@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "${description}",
+  "license": "${license}",
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "io.github.cmdessentials.fabric.CmdEssentialsFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric-api": "*",
+    "minecraft": "${minecraft}",
+    "java": ">=${java}"
+  },
+  "suggests": {
+    "fabric-permissions-api-v0": "*"
+  }
+}

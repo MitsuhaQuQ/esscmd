@@ -1,0 +1,11 @@
+.gradle/
+build/
+run/
+out/
+.idea/
+*.iml
+.DS_Store
+.kotlin/
+
+# Source snapshot of essentialsx.net/commands; docs/essentials-commands.md is the text version
+EssentialsX.pdf
