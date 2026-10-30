@@ -37,6 +37,8 @@ public final class PlayerRecord {
     boolean replyToRecipient;
     boolean socialSpy;
     boolean clearConfirm;
+    /** Kit name -> epoch millis of the last claim. */
+    final Map<String, Long> kitUses = new TreeMap<>();
     String nickname = "";
     final Set<UUID> ignored = new HashSet<>();
     final List<MailMessage> mail = new ArrayList<>();
@@ -119,6 +121,9 @@ public final class PlayerRecord {
             tag.put("logoutLocation", logoutLocation.toTag());
         }
         tag.putBoolean("clearConfirm", clearConfirm);
+        CompoundTag kitTag = new CompoundTag();
+        kitUses.forEach(kitTag::putLong);
+        tag.put("kitUses", kitTag);
         tag.putBoolean("fly", fly);
         tag.putBoolean("god", god);
         tag.putBoolean("messagesDisabled", messagesDisabled);
@@ -148,6 +153,10 @@ public final class PlayerRecord {
             record.logoutLocation = StoredLocation.fromTag(tag.getCompound("logoutLocation"));
         }
         record.clearConfirm = tag.getBoolean("clearConfirm");
+        CompoundTag kitTag = tag.getCompound("kitUses");
+        for (String kit : kitTag.getAllKeys()) {
+            record.kitUses.put(kit, kitTag.getLong(kit));
+        }
         record.fly = tag.getBoolean("fly");
         record.god = tag.getBoolean("god");
         record.messagesDisabled = tag.getBoolean("messagesDisabled");

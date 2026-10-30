@@ -1,14 +1,13 @@
 package com.mtmrails.esscmd.teleport;
 
 import java.util.Optional;
-import java.util.Set;
 import com.mtmrails.esscmd.compat.Dimensions;
+import com.mtmrails.esscmd.compat.ItemLookup;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.StoredLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
@@ -17,17 +16,13 @@ import net.minecraft.world.level.levelgen.Heightmap;
  * Uses collision shapes rather than {@code blocksMotion()}, which 1.18.2 doesn't have.
  */
 public final class SafeSpots {
-    private static final Set<Block> HARMFUL_FLOORS = Set.of(Blocks.LAVA, Blocks.MAGMA_BLOCK, Blocks.CACTUS,
-            Blocks.FIRE, Blocks.SOUL_FIRE, Blocks.CAMPFIRE, Blocks.SOUL_CAMPFIRE, Blocks.SWEET_BERRY_BUSH,
-            Blocks.POWDER_SNOW, Blocks.WITHER_ROSE, Blocks.POINTED_DRIPSTONE);
-
     private SafeSpots() {}
 
     /** True if a player standing with feet at {@code feet} is safe. */
     public static boolean isSafe(ServerLevel level, BlockPos feet) {
         BlockPos floor = feet.below();
         BlockState floorState = level.getBlockState(floor);
-        if (HARMFUL_FLOORS.contains(floorState.getBlock()) || !floorState.isFaceSturdy(level, floor, Direction.UP)) {
+        if (isUnsafe(floorState) || !floorState.isFaceSturdy(level, floor, Direction.UP)) {
             return false;
         }
         return isFree(level, feet) && isFree(level, feet.above());
@@ -36,7 +31,12 @@ public final class SafeSpots {
     private static boolean isFree(ServerLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return state.getCollisionShape(level, pos).isEmpty() && state.getFluidState().isEmpty()
-                && !HARMFUL_FLOORS.contains(state.getBlock());
+                && !isUnsafe(state);
+    }
+
+    /** Listed by standard id in {@code teleport.unsafeBlocks}. */
+    private static boolean isUnsafe(BlockState state) {
+        return ConfigManager.get().teleport.unsafeBlocks.contains(ItemLookup.id(state.getBlock()).toString());
     }
 
     /**

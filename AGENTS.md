@@ -12,8 +12,8 @@ commit messages in English.
 All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1, Forge 1.20.1 and Fabric 1.21.1 (docs/testing/p0-checklist.md);
-Forge 1.21.1 and both 1.18.2 targets still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M6 are
-done (M6 not yet played in-game). M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
+Forge 1.21.1 and both 1.18.2 targets still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M7 are
+done, so P1 is complete (M6 and M7 not yet played in-game). M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
 Forge 1.20.1 and Fabric 1.21.1. The checklist under **Commands** tracks progress.
 
 ## Target versions
@@ -256,7 +256,9 @@ below says otherwise. Mark each line `[x]` once every command on it is done.
   `cmdessentials.home.others` node.
 - **`datediff`** (`1d2h30m`): one shared parser, used by `/mute`, `/tempban`, `/togglejail`,
   `/mail sendtemp`, …
-- **Items**: use vanilla resource IDs (`diamond`, `minecraft:diamond`). There are no numeric
+- **Items and blocks**: always use standard namespaced IDs (`minecraft:diamond`; a bare `diamond`
+  is accepted as input) in commands, config and output (user requirement). Block lists belong
+  in config as IDs (`teleport.unsafeBlocks`), not hard-coded. Look IDs up with `compat/ItemLookup`. There are no numeric
   IDs, no `:data` suffix and no Essentials `items.csv`. Item NBT changed to data components in
   1.20.5, so hide that difference behind a version helper.
 - **"world"** in Essentials means a dimension here (`/world`, `/broadcastworld`, `/time … <world>`).
@@ -396,12 +398,15 @@ in-game checklist in `docs/testing/` and a commit.
 
 **M7: kits**
 
-- [ ] `/kit`, `/createkit`, `/delkit`, `/showkit`, `/kitreset`
-  - Items are stored through `ItemData`. `/createkit <name> <delay>` takes the creator's
-    inventory, and cooldowns are kept in `PlayerRecord`.
-  - Permissions (decided): each kit stores a required OP level (default 0). On Fabric with a
-    permission provider, `cmdessentials.kits.<name>` also grants it. This avoids Forge's rule
-    that nodes must be registered at startup.
+- [x] `/kit`, `/createkit`, `/delkit`, `/showkit`, `/kitreset` (`command/KitCommands`,
+  `data/Kit`, `compat/ItemData`; checklist `docs/testing/m7-checklist.md`, not yet played in-game)
+  - Items are stored as serialised tags with standard IDs and decoded through `ItemData`.
+    `/showkit` prints the IDs. `/createkit <name> <delay> [opLevel]` takes the creator's
+    inventory. Delay: seconds, a `1d2h` duration, or -1 for one claim. Claims are kept in
+    `PlayerRecord`; the `kitreset` node also skips the cooldown.
+  - Permissions (decided): each kit stores a required OP level (default 0). With a permission
+    provider, `cmdessentials.kits.<name>` also grants it. This avoids Forge's rule that nodes
+    must be registered at startup.
 
 ### P2: admin, world, items
 

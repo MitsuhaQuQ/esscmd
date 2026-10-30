@@ -92,6 +92,15 @@ the command's `.others` permission (admins by default).
 | `/clearinventory [player\|*] [item\|*\|**] [amount]`, `/clearinventoryconfirmtoggle` | Clear items, optionally asking for confirmation | admins |
 | `/disposal` | Destroy unwanted items | everyone |
 
+**Kits**
+
+| Command | Description | Default |
+|---|---|---|
+| `/kit [kit] [player]`, `/showkit <kit>` | List, claim or inspect kits | everyone |
+| `/createkit <kit> <delay> [opLevel]`, `/delkit <kit>`, `/kitreset <kit> [player]` | Manage kits. The kit is your current inventory; delay is seconds, `1d2h`, or -1 for one claim | admins |
+
+Items and blocks always use standard IDs such as `minecraft:diamond`.
+
 **Information**
 
 | Command | Description | Default |
@@ -122,7 +131,7 @@ Everything lives in `config/cmdessentials/`, created on first start. Run
 
 - `config.json`: teleport delay and cooldown, home limit, spawn behaviour, `/back` on death,
   `/tpa` timeout, speed limits, AFK timers (`afk.autoSeconds`, `afk.kickSeconds`), `/near`
-  radius, MOTD on join, `/tpr` areas per dimension, and `overrideVanilla` command names.
+  radius, unsafe teleport blocks (by ID), MOTD on join, `/tpr` areas per dimension, and `overrideVanilla` command names.
 - `messages_<lang>.json`: every message (see [Languages](#languages)).
 - `motd_<lang>.txt`, `rules_<lang>.txt`, `info_<lang>.txt`: texts for `/motd`, `/rules` and
   `/info`. Lines starting with `#name` begin a chapter, `##` lines are comments, `&` colour
@@ -156,11 +165,11 @@ The full plan lives in [AGENTS.md](AGENTS.md#commands). It is based on the 163 E
 commands listed in [docs/essentials-commands.md](docs/essentials-commands.md).
 
 - **P0 (done):** homes, spawn, `/speed`, `/back`, `/tpa` and friends, warps
-- **P1 (in progress):**
+- **P1 (done, final testing in progress):**
   - done: player state (`/fly`, `/god`, `/heal`, `/afk`, …), info commands (`/seen`,
     `/whois`, `/motd`, …), teleport extensions (`/tpr`, `/top`, `/world`, …), gamemode
     shortcuts, messaging (`/msg`, `/r`, `/ignore`, `/socialspy`, `/mail`, `/nick`, …)
-  - next: inventory tools and portable workbenches, kits
+  - next: in-game testing of inventory tools and kits on all targets
 - **P2:** moderation, jails, world and item tools
 - **P3 (optional):** economy, fun commands
 - **Out of scope:** Discord/XMPP integration, `/customtext`, `/backup`

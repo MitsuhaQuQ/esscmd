@@ -27,6 +27,7 @@ public final class EssData extends VersionedSavedData {
 
     private final Map<UUID, PlayerRecord> players = new HashMap<>();
     private final Map<String, StoredLocation> warps = new TreeMap<>();
+    private final Map<String, Kit> kits = new TreeMap<>();
     @Nullable
     private StoredLocation spawn;
 
@@ -189,6 +190,45 @@ public final class EssData extends VersionedSavedData {
         PlayerRecord record = record(player);
         if (record.replyToRecipient != enabled) {
             record.replyToRecipient = enabled;
+            setDirty();
+        }
+    }
+
+    // Kits
+
+    public Map<String, Kit> kits() {
+        return Collections.unmodifiableMap(kits);
+    }
+
+    public void setKit(String name, Kit kit) {
+        kits.put(name, kit);
+        setDirty();
+    }
+
+    /** Also forgets every player's cooldown for it, so a new kit of that name starts fresh. */
+    public boolean removeKit(String name) {
+        if (kits.remove(name) == null) {
+            return false;
+        }
+        players.values().forEach(record -> record.kitUses.remove(name));
+        setDirty();
+        return true;
+    }
+
+    /** Epoch millis of the player's last claim, or 0. */
+    public long kitUsed(UUID player, String kit) {
+        PlayerRecord record = players.get(player);
+        return record == null ? 0 : record.kitUses.getOrDefault(kit, 0L);
+    }
+
+    public void setKitUsed(UUID player, String kit, long time) {
+        record(player).kitUses.put(kit, time);
+        setDirty();
+    }
+
+    public void resetKit(UUID player, String kit) {
+        PlayerRecord record = players.get(player);
+        if (record != null && record.kitUses.remove(kit) != null) {
             setDirty();
         }
     }
@@ -359,6 +399,9 @@ public final class EssData extends VersionedSavedData {
         players.forEach((id, record) -> playersTag.put(id.toString(), record.toTag()));
         tag.put("players", playersTag);
         tag.put("warps", writeLocations(warps));
+        CompoundTag kitsTag = new CompoundTag();
+        kits.forEach((name, kit) -> kitsTag.put(name, kit.toTag()));
+        tag.put("kits", kitsTag);
         if (spawn != null) {
             tag.put("spawn", spawn.toTag());
         }
@@ -376,6 +419,10 @@ public final class EssData extends VersionedSavedData {
             data.migrateFormat1(tag);
         }
         readLocations(tag.getCompound("warps"), data.warps);
+        CompoundTag kitsTag = tag.getCompound("kits");
+        for (String name : kitsTag.getAllKeys()) {
+            data.kits.put(name, Kit.fromTag(kitsTag.getCompound(name)));
+        }
         if (tag.contains("spawn")) {
             data.spawn = StoredLocation.fromTag(tag.getCompound("spawn"));
         }

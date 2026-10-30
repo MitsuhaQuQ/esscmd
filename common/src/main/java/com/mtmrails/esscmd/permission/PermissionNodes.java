@@ -132,6 +132,13 @@ public final class PermissionNodes {
     public static final PermissionNode SMITHINGTABLE = node("smithingtable", ADMINS);
     public static final PermissionNode STONECUTTER = node("stonecutter", ADMINS);
 
+    public static final PermissionNode KIT = node("kit", ALL_PLAYERS);
+    public static final PermissionNode KIT_OTHERS = node("kit.others", ADMINS);
+    public static final PermissionNode SHOWKIT = node("showkit", ALL_PLAYERS);
+    public static final PermissionNode CREATEKIT = node("createkit", ADMINS);
+    public static final PermissionNode DELKIT = node("delkit", ADMINS);
+    public static final PermissionNode KITRESET = node("kitreset", ADMINS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -152,6 +159,7 @@ public final class PermissionNodes {
             SOCIALSPY, SOCIALSPY_OTHERS, HELPOP, HELPOP_RECEIVE, MAIL, MAIL_OTHERS, MAIL_SENDALL,
             BROADCAST, BROADCASTWORLD, NICK, NICK_OTHERS, REALNAME,
             ENDERCHEST, ENDERCHEST_OTHERS, INVSEE, INVSEE_MODIFY, HAT, REPAIR, REPAIR_ALL, MORE, CLEARINVENTORY, CLEARINVENTORY_OTHERS, DISPOSAL, WORKBENCH, ANVIL, CARTOGRAPHYTABLE, GRINDSTONE, LOOM, SMITHINGTABLE, STONECUTTER,
+            KIT, KIT_OTHERS, SHOWKIT, CREATEKIT, DELKIT, KITRESET,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

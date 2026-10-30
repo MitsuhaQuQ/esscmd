@@ -3,13 +3,14 @@ package com.mtmrails.esscmd.compat;
 import java.util.Optional;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 //? if >=1.19.3 {
 import net.minecraft.core.registries.BuiltInRegistries;
 //?} else {
 /*import net.minecraft.core.Registry;
 *///?}
 
-/** The item registry, which moved in 1.19.3. */
+/** The item and block registries, which moved in 1.19.3. */
 public final class ItemLookup {
     private ItemLookup() {}
 
@@ -18,6 +19,24 @@ public final class ItemLookup {
         return BuiltInRegistries.ITEM.getOptional(id);
         //?} else {
         /*return Registry.ITEM.getOptional(id);
+        *///?}
+    }
+
+    /** The namespaced id, such as {@code minecraft:diamond}. */
+    public static ResourceLocation id(Item item) {
+        //? if >=1.19.3 {
+        return BuiltInRegistries.ITEM.getKey(item);
+        //?} else {
+        /*return Registry.ITEM.getKey(item);
+        *///?}
+    }
+
+    /** The namespaced block id, such as {@code minecraft:lava}. */
+    public static ResourceLocation id(Block block) {
+        //? if >=1.19.3 {
+        return BuiltInRegistries.BLOCK.getKey(block);
+        //?} else {
+        /*return Registry.BLOCK.getKey(block);
         *///?}
     }
 

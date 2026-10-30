@@ -8,6 +8,7 @@ import com.mtmrails.esscmd.command.BroadcastCommands;
 import com.mtmrails.esscmd.command.EssentialsCommand;
 import com.mtmrails.esscmd.command.HomeCommands;
 import com.mtmrails.esscmd.command.InventoryCommands;
+import com.mtmrails.esscmd.command.KitCommands;
 import com.mtmrails.esscmd.command.LocationInfoCommands;
 import com.mtmrails.esscmd.command.MailCommands;
 import com.mtmrails.esscmd.command.MessagingCommands;
@@ -92,6 +93,7 @@ public final class CmdEssentials {
         TextCommands.register(dispatcher);
         TeleportExtraCommands.register(dispatcher);
         InventoryCommands.register(dispatcher);
+        KitCommands.register(dispatcher);
         MessagingCommands.register(dispatcher);
         MailCommands.register(dispatcher);
         BroadcastCommands.register(dispatcher);

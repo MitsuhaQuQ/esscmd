@@ -174,5 +174,20 @@
   "clear.confirm": "30 秒内再次执行相同命令以确认。",
   "clear.confirm-on": "/clearinventory 现在需要确认。",
   "clear.confirm-off": "/clearinventory 不再需要确认。",
-  "clear.unknown-item": "未知物品 {0}。"
+  "clear.unknown-item": "未知物品 {0}。",
+  "kit.list": "礼包：{0}",
+  "kit.none": "没有可用的礼包。",
+  "kit.not-found": "找不到礼包 {0}。",
+  "kit.no-access": "你没有权限领取礼包 {0}。",
+  "kit.received": "你领取了礼包 {0}。",
+  "kit.given": "已将礼包 {0} 发给 {1}。",
+  "kit.cooldown": "礼包 {0} 还需 {1} 才能再次领取。",
+  "kit.once": "礼包 {0} 只能领取一次。",
+  "kit.invalid-delay": "冷却时间 {0} 无效。请使用秒数、-1（只能领一次）或 1d2h 这样的时长。",
+  "kit.created": "已创建礼包 {0}，共 {1} 组物品。",
+  "kit.empty": "你的背包是空的。",
+  "kit.deleted": "已删除礼包 {0}。",
+  "kit.reset": "已重置 {1} 的礼包 {0} 冷却。",
+  "kit.contents": "礼包 {0} 包含：{1}",
+  "kit.broken": "礼包 {0} 没有可用的物品。"
 }

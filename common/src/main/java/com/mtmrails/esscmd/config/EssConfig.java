@@ -32,6 +32,12 @@ public final class EssConfig {
         public boolean cancelOnMove = true;
         /** Seconds between two teleports of the same player. */
         public int cooldownSeconds = 0;
+        /** Standard block ids nobody should be teleported onto or into (/top, /tpr, /jump, ...). */
+        public java.util.List<String> unsafeBlocks = new java.util.ArrayList<>(java.util.List.of(
+                "minecraft:lava", "minecraft:magma_block", "minecraft:cactus", "minecraft:fire",
+                "minecraft:soul_fire", "minecraft:campfire", "minecraft:soul_campfire",
+                "minecraft:sweet_berry_bush", "minecraft:powder_snow", "minecraft:wither_rose",
+                "minecraft:pointed_dripstone"));
     }
 
     public static final class Homes {

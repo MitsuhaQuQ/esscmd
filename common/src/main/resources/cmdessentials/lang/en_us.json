@@ -174,5 +174,20 @@
   "clear.confirm": "Run the same command again within 30 seconds to confirm.",
   "clear.confirm-on": "/clearinventory will now ask for confirmation.",
   "clear.confirm-off": "/clearinventory will no longer ask for confirmation.",
-  "clear.unknown-item": "Unknown item {0}."
+  "clear.unknown-item": "Unknown item {0}.",
+  "kit.list": "Kits: {0}",
+  "kit.none": "No kits are available.",
+  "kit.not-found": "Kit {0} not found.",
+  "kit.no-access": "You don't have access to kit {0}.",
+  "kit.received": "You received kit {0}.",
+  "kit.given": "Gave kit {0} to {1}.",
+  "kit.cooldown": "You can claim kit {0} again in {1}.",
+  "kit.once": "Kit {0} can only be claimed once.",
+  "kit.invalid-delay": "Invalid delay {0}. Use seconds, -1 for one claim, or a duration like 1d2h.",
+  "kit.created": "Kit {0} created with {1} item stack(s).",
+  "kit.empty": "Your inventory is empty.",
+  "kit.deleted": "Kit {0} deleted.",
+  "kit.reset": "Reset the cooldown of kit {0} for {1}.",
+  "kit.contents": "Kit {0} contains: {1}",
+  "kit.broken": "Kit {0} has no usable items."
 }
