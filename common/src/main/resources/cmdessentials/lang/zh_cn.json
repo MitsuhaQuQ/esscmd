@@ -267,8 +267,6 @@
   "skull.done": "已给予 {0} 的头颅。",
   "condense.done": "已压缩 {0} 个物品。",
   "condense.nothing": "没有可压缩的物品。",
-  "recipe.result": "{0} 的配方：{1}",
-  "recipe.none": "没有找到 {0} 的配方。",
   "editsign.not-sign": "你看向的不是告示牌。",
   "editsign.done": "告示牌已更新。",
   "unlimited.on": "{1} 的 {0} 现在无限。",

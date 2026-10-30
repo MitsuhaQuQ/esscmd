@@ -52,7 +52,6 @@ Same setup as [p0-checklist.md](p0-checklist.md): **A** is OP, **B** is not.
 | 5.3 | `/exp show`, `/exp give B 100`, `/exp set B 0` | Values update |
 | 5.4 | `/skull Notch` | Head shows the skin |
 | 5.5 | Hold 20 iron ingots, `/condense` | 2 blocks, 2 ingots left |
-| 5.6 | `/recipe minecraft:chest` | Lists ingredient ids |
 | 5.7 | Look at a sign: `/editsign set 1 &cHello`, `/editsign clear 1` | Text changes for everyone |
 | 5.8 | `/unlimited minecraft:torch`, place torches | Stack refills within a second |
 | 5.9 | Hold a stick, `/powertool home`, right-click air and a block | Runs `/home`; `/powertool` removes; `/powertooltoggle` disables |

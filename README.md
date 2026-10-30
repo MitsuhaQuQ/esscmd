@@ -129,7 +129,7 @@ Items and blocks always use standard IDs such as `minecraft:diamond`.
 | `/spawner <mob>`, `/spawnmob <mob> [amount] [player]`, `/tree [type]`, `/bigtree <type>` | Mobs and trees | admins |
 | `/item`, `/itemname`, `/itemlore`, `/exp`, `/skull`, `/condense`, `/editsign`, `/unlimited` | Item and sign tools | admins |
 | `/powertool [command]`, `/powertoollist`, `/powertooltoggle` | Run a command on right-click with an item | admins |
-| `/itemdb [item]`, `/recipe <item>` | Item information | everyone |
+| `/itemdb [item]` | Item information | everyone |
 | `/eban`, `/ekick`, `/egive`, `/etp`, `/etime`, ... | Vanilla commands under Essentials' `e` names | as vanilla |
 
 **Information**
@@ -206,7 +206,8 @@ commands listed in [docs/essentials-commands.md](docs/essentials-commands.md).
 - **P2 (done except `/book`, `/firework`, `/potion`):** moderation, jails, `/vanish`,
   per-player time and weather, world tools, item tools and power tools
 - **P3 (optional):** economy, fun commands
-- **Out of scope:** Discord/XMPP integration, `/customtext`, `/backup`
+- **Out of scope:** Discord/XMPP integration, `/customtext`, `/backup`, `/recipe` (use the
+  vanilla recipe book)
 
 Vanilla commands are not replaced by default. Where the names clash, the Essentials version
 gets an `e`-prefixed name (`/egive`, `/etp`, …). The exception is private messages:

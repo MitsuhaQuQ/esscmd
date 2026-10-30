@@ -456,7 +456,7 @@ vanilla-clash versions, M11 per-player view and world tools, M12 items and power
   argument), `/spawnmob` (no mount syntax), `/tree`, `/bigtree` (grown from real saplings),
   `/break` (`command/WorldCommands`).
 - [x] M12 items: `/item`, `/itemdb`, `/itemname`, `/itemlore`, `/exp`, `/skull`, `/condense`
-  (`items.condense` table), `/recipe` (text list), `/editsign` (`set`, `clear`), `/unlimited`
+  (`items.condense` table), `/editsign` (`set`, `clear`), `/unlimited`
   (`command/ItemCommands`). `/enchant` is `/eenchant` above.
 - [x] M12 power tools: `/powertool`, `/powertoollist`, `/powertooltoggle`, right-click only
   (`player/ItemPowers`, `ServerPlayerGameModeMixin`).
@@ -480,6 +480,7 @@ played in-game.
 - `/customtext`: configured in `bukkit.yml`, so it doesn't apply here.
 - `/backup`: leave this to a backup mod.
 - `/help`: vanilla `/help` already lists Brigadier commands.
+- `/recipe`: the vanilla recipe book already shows this.
 
 ## Build & run
 

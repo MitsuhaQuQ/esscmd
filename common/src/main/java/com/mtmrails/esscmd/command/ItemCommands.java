@@ -15,7 +15,6 @@ import com.mtmrails.esscmd.compat.Dimensions;
 import com.mtmrails.esscmd.compat.ItemData;
 import com.mtmrails.esscmd.compat.ItemLookup;
 import com.mtmrails.esscmd.compat.Players;
-import com.mtmrails.esscmd.compat.Recipes;
 import com.mtmrails.esscmd.compat.Signs;
 import com.mtmrails.esscmd.compat.Texts;
 import com.mtmrails.esscmd.config.ConfigManager;
@@ -43,7 +42,7 @@ import net.minecraft.world.phys.HitResult;
 
 /**
  * {@code /item}, {@code /itemdb}, {@code /itemname}, {@code /itemlore}, {@code /exp},
- * {@code /skull}, {@code /condense}, {@code /recipe}, {@code /editsign}, {@code /unlimited},
+ * {@code /skull}, {@code /condense}, {@code /editsign}, {@code /unlimited},
  * {@code /powertool}, {@code /powertoollist}, {@code /powertooltoggle}. Items are standard ids.
  */
 public final class ItemCommands {
@@ -119,10 +118,6 @@ public final class ItemCommands {
         dispatcher.register(Commands.literal("condense")
                 .requires(PermissionNodes.CONDENSE.require())
                 .executes(ctx -> condense(ctx.getSource())));
-        dispatcher.register(Commands.literal("recipe")
-                .requires(PermissionNodes.RECIPE.require())
-                .then(Commands.argument("item", ResourceLocationArgument.id()).suggests(ITEMS)
-                        .executes(ctx -> recipe(ctx.getSource(), ResourceLocationArgument.getId(ctx, "item")))));
         LiteralCommandNode<CommandSourceStack> sign = dispatcher.register(Commands.literal("editsign")
                 .requires(PermissionNodes.EDITSIGN.require())
                 .then(Commands.literal("set").then(Commands.argument("line", IntegerArgumentType.integer(1, 4))
@@ -303,19 +298,6 @@ public final class ItemCommands {
             }
         }
         return used == 0 ? CommandUtil.fail(source, "condense.nothing") : CommandUtil.ok(source, "condense.done", used);
-    }
-
-    private static int recipe(CommandSourceStack source, ResourceLocation id) {
-        Optional<Item> item = ItemLookup.find(id);
-        if (item.isEmpty()) {
-            return CommandUtil.fail(source, "item.unknown", id);
-        }
-        Optional<List<ItemStack>> ingredients = Recipes.find(source.getServer(), item.get());
-        if (ingredients.isEmpty()) {
-            return CommandUtil.fail(source, "recipe.none", id);
-        }
-        List<String> names = ingredients.get().stream().map(stack -> ItemLookup.id(stack.getItem()).toString()).toList();
-        return CommandUtil.ok(source, "recipe.result", id, String.join(", ", names));
     }
 
     private static int editSign(CommandSourceStack source, int line, String text) throws CommandSyntaxException {

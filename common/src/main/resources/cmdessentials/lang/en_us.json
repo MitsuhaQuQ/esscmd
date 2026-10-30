@@ -267,8 +267,6 @@
   "skull.done": "Gave the head of {0}.",
   "condense.done": "Condensed {0} item(s).",
   "condense.nothing": "Nothing to condense.",
-  "recipe.result": "Recipe for {0}: {1}",
-  "recipe.none": "No recipe found for {0}.",
   "editsign.not-sign": "You are not looking at a sign.",
   "editsign.done": "Sign updated.",
   "unlimited.on": "{0} is now unlimited for {1}.",
