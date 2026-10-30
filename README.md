@@ -7,11 +7,11 @@ A **server-only** Minecraft mod that brings the commands of the Bukkit
 
 Install it on the server only. Players join with an unmodified vanilla client.
 
-> **Status: early development.** Homes, spawn, warps, `/back`, the `/tpa` family, player
-> state (`/fly`, `/god`, `/heal`, AFK, …), info commands and teleport extensions (`/tpr`,
-> `/top`, `/world`, …), messaging, mail and nicknames are implemented. Inventory tools and kits come next; see the
-> [roadmap](#roadmap). Tested in-game on Fabric 1.20.1; the other targets pass build and
-> console tests.
+> **Status: early development.** All of P0 and P1 is implemented: homes, spawn, warps, `/back`,
+> the `/tpa` family, teleport extensions, player state, AFK, info commands, messaging, mail,
+> nicknames, inventory tools, portable workbenches and kits. P2 has started with moderation.
+> See the [roadmap](#roadmap). Core features have been played in-game on five of the six
+> targets; Forge 1.21.1 has only passed server-console tests so far.
 
 ## Supported versions
 
@@ -28,7 +28,8 @@ NeoForge is not supported yet.
 1. Download the jar that matches your loader and Minecraft version, for example
    `cmdessentials-fabric-0.1.0+1.20.1.jar` or `cmdessentials-forge-0.1.0+1.21.1.jar`.
 2. Put it in the server's `mods/` folder.
-3. **Fabric only:** also install [Fabric API](https://modrinth.com/mod/fabric-api).
+3. **Fabric only:** also install [Fabric API](https://modrinth.com/mod/fabric-api) from
+   Modrinth. For 1.18.2, the aggregate jars on the Fabric Maven are empty stubs.
 4. Start the server.
 
 The mod doesn't load in singleplayer or on clients. That is intentional.
@@ -141,7 +142,8 @@ Everything lives in `config/cmdessentials/`, created on first start. Run
 
 - `config.json`: teleport delay and cooldown, home limit, spawn behaviour, `/back` on death,
   `/tpa` timeout, speed limits, AFK timers (`afk.autoSeconds`, `afk.kickSeconds`), `/near`
-  radius, unsafe teleport blocks (by ID), MOTD on join, `/tpr` areas per dimension, and `overrideVanilla` command names.
+  radius, unsafe teleport blocks (by ID), MOTD on join, `/tpr` areas per dimension, and the
+  `overrideVanilla` command names.
 - `messages_<lang>.json`: every message (see [Languages](#languages)).
 - `motd_<lang>.txt`, `rules_<lang>.txt`, `info_<lang>.txt`: texts for `/motd`, `/rules` and
   `/info`. Lines starting with `#name` begin a chapter, `##` lines are comments, `&` colour
@@ -175,12 +177,10 @@ The full plan lives in [AGENTS.md](AGENTS.md#commands). It is based on the 163 E
 commands listed in [docs/essentials-commands.md](docs/essentials-commands.md).
 
 - **P0 (done):** homes, spawn, `/speed`, `/back`, `/tpa` and friends, warps
-- **P1 (done, final testing in progress):**
-  - done: player state (`/fly`, `/god`, `/heal`, `/afk`, …), info commands (`/seen`,
-    `/whois`, `/motd`, …), teleport extensions (`/tpr`, `/top`, `/world`, …), gamemode
-    shortcuts, messaging (`/msg`, `/r`, `/ignore`, `/socialspy`, `/mail`, `/nick`, …)
-  - next: in-game testing of inventory tools and kits on all targets
-- **P2 (in progress):** moderation is done; next are jails, `/vanish`, world and item tools
+- **P1 (done):** player state and AFK, info commands, teleport extensions, gamemode shortcuts,
+  messaging, mail, nicknames, inventory tools, portable workbenches, kits
+- **P2 (in progress):** moderation is done; next are jails, `/vanish` and the `e`-prefixed
+  vanilla replacements, per-player time and weather, world tools, item tools and power tools
 - **P3 (optional):** economy, fun commands
 - **Out of scope:** Discord/XMPP integration, `/customtext`, `/backup`
 

@@ -9,13 +9,14 @@ commit messages in English.
 
 ## Status
 
-All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
-`/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
-played in-game on Fabric and Forge 1.18.2, Fabric and Forge 1.20.1 and Fabric 1.21.1
-(docs/testing/p0-checklist.md); Forge 1.21.1 still needs an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M7 are
-done, so P1 is complete. M6 and M7 have been played in-game on Fabric 1.20.1. P2 is in progress: M8
-(moderation) is done but not yet played in-game. M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
-Forge 1.20.1 and Fabric 1.21.1. The checklist under **Commands** tracks progress.
+All 6 jars build; CI builds them and runs the unit tests on every push.
+
+- **Done:** P0 and P1 (M1–M7). **In progress:** P2: M8 (moderation) is done, M9–M12 are next.
+- **In-game testing:** P0 and M2–M7 on Fabric 1.20.1. P0 and M5 core checks on Forge 1.20.1 and
+  Fabric 1.21.1. Both 1.18.2 targets passed a pass covering P0, M5, M6, M7 and M8 core checks.
+- **Not yet tested in-game:** Forge 1.21.1 (console only) and `/mute` with signed chat (1.19+).
+
+The checklists under **Commands** track progress; test steps are in `docs/testing/`.
 
 ## Target versions
 
@@ -48,11 +49,14 @@ cmdEssentials/
 │     ├─ platform/Platform.java  # the loader abstraction (ServiceLoader)
 │     ├─ permission/           # PermissionNode, IntOption, PermissionNodes (the one list)
 │     ├─ config/               # EssConfig (JSON) and ConfigManager (load, async reload)
-│     ├─ message/              # Messages (per-player), TextFiles/TextDocument, Broadcast
-│     ├─ data/                 # EssData (SavedData), PlayerRecord, StoredLocation
+│     ├─ message/              # Messages (per-player), TextFiles/TextDocument, Broadcast,
+│     │                        #   MessagingService (/r history), Nicknames
+│     ├─ data/                 # EssData (SavedData), PlayerRecord, StoredLocation, Kit,
+│     │                        #   MailMessage
 │     ├─ teleport/             # TeleportService (delay, cooldown, /back), TpaRequests,
 │     │                        #   SafeSpots, RandomTeleport
-│     ├─ player/               # AbilityService (/fly, /god), AfkService, Sessions
+│     ├─ player/               # AbilityService (/fly, /god), AfkService, Sessions, Mutes
+│     ├─ menu/                 # PortableMenus, InvseeMenu, InvseeContainer
 │     ├─ util/                 # DateDiff, Pager (pure Java, unit-tested)
 │     ├─ compat/               # version adapters, the only place with //? blocks
 │     │  └─ mixin/             # mixins (cmdessentials.common.mixins.json)
@@ -127,6 +131,8 @@ cmdEssentials/
     stores it (see `Players.language`). From 1.20.2 it's empty and `clientInformation()` is used.
   - `ServerGamePacketListenerImplMixin`: chat and command activity for AFK, plus `/mute`.
     Expected injected handlers: 2 on 1.18.2, 3 on 1.20.1, 4 on 1.21.1.
+  - `PlayerMixin`, `ServerPlayerListNameMixin`: nickname in the display name, nickname and
+    AFK tag in the tab list. `TabListNames` sends the update packet.
   - **Verifying mixins**: targets like the network handler only load when a player joins, so
     a broken injection would crash then. Start a server with
     `-Dcmdessentials.debug.loadMixinTargets=true` (loads every target at startup; add new
@@ -150,7 +156,7 @@ cmdEssentials/
   `//? if >=1.20.5 {` … `//?} else {` … `//?}`. Use version-range conditions only, never
   loader conditions. Loader differences belong in the loader modules.
 - Put version branches in **one place**: a small adapter class per topic in
-  `common/.../compat/` (`Texts`, `ItemData`, `Teleports`, `Attributes`, …). Command code calls
+  `common/.../compat/` (`Texts`, `Players`, `ItemData`, `ItemLookup`, `MovementSpeed`, …). Command code calls
   these adapters and contains no `//?` blocks itself.
 - Known version splits we need to handle: 1.19 (chat and `Component` API, the
   `CommandBuildContext` argument), 1.20 (`Level` vs `ServerLevel` getters, smithing menu),
@@ -185,7 +191,7 @@ redirect does nothing. `EssentialsCommand` shows the pattern.
 - Fabric: `fabric-permissions-api` (works with LuckPerms). Forge: `PermissionAPI`. How each
   loader wires this up is described under **Code split**.
 - With no permission provider, fall back to an OP level per node (default: basic player
-  commands = 0, admin commands = 2).
+  commands = 0, admin commands = 2, `/sudo` = 4).
 - Node format: `cmdessentials.<command>[.<sub>]`, e.g. `cmdessentials.home`,
   `cmdessentials.home.others`, `cmdessentials.speed.others`. Teleport bypasses:
   `cmdessentials.teleport.bypass.delay` / `.cooldown`.
@@ -197,9 +203,9 @@ redirect does nothing. `EssentialsCommand` shows the pattern.
 ## Data & config
 
 - Persistent data is one `EssData` (`SavedData`, `format: 2`) on the overworld:
-  `<world>/data/cmdessentials.dat`. Server-wide: warps and the spawn point. Per player, one
-  `PlayerRecord`: homes, `/back`, `/tptoggle`, `/tpauto`, `/fly`, `/god`, last name, last seen
-  and logout location. Locations
+  `<world>/data/cmdessentials.dat`. Server-wide: warps, kits and the spawn point. Per player,
+  one `PlayerRecord`: homes, `/back`, teleport toggles, `/fly`, `/god`, last name, last seen,
+  logout location, mail, nickname, message settings, ignore list, kit claims and mute. Locations
   are `StoredLocation`s: dimension id, position, yaw and pitch. `/tpa` requests, pending
   teleports, AFK state and session start times are in memory only.
 - Config: `config/cmdessentials/config.json` (`EssConfig`), parsed with the Gson that ships
@@ -332,7 +338,7 @@ in-game checklist in `docs/testing/` and a commit.
     is off by default (`afk.kickSeconds`; `cmdessentials.afk.kickexempt` is never kicked).
     Chat and commands are seen by `ServerGamePacketListenerImplMixin`, which runs on the
     network thread on 1.19+ and therefore only records a timestamp; state changes happen in
-    `AfkService.tick`. The `[AFK]` tab-list tag ships with M5's tab-list support.
+    `AfkService.tick`. The tab list shows the AFK state (see `Nicknames`).
 
 **M3: info**
 
@@ -416,7 +422,8 @@ vanilla-clash versions, M11 per-player view and world tools, M12 items and power
 
 - [x] M8 moderation: `/mute`, `/tempban`, `/tempbanip`, `/unban`, `/unbanip`, `/kickall`,
   `/sudo`, `/gc` (`command/ModerationCommands`, `player/Mutes`; checklist
-  `docs/testing/m8-checklist.md`; injections verified on all targets, not yet played in-game)
+  `docs/testing/m8-checklist.md`; injections verified on all targets, core checks played
+  in-game on 1.18.2, signed-chat `/mute` on 1.19+ still untested)
   - `/mute` cancels at `broadcastChatMessage` (1.19.3+) or the private
     `handleChat(FilteredText)` (before), never when the packet arrives: dropping a chat packet
     desyncs signed chat's last-seen tracking and gets the player kicked. It also blocks `/msg`
