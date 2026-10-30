@@ -1,6 +1,6 @@
-package io.github.cmdessentials.forge;
+package com.mtmrails.esscmd.forge;
 
-import io.github.cmdessentials.CmdEssentials;
+import com.mtmrails.esscmd.CmdEssentials;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.common.Mod;

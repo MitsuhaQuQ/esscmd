@@ -1,4 +1,4 @@
-package io.github.cmdessentials.platform;
+package com.mtmrails.esscmd.platform;
 
 import java.nio.file.Path;
 import java.util.ServiceLoader;
@@ -6,7 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 
 /**
  * Everything common code needs from the mod loader. Each loader module provides one
- * implementation, registered in {@code META-INF/services/io.github.cmdessentials.platform.Platform}.
+ * implementation, registered in {@code META-INF/services/com.mtmrails.esscmd.platform.Platform}.
  */
 public interface Platform {
     String loaderName();

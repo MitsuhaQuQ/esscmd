@@ -1,6 +1,6 @@
-package io.github.cmdessentials.fabric;
+package com.mtmrails.esscmd.fabric;
 
-import io.github.cmdessentials.CmdEssentials;
+import com.mtmrails.esscmd.CmdEssentials;
 import net.fabricmc.api.DedicatedServerModInitializer;
 //? if >=1.19 {
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;

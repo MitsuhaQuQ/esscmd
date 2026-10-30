@@ -1,8 +1,8 @@
-package io.github.cmdessentials;
+package com.mtmrails.esscmd;
 
 import com.mojang.brigadier.CommandDispatcher;
-import io.github.cmdessentials.command.EssentialsCommand;
-import io.github.cmdessentials.platform.Platform;
+import com.mtmrails.esscmd.command.EssentialsCommand;
+import com.mtmrails.esscmd.platform.Platform;
 import net.minecraft.commands.CommandSourceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

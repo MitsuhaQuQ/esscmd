@@ -1,4 +1,4 @@
-package io.github.cmdessentials.permission;
+package com.mtmrails.esscmd.permission;
 
 import java.util.List;
 

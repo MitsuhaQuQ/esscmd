@@ -1,7 +1,7 @@
-package io.github.cmdessentials.permission;
+package com.mtmrails.esscmd.permission;
 
 import java.util.function.Predicate;
-import io.github.cmdessentials.platform.Platform;
+import com.mtmrails.esscmd.platform.Platform;
 import net.minecraft.commands.CommandSourceStack;
 
 /** A permission node with the OP level used when no permission provider is installed. */

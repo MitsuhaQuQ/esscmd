@@ -1,8 +1,8 @@
-package io.github.cmdessentials.fabric;
+package com.mtmrails.esscmd.fabric;
 
 import java.nio.file.Path;
-import io.github.cmdessentials.CmdEssentials;
-import io.github.cmdessentials.platform.Platform;
+import com.mtmrails.esscmd.CmdEssentials;
+import com.mtmrails.esscmd.platform.Platform;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;

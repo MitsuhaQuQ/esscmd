@@ -1,4 +1,4 @@
-package io.github.cmdessentials.compat;
+package com.mtmrails.esscmd.compat;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;

@@ -39,7 +39,7 @@ cmdEssentials/
 ├─ versions/<mc>/gradle.properties  # per-version: java, mc ranges, pack_format, fabric api, forge
 ├─ buildSrc/                   # build helpers: `mod`, `versionProp(...)`, `properties(...)`
 ├─ common/                     # ALL logic. Only vanilla Minecraft (Mojmap) + Brigadier
-│  └─ src/main/java/io/github/cmdessentials/
+│  └─ src/main/java/com/mtmrails/esscmd/
 │     ├─ CmdEssentials.java    # init() and registerCommands(): the hooks loaders call
 │     ├─ platform/Platform.java  # the loader abstraction (ServiceLoader)
 │     ├─ permission/           # PermissionNode, PermissionNodes (the one node list)
@@ -87,7 +87,7 @@ cmdEssentials/
 - Loader-specific features go through **`platform.Platform`** in `common` (loader name, mod
   version, config dir, permission checks). There is one implementation per loader
   (`FabricPlatform`, `ForgePlatform`), loaded with `java.util.ServiceLoader` from
-  `META-INF/services/io.github.cmdessentials.platform.Platform`. Add new loader needs as
+  `META-INF/services/com.mtmrails.esscmd.platform.Platform`. Add new loader needs as
   methods there. Don't use `@ExpectPlatform`, because it needs Architectury's transformer at
   runtime.
 - **Events**: `common` exposes plain hooks. These exist now: `CmdEssentials.init()` and

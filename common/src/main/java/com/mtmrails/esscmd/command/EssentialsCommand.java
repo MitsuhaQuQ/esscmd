@@ -1,10 +1,10 @@
-package io.github.cmdessentials.command;
+package com.mtmrails.esscmd.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import io.github.cmdessentials.compat.Texts;
-import io.github.cmdessentials.permission.PermissionNodes;
-import io.github.cmdessentials.platform.Platform;
+import com.mtmrails.esscmd.compat.Texts;
+import com.mtmrails.esscmd.permission.PermissionNodes;
+import com.mtmrails.esscmd.platform.Platform;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

@@ -1,11 +1,11 @@
-package io.github.cmdessentials.forge;
+package com.mtmrails.esscmd.forge;
 
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Collectors;
-import io.github.cmdessentials.CmdEssentials;
-import io.github.cmdessentials.permission.PermissionNodes;
-import io.github.cmdessentials.platform.Platform;
+import com.mtmrails.esscmd.CmdEssentials;
+import com.mtmrails.esscmd.permission.PermissionNodes;
+import com.mtmrails.esscmd.platform.Platform;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.ModList;
@@ -17,9 +17,9 @@ import net.minecraftforge.server.permission.nodes.PermissionTypes;
 public final class ForgePlatform implements Platform {
     /** Forge nodes for {@link PermissionNodes#ALL}, keyed by full node name. */
     static final Map<String, PermissionNode<Boolean>> NODES = PermissionNodes.ALL.stream()
-            .collect(Collectors.toUnmodifiableMap(io.github.cmdessentials.permission.PermissionNode::name, ForgePlatform::toForgeNode));
+            .collect(Collectors.toUnmodifiableMap(com.mtmrails.esscmd.permission.PermissionNode::name, ForgePlatform::toForgeNode));
 
-    private static PermissionNode<Boolean> toForgeNode(io.github.cmdessentials.permission.PermissionNode node) {
+    private static PermissionNode<Boolean> toForgeNode(com.mtmrails.esscmd.permission.PermissionNode node) {
         // Forge builds the full name as "<modid>.<nodeName>".
         String nodeName = node.name().substring(CmdEssentials.MOD_ID.length() + 1);
         return new PermissionNode<>(CmdEssentials.MOD_ID, nodeName, PermissionTypes.BOOLEAN,
