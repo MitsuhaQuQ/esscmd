@@ -13,7 +13,7 @@ All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1 only (docs/testing/p0-checklist.md); Forge and 1.18.2 / 1.21.1
 still need an in-game pass. P1 is planned (milestones M1–M7 under **Commands**); M1 and M2 are
-done (M2 played in-game on Fabric 1.20.1), M3 and M4 are done but not yet played in-game. The checklist
+done; M2–M4 are also done. M2, M3 and M4 have been played in-game on Fabric 1.20.1. The checklist
 under **Commands** tracks progress.
 
 ## Target versions
@@ -309,7 +309,7 @@ in-game checklist in `docs/testing/` and a commit.
 
 - [x] `/fly`, `/god`, `/heal`, `/feed`, `/rest`, `/ext`, `/afk`, `/suicide`
   (`command/PlayerStateCommands`, `command/AfkCommand`, `player/AbilityService`,
-  `player/AfkService`; checklist `docs/testing/m2-checklist.md`, not yet played in-game)
+  `player/AfkService`; checklist `docs/testing/m2-checklist.md`, played in-game on Fabric 1.20.1)
   - `/god` and `/fly` are stored in `PlayerRecord`. Instead of hooking every reset (respawn,
     gamemode change, join), `AbilityService` re-applies them once a second; turning one off
     rebuilds abilities from the gamemode first, so creative flight survives. God mode uses
@@ -327,7 +327,7 @@ in-game checklist in `docs/testing/` and a commit.
 
 - [x] `/getpos`, `/compass`, `/depth`, `/near`, `/seen`, `/whois`, `/playtime`, `/ping`,
   `/motd`, `/rules`, `/info` (`command/LocationInfoCommands`, `PlayerInfoCommands`,
-  `TextCommands`; checklist `docs/testing/m3-checklist.md`, not yet played in-game)
+  `TextCommands`; checklist `docs/testing/m3-checklist.md`, played in-game on Fabric 1.20.1)
   - Player names resolve through `Players.findId`: online players, then names the mod recorded
     on join. **Never** use the vanilla profile cache for lookups: for unknown names it calls
     Mojang's API and blocks the server thread.
@@ -342,7 +342,7 @@ in-game checklist in `docs/testing/` and a commit.
 - [x] `/tphere`, `/tppos`, `/tpo`, `/tpohere`, `/tpall`, `/tpaall`, `/tpoffline`, `/top`,
   `/bottom`, `/jump`, `/tpr`, `/settpr`, `/world` (`command/TeleportExtraCommands`,
   `teleport/SafeSpots`, `teleport/RandomTeleport`; checklist `docs/testing/m4-checklist.md`,
-  not yet played in-game)
+  played in-game on Fabric 1.20.1)
   - A player's own move (`/tppos`, `/top`, `/bottom`, `/jump`, `/tpr`, `/world`) goes through
     `TeleportService.teleport` (delay, cooldown); moving someone else uses `teleportNow`.
   - `SafeSpots`: sturdy, harmless floor and two free, dry blocks. It uses collision shapes and
