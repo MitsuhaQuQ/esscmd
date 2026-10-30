@@ -237,6 +237,39 @@ public final class EssData extends VersionedSavedData {
         return players.values().stream().filter(record -> !record.jail.isEmpty()).map(PlayerRecord::lastName).sorted().toList();
     }
 
+    // /powertool and /unlimited
+
+    public void setPowerTool(UUID player, String item, String command) {
+        PlayerRecord record = record(player);
+        if (command == null) {
+            record.powerTools.remove(item);
+        } else {
+            record.powerTools.put(item, command);
+        }
+        setDirty();
+    }
+
+    public void setPowerToolsOff(UUID player, boolean off) {
+        record(player).powerToolsOff = off;
+        setDirty();
+    }
+
+    /** Adds or removes an item; returns true if it is now unlimited. */
+    public boolean toggleUnlimited(UUID player, String item) {
+        PlayerRecord record = record(player);
+        boolean added = record.unlimited.add(item);
+        if (!added) {
+            record.unlimited.remove(item);
+        }
+        setDirty();
+        return added;
+    }
+
+    public void clearUnlimited(UUID player) {
+        record(player).unlimited.clear();
+        setDirty();
+    }
+
     // /mute
 
     public boolean muted(UUID player) {

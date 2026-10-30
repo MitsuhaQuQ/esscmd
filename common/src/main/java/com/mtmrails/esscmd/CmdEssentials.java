@@ -8,6 +8,7 @@ import com.mtmrails.esscmd.command.BroadcastCommands;
 import com.mtmrails.esscmd.command.EssentialsCommand;
 import com.mtmrails.esscmd.command.HomeCommands;
 import com.mtmrails.esscmd.command.InventoryCommands;
+import com.mtmrails.esscmd.command.ItemCommands;
 import com.mtmrails.esscmd.command.JailCommands;
 import com.mtmrails.esscmd.command.KitCommands;
 import com.mtmrails.esscmd.command.LocationInfoCommands;
@@ -37,6 +38,7 @@ import com.mtmrails.esscmd.message.Messages;
 import com.mtmrails.esscmd.player.AbilityService;
 import com.mtmrails.esscmd.player.AfkService;
 import com.mtmrails.esscmd.player.JailService;
+import com.mtmrails.esscmd.player.ItemPowers;
 import com.mtmrails.esscmd.player.PlayerView;
 import com.mtmrails.esscmd.player.Sessions;
 import com.mtmrails.esscmd.player.VanishService;
@@ -75,6 +77,7 @@ public final class CmdEssentials {
         for (String target : new String[] {
                 "net.minecraft.world.entity.player.Player",
                 "net.minecraft.server.level.ServerPlayer",
+                "net.minecraft.server.level.ServerPlayerGameMode",
                 "net.minecraft.server.level.ChunkMap",
                 "net.minecraft.server.level.ChunkMap$TrackedEntity",
                 "net.minecraft.server.network.ServerGamePacketListenerImpl"}) {
@@ -108,6 +111,7 @@ public final class CmdEssentials {
         JailCommands.register(dispatcher);
         ViewCommands.register(dispatcher);
         WorldCommands.register(dispatcher);
+        ItemCommands.register(dispatcher);
         ConfigManager.get().disabledCommands.forEach(name -> CommandTrees.removeRootCommand(dispatcher, name));
         MessagingCommands.register(dispatcher);
         MailCommands.register(dispatcher);
@@ -132,6 +136,7 @@ public final class CmdEssentials {
         AfkService.tick(server);
         JailService.tick(server);
         PlayerView.tick(server);
+        ItemPowers.tick(server);
     }
 
     public static void onPlayerJoin(ServerPlayer player) {

@@ -162,6 +162,13 @@ public final class EssConfig {
         public int defaultStackSize = -1;
         /** repair-enchanted: /repair may fix enchanted items. */
         public boolean repairEnchanted = true;
+        /** /condense: item id -> block id, nine items to one block. */
+        public java.util.Map<String, String> condense = new java.util.LinkedHashMap<>(java.util.Map.of(
+                "minecraft:coal", "minecraft:coal_block", "minecraft:iron_ingot", "minecraft:iron_block",
+                "minecraft:gold_ingot", "minecraft:gold_block", "minecraft:diamond", "minecraft:diamond_block",
+                "minecraft:emerald", "minecraft:emerald_block", "minecraft:lapis_lazuli", "minecraft:lapis_block",
+                "minecraft:redstone", "minecraft:redstone_block", "minecraft:netherite_ingot", "minecraft:netherite_block",
+                "minecraft:wheat", "minecraft:hay_block", "minecraft:copper_ingot", "minecraft:copper_block"));
     }
 
     public static final class Jail {

@@ -11,10 +11,11 @@ commit messages in English.
 
 All 6 jars build; CI builds them and runs the unit tests on every push.
 
-- **Done:** P0 and P1 (M1–M7). **In progress:** P2: M8 (moderation) is done, M9–M12 are next.
+- **Done:** P0, P1 (M1–M7) and P2 (M8–M12), except `/book`, `/firework` and `/potion`.
 - **In-game testing:** P0 and M2–M7 on Fabric 1.20.1. P0 and M5 core checks on Forge 1.20.1 and
   Fabric 1.21.1. Both 1.18.2 targets passed a pass covering P0, M5, M6, M7 and M8 core checks.
-- **Not yet tested in-game:** Forge 1.21.1 (console only) and `/mute` with signed chat (1.19+).
+- **Not yet tested in-game:** Forge 1.21.1 (console only), `/mute` with signed chat (1.19+) and
+  all of M9–M12.
 
 The checklists under **Commands** track progress; test steps are in `docs/testing/`.
 
@@ -55,7 +56,8 @@ cmdEssentials/
 │     │                        #   MailMessage
 │     ├─ teleport/             # TeleportService (delay, cooldown, /back), TpaRequests,
 │     │                        #   SafeSpots, RandomTeleport
-│     ├─ player/               # AbilityService (/fly, /god), AfkService, Sessions, Mutes
+│     ├─ player/               # AbilityService, AfkService, Sessions, Mutes, JailService,
+│     │                        #   VanishService, PlayerView, ItemPowers
 │     ├─ menu/                 # PortableMenus, InvseeMenu, InvseeContainer
 │     ├─ util/                 # DateDiff, Pager (pure Java, unit-tested)
 │     ├─ compat/               # version adapters, the only place with //? blocks
@@ -131,6 +133,7 @@ cmdEssentials/
     stores it (see `Players.language`). From 1.20.2 it's empty and `clientInformation()` is used.
   - `ServerGamePacketListenerImplMixin`: chat and command activity for AFK, plus `/mute`.
     Expected injected handlers: 2 on 1.18.2, 3 on 1.20.1, 4 on 1.21.1.
+  - `TrackedEntityMixin`, `ChunkMapAccessor`: /vanish. `ServerPlayerGameModeMixin`: /powertool.
   - `PlayerMixin`, `ServerPlayerListNameMixin`: nickname in the display name, nickname and
     AFK tag in the tab list. `TabListNames` sends the update packet.
   - **Verifying mixins**: targets like the network handler only load when a player joins, so
@@ -437,17 +440,30 @@ vanilla-clash versions, M11 per-player view and world tools, M12 items and power
     and `/mail`; other commands keep working.
   - Bans use the vanilla ban lists, so `/banlist` and `/pardon` work with them.
   - `/sudo` defaults to OP level 4: it is as powerful as the console.
-- [ ] M10: `/vanish`
-- [ ] Vanilla-clash versions (only as `e` names): `/ban`, `/banip`, `/kick`, `/kill`, `/list`,
-  `/me`, `/gamemode`, `/time`, `/weather`, `/give`, `/tp`
-- [ ] Jail: `/setjail`, `/deljail`, `/jails`, `/togglejail`, `/jailedplayers`
-- [ ] Per-player view: `/ptime`, `/pweather`. These change only that player's client, through
-  packets, so send them again after a dimension change or respawn.
-- [ ] World: `/thunder`, `/lightning`, `/burn`, `/ice`, `/remove`, `/spawner`, `/spawnmob`,
-  `/tree`, `/bigtree`, `/break`
-- [ ] Items: `/item`, `/itemdb`, `/itemname`, `/itemlore`, `/enchant`, `/exp`, `/skull`,
-  `/book`, `/firework`, `/potion`, `/condense`, `/recipe`, `/editsign`, `/unlimited`
-- [ ] Power tools: `/powertool`, `/powertoollist`, `/powertooltoggle`
+- [x] M9 jail: `/setjail`, `/deljail`, `/jails`, `/togglejail` (`/jail`, `/unjail`),
+  `/jailedplayers` (`command/JailCommands`, `player/JailService`). Online players only.
+  Adventure mode stands in for block protection; `TeleportService` refuses jailed players'
+  own teleports. Other commands are not blocked yet.
+- [x] M10: `/vanish` (`player/VanishService`, `TrackedEntityMixin`, `ChunkMapAccessor`): filtered
+  in the entity tracker, plus tab-list removal. Not persisted. `/near` honours it; `/msg`, `/list`
+  and tab completion don't yet.
+- [x] M10 vanilla-clash versions: `/eban`, `/ebanip`, `/ekick`, `/ekill`, `/elist`, `/eme`,
+  `/egamemode`, `/etime`, `/eweather`, `/egive`, `/etp`, `/eenchant` redirect to vanilla
+  (`command/VanillaAliases`), so they have vanilla's syntax, not Essentials'.
+- [x] M11 per-player view: `/ptime`, `/pweather` (`player/PlayerView`). Not persisted; re-sent
+  after vanilla's periodic time broadcast.
+- [x] M11 world: `/thunder`, `/lightning`, `/burn`, `/ice`, `/remove`, `/spawner` (no delay
+  argument), `/spawnmob` (no mount syntax), `/tree`, `/bigtree` (grown from real saplings),
+  `/break` (`command/WorldCommands`).
+- [x] M12 items: `/item`, `/itemdb`, `/itemname`, `/itemlore`, `/exp`, `/skull`, `/condense`
+  (`items.condense` table), `/recipe` (text list), `/editsign` (`set`, `clear`), `/unlimited`
+  (`command/ItemCommands`). `/enchant` is `/eenchant` above.
+- [x] M12 power tools: `/powertool`, `/powertoollist`, `/powertooltoggle`, right-click only
+  (`player/ItemPowers`, `ServerPlayerGameModeMixin`).
+- [ ] Not done: `/book`, `/firework`, `/potion` (each needs per-version item data editing).
+
+Test steps for M9-M12: `docs/testing/p2-checklist.md`. Console-verified on all targets, not yet
+played in-game.
 
 ### P3: optional modules (each behind a config switch)
 

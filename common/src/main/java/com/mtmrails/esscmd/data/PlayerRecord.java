@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.ArrayList;
 import net.minecraft.nbt.CompoundTag;
@@ -37,6 +38,11 @@ public final class PlayerRecord {
     boolean replyToRecipient;
     boolean socialSpy;
     boolean clearConfirm;
+    /** Item id -> command run when using that item. */
+    final Map<String, String> powerTools = new TreeMap<>();
+    boolean powerToolsOff;
+    /** Item ids refilled in hand by /unlimited. */
+    final Set<String> unlimited = new TreeSet<>();
     /** Jail name, or empty when free. */
     String jail = "";
     /** Epoch millis of release; -1 = until freed. */
@@ -102,6 +108,18 @@ public final class PlayerRecord {
         return jailGameMode;
     }
 
+    public Map<String, String> powerTools() {
+        return Collections.unmodifiableMap(powerTools);
+    }
+
+    public boolean powerToolsOff() {
+        return powerToolsOff;
+    }
+
+    public Set<String> unlimited() {
+        return Collections.unmodifiableSet(unlimited);
+    }
+
     public boolean fly() {
         return fly;
     }
@@ -148,6 +166,13 @@ public final class PlayerRecord {
             tag.put("logoutLocation", logoutLocation.toTag());
         }
         tag.putBoolean("clearConfirm", clearConfirm);
+        CompoundTag toolTag = new CompoundTag();
+        powerTools.forEach(toolTag::putString);
+        tag.put("powerTools", toolTag);
+        tag.putBoolean("powerToolsOff", powerToolsOff);
+        CompoundTag unlimitedTag = new CompoundTag();
+        unlimited.forEach(id -> unlimitedTag.putBoolean(id, true));
+        tag.put("unlimited", unlimitedTag);
         tag.putString("jail", jail);
         tag.putLong("jailUntil", jailUntil);
         tag.putString("jailGameMode", jailGameMode);
@@ -188,6 +213,12 @@ public final class PlayerRecord {
             record.logoutLocation = StoredLocation.fromTag(tag.getCompound("logoutLocation"));
         }
         record.clearConfirm = tag.getBoolean("clearConfirm");
+        CompoundTag toolTag = tag.getCompound("powerTools");
+        for (String id : toolTag.getAllKeys()) {
+            record.powerTools.put(id, toolTag.getString(id));
+        }
+        record.powerToolsOff = tag.getBoolean("powerToolsOff");
+        record.unlimited.addAll(tag.getCompound("unlimited").getAllKeys());
         record.jail = tag.getString("jail");
         record.jailUntil = tag.getLong("jailUntil");
         record.jailGameMode = tag.getString("jailGameMode");

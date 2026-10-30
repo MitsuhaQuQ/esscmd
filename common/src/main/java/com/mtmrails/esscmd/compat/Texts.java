@@ -31,6 +31,11 @@ public final class Texts {
         *///?}
     }
 
+    /** Literal text with {@code &} colour codes, which clients still render as {@code §} codes. */
+    public static MutableComponent colored(String text) {
+        return literal(text.replaceAll("&([0-9a-fk-orA-FK-OR])", "\u00a7$1"));
+    }
+
     public static MutableComponent empty() {
         return literal("");
     }

@@ -183,6 +183,20 @@ public final class PermissionNodes {
     public static final PermissionNode BREAK = node("break", ADMINS);
     public static final PermissionNode BREAK_BEDROCK = node("break.bedrock", OWNERS);
 
+    public static final PermissionNode ITEM = node("item", ADMINS);
+    public static final PermissionNode ITEMDB = node("itemdb", ALL_PLAYERS);
+    public static final PermissionNode ITEMNAME = node("itemname", ADMINS);
+    public static final PermissionNode ITEMLORE = node("itemlore", ADMINS);
+    public static final PermissionNode EXP = node("exp", ADMINS);
+    public static final PermissionNode EXP_OTHERS = node("exp.others", ADMINS);
+    public static final PermissionNode SKULL = node("skull", ADMINS);
+    public static final PermissionNode CONDENSE = node("condense", ADMINS);
+    public static final PermissionNode RECIPE = node("recipe", ALL_PLAYERS);
+    public static final PermissionNode EDITSIGN = node("editsign", ADMINS);
+    public static final PermissionNode UNLIMITED = node("unlimited", ADMINS);
+    public static final PermissionNode UNLIMITED_OTHERS = node("unlimited.others", ADMINS);
+    public static final PermissionNode POWERTOOL = node("powertool", ADMINS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -208,6 +222,7 @@ public final class PermissionNodes {
             HEAL_COOLDOWN_BYPASS, MUTE_UNLIMITED, TEMPBAN_UNLIMITED,
             SETJAIL, DELJAIL, JAILS, JAILEDPLAYERS, TOGGLEJAIL, JAIL_EXEMPT, VANISH, VANISH_OTHERS, VANISH_SEE,
             PTIME, PTIME_OTHERS, PWEATHER, THUNDER, LIGHTNING, LIGHTNING_OTHERS, BURN, ICE, ICE_OTHERS, REMOVE, SPAWNER, SPAWNMOB, TREE, BREAK, BREAK_BEDROCK,
+            ITEM, ITEMDB, ITEMNAME, ITEMLORE, EXP, EXP_OTHERS, SKULL, CONDENSE, RECIPE, EDITSIGN, UNLIMITED, UNLIMITED_OTHERS, POWERTOOL,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

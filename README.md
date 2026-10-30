@@ -9,9 +9,9 @@ Install it on the server only. Players join with an unmodified vanilla client.
 
 > **Status: early development.** All of P0 and P1 is implemented: homes, spawn, warps, `/back`,
 > the `/tpa` family, teleport extensions, player state, AFK, info commands, messaging, mail,
-> nicknames, inventory tools, portable workbenches and kits. P2 has started with moderation.
+> nicknames, inventory tools, portable workbenches and kits. So is P2, except `/book`, `/firework` and `/potion`.
 > See the [roadmap](#roadmap). Core features have been played in-game on five of the six
-> targets; Forge 1.21.1 has only passed server-console tests so far.
+> targets; Forge 1.21.1 and the newest P2 commands have only passed server-console tests so far.
 
 ## Supported versions
 
@@ -112,6 +112,26 @@ Items and blocks always use standard IDs such as `minecraft:diamond`.
 | `/gc` | Uptime, TPS, memory, chunks and entities | admins |
 | `/sudo <player> <command>` | Run a command as a player | OP level 4 |
 
+**Jail and vanish**
+
+| Command | Description | Default |
+|---|---|---|
+| `/setjail <jail>`, `/deljail <jail>`, `/jails`, `/jailedplayers` | Manage jails | admins |
+| `/jail <player> <jail> [duration]`, `/unjail <player>` | Jail or free an online player | admins |
+| `/vanish [player] [on\|off]` | Hide from players without `vanish.see` | admins |
+
+**World and items**
+
+| Command | Description | Default |
+|---|---|---|
+| `/ptime`, `/pweather` | Time or weather for one client only | admins |
+| `/thunder`, `/lightning`, `/burn`, `/ice`, `/remove`, `/break` | World and player effects | admins |
+| `/spawner <mob>`, `/spawnmob <mob> [amount] [player]`, `/tree [type]`, `/bigtree <type>` | Mobs and trees | admins |
+| `/item`, `/itemname`, `/itemlore`, `/exp`, `/skull`, `/condense`, `/editsign`, `/unlimited` | Item and sign tools | admins |
+| `/powertool [command]`, `/powertoollist`, `/powertooltoggle` | Run a command on right-click with an item | admins |
+| `/itemdb [item]`, `/recipe <item>` | Item information | everyone |
+| `/eban`, `/ekick`, `/egive`, `/etp`, `/etime`, ... | Vanilla commands under Essentials' `e` names | as vanilla |
+
 **Information**
 
 | Command | Description | Default |
@@ -183,8 +203,8 @@ commands listed in [docs/essentials-commands.md](docs/essentials-commands.md).
 - **P0 (done):** homes, spawn, `/speed`, `/back`, `/tpa` and friends, warps
 - **P1 (done):** player state and AFK, info commands, teleport extensions, gamemode shortcuts,
   messaging, mail, nicknames, inventory tools, portable workbenches, kits
-- **P2 (in progress):** moderation is done; next are jails, `/vanish` and the `e`-prefixed
-  vanilla replacements, per-player time and weather, world tools, item tools and power tools
+- **P2 (done except `/book`, `/firework`, `/potion`):** moderation, jails, `/vanish`,
+  per-player time and weather, world tools, item tools and power tools
 - **P3 (optional):** economy, fun commands
 - **Out of scope:** Discord/XMPP integration, `/customtext`, `/backup`
 
