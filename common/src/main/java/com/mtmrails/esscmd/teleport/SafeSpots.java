@@ -8,6 +8,7 @@ import com.mtmrails.esscmd.data.StoredLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
@@ -30,7 +31,9 @@ public final class SafeSpots {
 
     private static boolean isFree(ServerLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        return state.getCollisionShape(level, pos).isEmpty() && state.getFluidState().isEmpty()
+        boolean dry = state.getFluidState().isEmpty()
+                || (ConfigManager.get().teleport.waterIsSafe && state.getFluidState().is(FluidTags.WATER));
+        return state.getCollisionShape(level, pos).isEmpty() && dry
                 && !isUnsafe(state);
     }
 
@@ -84,6 +87,7 @@ public final class SafeSpots {
 
     /** Centre of the block, keeping the given rotation. */
     public static StoredLocation location(ServerLevel level, BlockPos feet, float yaw, float pitch) {
-        return new StoredLocation(Dimensions.id(level.dimension()), feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5, yaw, pitch);
+        double offset = ConfigManager.get().teleport.toCenter ? 0.5 : 0;
+        return new StoredLocation(Dimensions.id(level.dimension()), feet.getX() + offset, feet.getY(), feet.getZ() + offset, yaw, pitch);
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import com.mtmrails.esscmd.compat.Players;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.message.Messages;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,6 +34,12 @@ public final class TpaRequests {
         LinkedHashMap<UUID, Request> forTarget = BY_TARGET.computeIfAbsent(request.target(), id -> new LinkedHashMap<>());
         forTarget.remove(request.requester());
         forTarget.put(request.requester(), request);
+        int max = Math.max(1, ConfigManager.get().tpa.maxRequests);
+        var oldest = forTarget.keySet().iterator();
+        while (forTarget.size() > max) {
+            oldest.next();
+            oldest.remove();
+        }
     }
 
     /** Removes and returns the newest request to {@code target}, or the one from {@code requester}. */

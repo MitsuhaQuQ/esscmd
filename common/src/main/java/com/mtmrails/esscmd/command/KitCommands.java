@@ -14,6 +14,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mtmrails.esscmd.compat.ItemData;
 import com.mtmrails.esscmd.compat.ItemLookup;
 import com.mtmrails.esscmd.compat.Texts;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.Kit;
 import com.mtmrails.esscmd.permission.PermissionNodes;
@@ -97,6 +98,13 @@ public final class KitCommands {
         return Platform.get().hasPermission(source, "cmdessentials.kits." + name, kit.opLevel());
     }
 
+    /** kits.skipUsedOneTimeKits: hide one-time kits the player has already claimed. */
+    private static boolean usedOnce(CommandSourceStack source, String name, Kit kit) {
+        return ConfigManager.get().kits.skipUsedOneTimeKits && kit.delaySeconds() < 0
+                && source.getEntity() instanceof ServerPlayer player
+                && EssData.get(source.getServer()).kitUsed(player.getUUID(), name) > 0;
+    }
+
     private static Kit find(CommandSourceStack source, String name) {
         Kit kit = EssData.get(source.getServer()).kits().get(name);
         if (kit == null) {
@@ -107,7 +115,8 @@ public final class KitCommands {
 
     private static int list(CommandSourceStack source) {
         var kits = EssData.get(source.getServer()).kits();
-        List<String> visible = kits.keySet().stream().filter(name -> canUse(source, name, kits.get(name))).toList();
+        List<String> visible = kits.keySet().stream()
+                .filter(name -> canUse(source, name, kits.get(name)) && !usedOnce(source, name, kits.get(name))).toList();
         return visible.isEmpty() ? CommandUtil.fail(source, "kit.none")
                 : CommandUtil.ok(source, "kit.list", String.join(", ", visible));
     }
@@ -134,6 +143,9 @@ public final class KitCommands {
                 return CommandUtil.fail(source, "kit.cooldown", name, DateDiff.format(Duration.ofMillis(readyAt - now + 999)));
             }
         }
+        if (!ConfigManager.get().kits.dropItemsIfFull && freeSlots(player) < kit.items().size()) {
+            return CommandUtil.fail(source, "kit.no-room", name);
+        }
         if (giveItems(source.getServer(), kit, player) == 0) {
             return CommandUtil.fail(source, "kit.broken", name);
         }
@@ -153,6 +165,16 @@ public final class KitCommands {
         }
         CommandUtil.tell(target, "kit.received", name);
         return CommandUtil.ok(source, "kit.given", name, target.getGameProfile().getName());
+    }
+
+    private static int freeSlots(ServerPlayer player) {
+        int free = 0;
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.isEmpty()) {
+                free++;
+            }
+        }
+        return free;
     }
 
     /** Fills the inventory and drops what doesn't fit, so nothing in the kit is lost. */

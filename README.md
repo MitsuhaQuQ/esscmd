@@ -144,6 +144,10 @@ Everything lives in `config/cmdessentials/`, created on first start. Run
   `/tpa` timeout, speed limits, AFK timers (`afk.autoSeconds`, `afk.kickSeconds`), `/near`
   radius, unsafe teleport blocks (by ID), MOTD on join, `/tpr` areas per dimension, and the
   `overrideVanilla` command names.
+  Options follow EssentialsX `config.yml` with the same defaults, for example the `/heal`
+  cooldown, nickname rules, `spawn-if-no-home`, mail and mute limits, and `disabledCommands`
+  (restart needed). The two deliberate differences are a 3-second teleport delay and
+  per-player languages being on.
 - `messages_<lang>.json`: every message (see [Languages](#languages)).
 - `motd_<lang>.txt`, `rules_<lang>.txt`, `info_<lang>.txt`: texts for `/motd`, `/rules` and
   `/info`. Lines starting with `#name` begin a chapter, `##` lines are comments, `&` colour

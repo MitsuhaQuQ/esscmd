@@ -16,6 +16,7 @@ import com.mtmrails.esscmd.compat.Dimensions;
 import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.compat.ServerStats;
 import com.mtmrails.esscmd.compat.Texts;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.PlayerRecord;
 import com.mtmrails.esscmd.message.Messages;
@@ -108,6 +109,14 @@ public final class ModerationCommands {
         }
     }
 
+    /** A null duration means "forever", which exceeds any limit. */
+    private static boolean overLimit(CommandSourceStack source, @Nullable Duration duration, long maxSeconds, PermissionNode unlimited) {
+        if (maxSeconds < 0 || unlimited.check(source)) {
+            return false;
+        }
+        return duration == null || duration.getSeconds() > maxSeconds;
+    }
+
     private static boolean exempt(CommandSourceStack source, @Nullable ServerPlayer online, PermissionNode node) {
         return online != null && node.check(online);
     }
@@ -136,6 +145,9 @@ public final class ModerationCommands {
             return CommandUtil.fail(source, "error.exempt", shown);
         }
         Details parsed = Details.parse(details);
+        if (overLimit(source, parsed.duration(), ConfigManager.get().moderation.maxMuteSeconds, PermissionNodes.MUTE_UNLIMITED)) {
+            return CommandUtil.fail(source, "error.duration-limit", DateDiff.format(Duration.ofSeconds(ConfigManager.get().moderation.maxMuteSeconds)));
+        }
         long until = parsed.duration() == null ? -1 : System.currentTimeMillis() + parsed.duration().toMillis();
         data.setMute(id.get(), until, parsed.reason() == null ? "" : parsed.reason());
         String length = parsed.duration() == null ? "∞" : DateDiff.format(parsed.duration());
@@ -159,6 +171,9 @@ public final class ModerationCommands {
         String shown = shownName(server, id.get(), name);
         if (exempt(source, online, PermissionNodes.TEMPBAN_EXEMPT)) {
             return CommandUtil.fail(source, "error.exempt", shown);
+        }
+        if (overLimit(source, parsed.duration(), ConfigManager.get().moderation.maxTempbanSeconds, PermissionNodes.TEMPBAN_UNLIMITED)) {
+            return CommandUtil.fail(source, "error.duration-limit", DateDiff.format(Duration.ofSeconds(ConfigManager.get().moderation.maxTempbanSeconds)));
         }
         Date now = new Date();
         Date expires = new Date(now.getTime() + parsed.duration().toMillis());

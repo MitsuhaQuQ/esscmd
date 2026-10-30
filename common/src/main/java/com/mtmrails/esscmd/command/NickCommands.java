@@ -7,6 +7,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mtmrails.esscmd.compat.TabListNames;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.PlayerRecord;
 import com.mtmrails.esscmd.message.Nicknames;
@@ -63,7 +64,8 @@ public final class NickCommands {
 
     private static int realName(CommandSourceStack source, String nickname) {
         EssData data = EssData.get(source.getServer());
-        String plain = nickname.startsWith("~") ? nickname.substring(1) : nickname;
+        String prefix = ConfigManager.get().nick.prefix;
+        String plain = !prefix.isEmpty() && nickname.startsWith(prefix) ? nickname.substring(prefix.length()) : nickname;
         Optional<UUID> id = data.findByNickname(plain);
         if (id.isEmpty()) {
             return CommandUtil.fail(source, "realname.not-found", nickname);

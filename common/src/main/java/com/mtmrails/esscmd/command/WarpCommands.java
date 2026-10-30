@@ -6,9 +6,11 @@ import java.util.regex.Pattern;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.permission.PermissionNodes;
+import com.mtmrails.esscmd.platform.Platform;
 import com.mtmrails.esscmd.teleport.TeleportService;
 import com.mtmrails.esscmd.util.Pager;
 import net.minecraft.commands.CommandSourceStack;
@@ -94,9 +96,16 @@ public final class WarpCommands {
                         })));
     }
 
+    /** warps.perWarpPermission: needs cmdessentials.warps.<name>; admins pass by OP level. */
+    private static boolean allowed(CommandSourceStack source, String warp) {
+        return !ConfigManager.get().warps.perWarpPermission
+                || Platform.get().hasPermission(source, "cmdessentials.warps." + warp, 2);
+    }
+
     /** {@code /warp <page>}: Essentials accepts a page number in place of a warp name. */
     private static int list(CommandSourceStack source, int page) {
-        List<String> warps = List.copyOf(EssData.get(source.getServer()).warps().keySet());
+        List<String> warps = EssData.get(source.getServer()).warps().keySet().stream()
+                .filter(name -> allowed(source, name)).toList();
         if (warps.isEmpty()) {
             return CommandUtil.fail(source, "warp.none");
         }
@@ -109,9 +118,13 @@ public final class WarpCommands {
     }
 
     private static StoredLocation find(CommandSourceStack source, String name) {
-        StoredLocation warp = EssData.get(source.getServer()).warps().get(name.toLowerCase(Locale.ROOT));
+        String key = name.toLowerCase(Locale.ROOT);
+        StoredLocation warp = EssData.get(source.getServer()).warps().get(key);
         if (warp == null) {
             CommandUtil.fail(source, "warp.not-found", name);
+        } else if (!allowed(source, key)) {
+            CommandUtil.fail(source, "warp.no-access", key);
+            return null;
         }
         return warp;
     }

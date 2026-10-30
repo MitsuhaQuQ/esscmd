@@ -210,5 +210,12 @@
   "gc.uptime": "运行时间：{0}",
   "gc.tps": "TPS：{0}（每 tick {1} 毫秒）",
   "gc.memory": "内存：{0} / {1} MiB",
-  "gc.world": "{0}：{1} 个区块，{2} 个实体"
+  "gc.world": "{0}：{1} 个区块，{2} 个实体",
+  "heal.cooldown": "{0} 秒后才能再次治疗。",
+  "home.confirm-overwrite": "家 {0} 已存在。再次执行命令可以覆盖。",
+  "warp.no-access": "你没有权限使用传送点 {0}。",
+  "kit.no-room": "背包空间不足，无法领取礼包 {0}。",
+  "mail.rate-limit": "你发送邮件太频繁了，请一分钟后再试。",
+  "repair.enchanted": "附魔物品无法修复。",
+  "error.duration-limit": "时长最多为 {0}。"
 }

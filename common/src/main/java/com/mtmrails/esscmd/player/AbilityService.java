@@ -1,5 +1,8 @@
 package com.mtmrails.esscmd.player;
 
+import com.mtmrails.esscmd.compat.Dimensions;
+import com.mtmrails.esscmd.compat.Players;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +25,7 @@ public final class AbilityService {
         EssData data = EssData.get(server);
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             boolean fly = data.fly(player.getUUID());
-            boolean god = data.god(player.getUUID());
+            boolean god = godActive(player, data);
             if (fly || god) {
                 apply(player, fly, god);
             }
@@ -36,11 +39,17 @@ public final class AbilityService {
         // Start from what the gamemode grants, so turning a flag off doesn't take away
         // creative flight or invulnerability.
         player.gameMode.getGameModeForPlayer().updatePlayerAbilities(abilities);
-        apply(player, data.fly(player.getUUID()), data.god(player.getUUID()));
+        apply(player, data.fly(player.getUUID()), godActive(player, data));
         if (!abilities.mayfly && abilities.flying) {
             abilities.flying = false;
         }
         player.onUpdateAbilities();
+    }
+
+    /** god.disabledDimensions: the flag stays stored but has no effect there. */
+    private static boolean godActive(ServerPlayer player, EssData data) {
+        return data.god(player.getUUID()) && !ConfigManager.get().god.disabledDimensions
+                .contains(Dimensions.id(Players.level(player).dimension()));
     }
 
     private static void apply(ServerPlayer player, boolean fly, boolean god) {

@@ -210,5 +210,12 @@
   "gc.uptime": "Uptime: {0}",
   "gc.tps": "TPS: {0} ({1} ms per tick)",
   "gc.memory": "Memory: {0} / {1} MiB",
-  "gc.world": "{0}: {1} chunks, {2} entities"
+  "gc.world": "{0}: {1} chunks, {2} entities",
+  "heal.cooldown": "You can heal again in {0} seconds.",
+  "home.confirm-overwrite": "Home {0} already exists. Run the command again to replace it.",
+  "warp.no-access": "You don't have access to warp {0}.",
+  "kit.no-room": "Not enough room in your inventory for kit {0}.",
+  "mail.rate-limit": "You're sending mail too quickly. Try again in a minute.",
+  "repair.enchanted": "Enchanted items cannot be repaired.",
+  "error.duration-limit": "The duration can be at most {0}."
 }

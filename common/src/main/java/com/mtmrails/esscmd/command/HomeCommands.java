@@ -1,11 +1,14 @@
 package com.mtmrails.esscmd.command;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.permission.PermissionNodes;
@@ -29,6 +32,9 @@ public final class HomeCommands {
         }
         return SharedSuggestionProvider.suggest(EssData.get(ctx.getSource().getServer()).homes(player.getUUID()).keySet(), builder);
     };
+
+    /** Player -> home name awaiting a second /sethome (homes.confirmOverwrite). */
+    private static final Map<UUID, String> PENDING_OVERWRITE = new HashMap<>();
 
     private HomeCommands() {}
 
@@ -87,6 +93,11 @@ public final class HomeCommands {
                 return CommandUtil.fail(source, "home.limit", limit);
             }
         }
+        if (ConfigManager.get().homes.confirmOverwrite && homes.containsKey(name)
+                && !name.equals(PENDING_OVERWRITE.remove(player.getUUID()))) {
+            PENDING_OVERWRITE.put(player.getUUID(), name);
+            return CommandUtil.ok(source, "home.confirm-overwrite", name);
+        }
         data.setHome(owned.owner(), name, StoredLocation.of(player));
         return owned.other()
                 ? CommandUtil.ok(source, "home.set-other", name, owned.ownerName())
@@ -103,8 +114,13 @@ public final class HomeCommands {
         String name = owned.name();
         if (name.isEmpty()) {
             if (homes.isEmpty()) {
-                return owned.other() ? CommandUtil.fail(source, "home.none-other", owned.ownerName())
-                        : CommandUtil.fail(source, "home.none");
+                if (owned.other()) {
+                    return CommandUtil.fail(source, "home.none-other", owned.ownerName());
+                }
+                if (ConfigManager.get().homes.spawnIfNoHome) {
+                    return TeleportService.teleport(player, () -> SpawnCommands.spawn(player.server)) ? 1 : 0;
+                }
+                return CommandUtil.fail(source, "home.none");
             }
             if (homes.size() > 1 || owned.other()) {
                 return CommandUtil.ok(source, "home.list", String.join(", ", homes.keySet()));

@@ -33,9 +33,16 @@ public final class AfkService {
     private static final Map<UUID, Long> LAST_ACTIVE = new ConcurrentHashMap<>();
     private static final Map<UUID, Pose> LAST_POSE = new HashMap<>();
     /** AFK players -> epoch millis when they went AFK. */
-    private static final Map<UUID, Long> AFK_SINCE = new HashMap<>();
+    private static final Map<UUID, Long> AFK_SINCE = new ConcurrentHashMap<>();
 
     private AfkService() {}
+
+    /** A chat line or command. Thread-safe: only records the time. */
+    public static void markChatActive(ServerPlayer player) {
+        if (ConfigManager.get().afk.cancelOnChat || !isAfk(player)) {
+            markActive(player);
+        }
+    }
 
     /** Thread-safe: only records the time. */
     public static void markActive(ServerPlayer player) {
@@ -90,7 +97,7 @@ public final class AfkService {
             UUID id = player.getUUID();
             Pose pose = Pose.of(player);
             Pose previous = LAST_POSE.put(id, pose);
-            if (previous != null && !previous.equals(pose)) {
+            if (previous != null && !previous.equals(pose) && (config.cancelOnMove || !isAfk(player))) {
                 markActive(player);
             }
             long lastActive = LAST_ACTIVE.computeIfAbsent(id, ignored -> now);

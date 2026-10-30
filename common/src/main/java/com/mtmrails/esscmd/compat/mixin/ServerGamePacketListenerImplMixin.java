@@ -33,13 +33,13 @@ public abstract class ServerGamePacketListenerImplMixin {
 
     @Inject(method = "handleChat", at = @At("HEAD"))
     private void cmdessentials$onChat(ServerboundChatPacket packet, CallbackInfo ci) {
-        AfkService.markActive(player);
+        AfkService.markChatActive(player);
     }
 
     //? if >=1.19 {
     @Inject(method = "handleChatCommand", at = @At("HEAD"))
     private void cmdessentials$onCommand(ServerboundChatCommandPacket packet, CallbackInfo ci) {
-        AfkService.markActive(player);
+        AfkService.markChatActive(player);
     }
     //?}
 
@@ -64,7 +64,7 @@ public abstract class ServerGamePacketListenerImplMixin {
     //? if >=1.20.5 {
     /*@Inject(method = "handleSignedChatCommand", at = @At("HEAD"))
     private void cmdessentials$onSignedCommand(ServerboundChatCommandSignedPacket packet, CallbackInfo ci) {
-        AfkService.markActive(player);
+        AfkService.markChatActive(player);
     }
     *///?}
 }

@@ -1,11 +1,15 @@
 package com.mtmrails.esscmd.command;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mtmrails.esscmd.compat.Effects;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.permission.PermissionNode;
 import com.mtmrails.esscmd.permission.PermissionNodes;
@@ -26,6 +30,9 @@ public final class PlayerStateCommands {
     private static final float FULL_SATURATION = 20f;
     private static final float FEED_SATURATION = 10f;
 
+    /** Player -> server tick when /heal is ready again. */
+    private static final Map<UUID, Integer> HEAL_READY = new HashMap<>();
+
     private PlayerStateCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -40,7 +47,9 @@ public final class PlayerStateCommands {
             player.getFoodData().setFoodLevel(MAX_FOOD);
             player.getFoodData().setSaturation(FULL_SATURATION);
             player.clearFire();
-            Effects.removeHarmful(player);
+            if (ConfigManager.get().heal.removeEffects) {
+                Effects.removeHarmful(player);
+            }
         }));
         dispatcher.register(action("feed", PermissionNodes.FEED, PermissionNodes.FEED_OTHERS, player -> {
             player.getFoodData().setFoodLevel(MAX_FOOD);
@@ -80,6 +89,14 @@ public final class PlayerStateCommands {
     }
 
     private static int act(CommandSourceStack source, ServerPlayer target, String command, Consumer<ServerPlayer> effect) {
+        if (command.equals("heal") && source.getEntity() == target && !PermissionNodes.HEAL_COOLDOWN_BYPASS.check(source)) {
+            int now = source.getServer().getTickCount();
+            Integer readyAt = HEAL_READY.get(target.getUUID());
+            if (readyAt != null && now < readyAt) {
+                return CommandUtil.fail(source, "heal.cooldown", (readyAt - now + 19) / 20);
+            }
+            HEAL_READY.put(target.getUUID(), now + ConfigManager.get().heal.cooldownSeconds * 20);
+        }
         effect.accept(target);
         report(source, target, command + ".done");
         return 1;

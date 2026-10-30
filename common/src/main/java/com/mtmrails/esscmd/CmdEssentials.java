@@ -23,6 +23,7 @@ import com.mtmrails.esscmd.command.TextCommands;
 import com.mtmrails.esscmd.command.TpaCommands;
 import com.mtmrails.esscmd.command.VanillaAliases;
 import com.mtmrails.esscmd.command.WarpCommands;
+import com.mtmrails.esscmd.compat.CommandTrees;
 import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
@@ -96,6 +97,7 @@ public final class CmdEssentials {
         InventoryCommands.register(dispatcher);
         KitCommands.register(dispatcher);
         ModerationCommands.register(dispatcher);
+        ConfigManager.get().disabledCommands.forEach(name -> CommandTrees.removeRootCommand(dispatcher, name));
         MessagingCommands.register(dispatcher);
         MailCommands.register(dispatcher);
         BroadcastCommands.register(dispatcher);
@@ -142,6 +144,9 @@ public final class CmdEssentials {
         TeleportService.cancel(player);
         TpaRequests.forget(player.getUUID());
         AfkService.onLeave(player);
+        if (ConfigManager.get().god.removeOnDisconnect) {
+            EssData.get(player.server).setGod(player.getUUID(), false);
+        }
         Sessions.onLeave(player);
         MessagingService.forget(player.getUUID());
     }
@@ -155,14 +160,21 @@ public final class CmdEssentials {
 
     /** Called with the new player entity after a respawn from death (not after leaving the End). */
     public static void onPlayerRespawn(ServerPlayer player) {
-        if (ConfigManager.get().spawn.respawnAtSpawn && player.getRespawnPosition() == null) {
-            StoredLocation spawn = EssData.get(player.server).spawn();
-            if (spawn != null) {
-                // Not via TeleportService: a respawn shouldn't overwrite the death location in /back.
-                var level = spawn.level(player.server);
-                if (level != null) {
-                    Players.teleport(player, level, spawn.x(), spawn.y(), spawn.z(), spawn.yaw(), spawn.pitch());
-                }
+        var config = ConfigManager.get().spawn;
+        boolean hasBed = player.getRespawnPosition() != null;
+        EssData data = EssData.get(player.server);
+        var homes = data.homes(player.getUUID());
+        StoredLocation target = null;
+        if (config.respawnAtHome && !homes.isEmpty() && !(hasBed && config.respawnAtHomeBed)) {
+            target = homes.getOrDefault("home", homes.values().iterator().next());
+        } else if (config.respawnAtSpawn && !hasBed) {
+            target = data.spawn();
+        }
+        if (target != null) {
+            // Not via TeleportService: a respawn shouldn't overwrite the death location in /back.
+            var level = target.level(player.server);
+            if (level != null) {
+                Players.teleport(player, level, target.x(), target.y(), target.z(), target.yaw(), target.pitch());
             }
         }
     }

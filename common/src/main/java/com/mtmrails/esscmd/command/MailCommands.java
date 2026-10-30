@@ -3,6 +3,10 @@ package com.mtmrails.esscmd.command;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import com.mojang.brigadier.CommandDispatcher;
@@ -10,6 +14,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mtmrails.esscmd.compat.Players;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.MailMessage;
 import com.mtmrails.esscmd.data.PlayerRecord;
@@ -25,6 +30,8 @@ import net.minecraft.server.level.ServerPlayer;
 
 /** Persisted player mail, including expiring mail and administrative clearing. */
 public final class MailCommands {
+    private static final Map<UUID, Deque<Long>> RECENT_SENDS = new HashMap<>();
+
     private MailCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -136,12 +143,29 @@ public final class MailCommands {
         return send(source, target, text, expires);
     }
 
+    /** mail.perMinute: a sliding one-minute window per sender. */
+    private static boolean withinRateLimit(ServerPlayer sender) {
+        long now = System.currentTimeMillis();
+        Deque<Long> times = RECENT_SENDS.computeIfAbsent(sender.getUUID(), id -> new ArrayDeque<>());
+        while (!times.isEmpty() && now - times.peekFirst() >= 60_000L) {
+            times.removeFirst();
+        }
+        if (times.size() >= ConfigManager.get().mail.perMinute) {
+            return false;
+        }
+        times.addLast(now);
+        return true;
+    }
+
     private static int send(CommandSourceStack source, String targetName, String text, long expiresAt) {
         if (source.getEntity() instanceof ServerPlayer sender && Mutes.blockChat(sender)) {
             return 0;
         }
         if (!(source.getEntity() instanceof ServerPlayer sender)) {
             return CommandUtil.fail(source, "mail.player-only");
+        }
+        if (!withinRateLimit(sender)) {
+            return CommandUtil.fail(source, "mail.rate-limit");
         }
         MinecraftServer server = source.getServer();
         Optional<UUID> target = Players.findId(server, targetName);

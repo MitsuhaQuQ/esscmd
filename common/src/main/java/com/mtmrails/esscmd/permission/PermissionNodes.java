@@ -153,6 +153,10 @@ public final class PermissionNodes {
     public static final PermissionNode SUDO_EXEMPT = node("sudo.exempt", OWNERS);
     public static final PermissionNode GC = node("gc", ADMINS);
 
+    public static final PermissionNode HEAL_COOLDOWN_BYPASS = node("heal.cooldown.bypass", ADMINS);
+    public static final PermissionNode MUTE_UNLIMITED = node("mute.unlimited", ADMINS);
+    public static final PermissionNode TEMPBAN_UNLIMITED = node("tempban.unlimited", ADMINS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -175,6 +179,7 @@ public final class PermissionNodes {
             ENDERCHEST, ENDERCHEST_OTHERS, INVSEE, INVSEE_MODIFY, HAT, REPAIR, REPAIR_ALL, MORE, CLEARINVENTORY, CLEARINVENTORY_OTHERS, DISPOSAL, WORKBENCH, ANVIL, CARTOGRAPHYTABLE, GRINDSTONE, LOOM, SMITHINGTABLE, STONECUTTER,
             KIT, KIT_OTHERS, SHOWKIT, CREATEKIT, DELKIT, KITRESET,
             MUTE, MUTE_EXEMPT, TEMPBAN, TEMPBAN_EXEMPT, TEMPBANIP, UNBAN, UNBANIP, KICKALL, SUDO, SUDO_EXEMPT, GC,
+            HEAL_COOLDOWN_BYPASS, MUTE_UNLIMITED, TEMPBAN_UNLIMITED,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

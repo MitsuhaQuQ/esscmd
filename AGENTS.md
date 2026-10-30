@@ -212,6 +212,13 @@ redirect does nothing. `EssentialsCommand` shows the pattern.
   with Minecraft. That's why it's JSON and not TOML: neither loader would need an extra
   library. Missing options are filled with defaults and written back. `/cmdessentials reload`
   re-reads the config and messages without a restart.
+- Options follow EssentialsX `config.yml` (2.x): same meaning and default, in camelCase JSON
+  groups, for example `heal-cooldown` → `heal.cooldownSeconds`, `spawn-if-no-home` →
+  `homes.spawnIfNoHome`, `max-nick-length` → `nick.maxLength`. When adding a feature, look up
+  its Essentials options first and don't hard-code them. Deliberate differences:
+  `teleport.delaySeconds` defaults to 3 (Essentials: 0); `perPlayerLanguage` to true
+  (Essentials: false). Options for Bukkit-only or unimplemented features aren't added until
+  the feature exists. Test steps: `docs/testing/config-checklist.md`.
 - Never block the server thread on file I/O while the server is running: the initial load
   happens during mod init, and reload reads the files on another thread
   (`ConfigManager.reload`) and swaps them in on the server thread.

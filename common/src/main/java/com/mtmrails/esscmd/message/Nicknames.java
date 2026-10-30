@@ -1,6 +1,10 @@
 package com.mtmrails.esscmd.message;
 
-import java.util.Locale;
+import com.mtmrails.esscmd.CmdEssentials;
+import com.mtmrails.esscmd.config.ConfigManager;
+import com.mtmrails.esscmd.config.EssConfig;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import com.mtmrails.esscmd.compat.Texts;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.player.AfkService;
@@ -14,7 +18,8 @@ public final class Nicknames {
 
     public static MutableComponent displayName(ServerPlayer player) {
         String nickname = EssData.get(player.server).nickname(player.getUUID());
-        String name = nickname.isEmpty() ? player.getGameProfile().getName() : nickname;
+        String name = nickname.isEmpty() ? player.getGameProfile().getName()
+                : ConfigManager.get().nick.prefix + nickname;
         MutableComponent display = Texts.literal(name);
         if (!nickname.isEmpty()) {
             display.withStyle(ChatFormatting.GOLD);
@@ -30,12 +35,25 @@ public final class Nicknames {
         return display.append(displayName(player));
     }
 
-    /** Plain nickname accepted by vanilla clients; formatting codes are deliberately unsupported. */
+    /** Checks length, {@code nick.allowedRegex} and {@code nick.blacklist}. Formatting codes aren't supported. */
     public static boolean valid(String nickname) {
-        if (nickname.length() < 1 || nickname.length() > 32) {
+        EssConfig.Nick config = ConfigManager.get().nick;
+        if (nickname.isEmpty() || nickname.length() > config.maxLength) {
             return false;
         }
-        String lower = nickname.toLowerCase(Locale.ROOT);
-        return lower.chars().allMatch(c -> Character.isLetterOrDigit(c) || c == '_' || c == '-');
+        try {
+            if (!Pattern.compile(config.allowedRegex).matcher(nickname).find()) {
+                return false;
+            }
+            for (String banned : config.blacklist) {
+                if (Pattern.compile(banned, Pattern.CASE_INSENSITIVE).matcher(nickname).find()) {
+                    return false;
+                }
+            }
+        } catch (PatternSyntaxException e) {
+            CmdEssentials.LOGGER.warn("Invalid regular expression in the nick config: {}", e.getMessage());
+            return false;
+        }
+        return true;
     }
 }

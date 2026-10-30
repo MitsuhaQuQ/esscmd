@@ -15,6 +15,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mtmrails.esscmd.compat.ItemLookup;
 import com.mtmrails.esscmd.compat.Texts;
+import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.menu.InvseeMenu;
 import com.mtmrails.esscmd.menu.PortableMenus;
@@ -105,7 +106,10 @@ public final class InventoryCommands {
                         .executes(ctx -> repairAll(ctx.getSource())))), List.of("fix"));
         dispatcher.register(Commands.literal("more")
                 .requires(PermissionNodes.MORE.require())
-                .executes(ctx -> more(ctx.getSource(), Integer.MAX_VALUE))
+                .executes(ctx -> {
+                    int size = ConfigManager.get().items.defaultStackSize;
+                    return more(ctx.getSource(), size > 0 ? size : Integer.MAX_VALUE);
+                })
                 .then(Commands.argument("amount", IntegerArgumentType.integer(1))
                         .executes(ctx -> more(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "amount")))));
         alias(dispatcher, dispatcher.register(Commands.literal("disposal")
@@ -202,10 +206,17 @@ public final class InventoryCommands {
         return CommandUtil.ok(source, "hat.removed");
     }
 
+    private static boolean canRepairEnchantment(ItemStack stack) {
+        return ConfigManager.get().items.repairEnchanted || !stack.isEnchanted();
+    }
+
     private static int repairHand(CommandSourceStack source) throws CommandSyntaxException {
         ItemStack stack = source.getPlayerOrException().getMainHandItem();
         if (!stack.isDamageableItem()) {
             return CommandUtil.fail(source, "repair.invalid");
+        }
+        if (!canRepairEnchantment(stack)) {
+            return CommandUtil.fail(source, "repair.enchanted");
         }
         stack.setDamageValue(0);
         return CommandUtil.ok(source, "repair.done", 1);
@@ -216,7 +227,7 @@ public final class InventoryCommands {
         int repaired = 0;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
-            if (stack.isDamageableItem() && stack.isDamaged()) {
+            if (stack.isDamageableItem() && stack.isDamaged() && canRepairEnchantment(stack)) {
                 stack.setDamageValue(0);
                 repaired++;
             }
