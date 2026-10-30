@@ -1,0 +1,5 @@
+## Shown by /motd and, if motd.showOnJoin is set, when a player joins.
+## Placeholders: {player}, {online}, {max}. Lines starting with ## are comments.
+Welcome to the server, {player}!
+There are {online}/{max} players online.
+Type /rules to read the server rules.

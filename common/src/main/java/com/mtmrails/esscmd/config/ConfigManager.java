@@ -11,6 +11,8 @@ import java.util.concurrent.CompletableFuture;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mtmrails.esscmd.message.Messages;
+import com.mtmrails.esscmd.message.TextDocument;
+import com.mtmrails.esscmd.message.TextFiles;
 import com.mtmrails.esscmd.platform.Platform;
 import net.minecraft.server.MinecraftServer;
 
@@ -46,7 +48,8 @@ public final class ConfigManager {
         }).thenAcceptAsync(ConfigManager::apply, server);
     }
 
-    private record Loaded(EssConfig config, Map<String, Map<String, String>> messages) {}
+    private record Loaded(EssConfig config, Map<String, Map<String, String>> messages,
+                          Map<String, Map<String, TextDocument>> texts) {}
 
     private static Loaded read() throws IOException {
         Path dir = dir();
@@ -67,11 +70,12 @@ public final class ConfigManager {
         try (Writer writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
             GSON.toJson(loaded, writer);
         }
-        return new Loaded(loaded, Messages.read(dir));
+        return new Loaded(loaded, Messages.read(dir), TextFiles.read(dir));
     }
 
     private static void apply(Loaded loaded) {
         config = loaded.config();
         Messages.set(loaded.messages());
+        TextFiles.set(loaded.texts());
     }
 }

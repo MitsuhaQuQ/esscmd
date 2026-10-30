@@ -1,6 +1,8 @@
 package com.mtmrails.esscmd.command;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
@@ -8,6 +10,7 @@ import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.permission.PermissionNodes;
 import com.mtmrails.esscmd.teleport.TeleportService;
+import com.mtmrails.esscmd.util.Pager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -16,6 +19,9 @@ import net.minecraft.server.level.ServerPlayer;
 
 /** {@code /warp [warp] [player]}, {@code /setwarp}, {@code /delwarp}, {@code /warpinfo}. */
 public final class WarpCommands {
+    private static final int WARPS_PER_PAGE = 40;
+    // Up to 4 digits: a longer number is more likely a warp name than a page.
+    private static final Pattern PAGE_NUMBER = Pattern.compile("[1-9][0-9]{0,3}");
     private static final SuggestionProvider<CommandSourceStack> WARPS = (ctx, builder) ->
             SharedSuggestionProvider.suggest(EssData.get(ctx.getSource().getServer()).warps().keySet(), builder);
 
@@ -24,11 +30,15 @@ public final class WarpCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("warp")
                 .requires(PermissionNodes.WARP.require())
-                .executes(ctx -> list(ctx.getSource()))
+                .executes(ctx -> list(ctx.getSource(), 1))
                 .then(Commands.argument("warp", StringArgumentType.word())
                         .suggests(WARPS)
                         .executes(ctx -> {
-                            StoredLocation warp = find(ctx.getSource(), StringArgumentType.getString(ctx, "warp"));
+                            String arg = StringArgumentType.getString(ctx, "warp");
+                            if (PAGE_NUMBER.matcher(arg).matches()) {
+                                return list(ctx.getSource(), Integer.parseInt(arg));
+                            }
+                            StoredLocation warp = find(ctx.getSource(), arg);
                             if (warp == null) {
                                 return 0;
                             }
@@ -84,12 +94,18 @@ public final class WarpCommands {
                         })));
     }
 
-    private static int list(CommandSourceStack source) {
-        var warps = EssData.get(source.getServer()).warps().keySet();
+    /** {@code /warp <page>}: Essentials accepts a page number in place of a warp name. */
+    private static int list(CommandSourceStack source, int page) {
+        List<String> warps = List.copyOf(EssData.get(source.getServer()).warps().keySet());
         if (warps.isEmpty()) {
             return CommandUtil.fail(source, "warp.none");
         }
-        return CommandUtil.ok(source, "warp.list", String.join(", ", warps));
+        Pager.Page<String> shown = Pager.page(warps, page, WARPS_PER_PAGE);
+        CommandUtil.ok(source, "warp.list", String.join(", ", shown.items()));
+        if (shown.pages() > 1) {
+            CommandUtil.ok(source, "page.footer", shown.page(), shown.pages(), "/warp " + (shown.page() % shown.pages() + 1));
+        }
+        return shown.items().size();
     }
 
     private static StoredLocation find(CommandSourceStack source, String name) {

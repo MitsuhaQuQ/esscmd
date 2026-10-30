@@ -78,20 +78,25 @@ public final class Messages {
         return lookup(language(recipient), key);
     }
 
-    private static String language(ServerPlayer player) {
+    static String language(ServerPlayer player) {
         if (!ConfigManager.get().perPlayerLanguage) {
             return ConfigManager.get().language;
         }
         return Players.language(player).toLowerCase(Locale.ROOT);
     }
 
-    private static String language(CommandSourceStack source) {
+    static String language(CommandSourceStack source) {
         return source.getEntity() instanceof ServerPlayer player ? language(player) : ConfigManager.get().language;
+    }
+
+    /** The language itself, then the configured default, then {@code en_us}. */
+    static List<String> fallbackChain(String language) {
+        return List.of(language, ConfigManager.get().language, FALLBACK);
     }
 
     private static String lookup(String language, String key) {
         Map<String, Map<String, String>> all = tables;
-        for (String candidate : new String[] {language, ConfigManager.get().language, FALLBACK}) {
+        for (String candidate : fallbackChain(language)) {
             Map<String, String> table = all.get(candidate);
             if (table != null) {
                 String text = table.get(key);

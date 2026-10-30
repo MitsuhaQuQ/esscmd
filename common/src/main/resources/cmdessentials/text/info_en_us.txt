@@ -1,0 +1,7 @@
+## Shown by /info [chapter]. Lines before the first #heading are shown by plain /info.
+## Each "#name" line starts a chapter that /info <name> shows.
+Server information. Chapters: /info commands
+#commands
+/home, /sethome - your homes
+/spawn - go to spawn
+/tpa <player> - ask to teleport to a player

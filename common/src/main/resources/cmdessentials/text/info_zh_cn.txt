@@ -1,0 +1,7 @@
+## 由 /info [章节] 显示。第一个 #标题 之前的内容由 /info 直接显示。
+## 每个 "#名称" 行开始一个章节，用 /info <名称> 查看。
+服务器信息。章节：/info commands
+#commands
+/home、/sethome - 你的家
+/spawn - 回到出生点
+/tpa <玩家> - 请求传送到某位玩家

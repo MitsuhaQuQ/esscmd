@@ -59,6 +59,7 @@ public final class CmdEssentials {
     }
 
     public static void onPlayerJoin(ServerPlayer player) {
+        EssData.get(player.server).playerJoined(player.getUUID(), player.getGameProfile().getName());
         if (ConfigManager.get().spawn.firstJoinAtSpawn && Players.isFirstJoin(player)) {
             StoredLocation spawn = EssData.get(player.server).spawn();
             if (spawn != null) {
@@ -68,6 +69,8 @@ public final class CmdEssentials {
     }
 
     public static void onPlayerLeave(ServerPlayer player) {
+        EssData.get(player.server).playerLeft(player.getUUID(), player.getGameProfile().getName(),
+                StoredLocation.of(player), System.currentTimeMillis());
         TeleportService.cancel(player);
         TpaRequests.forget(player.getUUID());
     }

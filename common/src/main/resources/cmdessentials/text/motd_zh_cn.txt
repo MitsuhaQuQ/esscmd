@@ -1,0 +1,5 @@
+## 由 /motd 显示；如果开启了 motd.showOnJoin，玩家加入时也会显示。
+## 占位符：{player}、{online}、{max}。以 ## 开头的行是注释。
+欢迎来到服务器，{player}！
+当前在线 {online}/{max} 人。
+输入 /rules 查看服务器规则。

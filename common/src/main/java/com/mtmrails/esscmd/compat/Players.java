@@ -3,6 +3,7 @@ package com.mtmrails.esscmd.compat;
 import java.util.Optional;
 import java.util.UUID;
 import com.mojang.authlib.GameProfile;
+import com.mtmrails.esscmd.data.EssData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -50,11 +51,18 @@ public final class Players {
         return player.getStats().getValue(Stats.CUSTOM.get(Stats.LEAVE_GAME)) == 0;
     }
 
-    /** Finds a player's UUID by name: online players first, then the server's profile cache. */
+    /**
+     * Finds a player's UUID by name: online players first, then players the mod has stored,
+     * then the server's profile cache.
+     */
     public static Optional<UUID> findId(MinecraftServer server, String name) {
         ServerPlayer online = server.getPlayerList().getPlayerByName(name);
         if (online != null) {
             return Optional.of(online.getUUID());
+        }
+        Optional<UUID> known = EssData.get(server).findByName(name);
+        if (known.isPresent()) {
+            return known;
         }
         return server.getProfileCache().get(name).map(GameProfile::getId);
     }

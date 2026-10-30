@@ -10,8 +10,10 @@ commit messages in English.
 ## Status
 
 All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
-`/cmdessentials`) is implemented and passes console smoke tests on every target, but it hasn't
-been played in-game yet. The checklist under **Commands** tracks progress.
+`/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
+played in-game on Fabric 1.20.1 only (docs/testing/p0-checklist.md); Forge and 1.18.2 / 1.21.1
+still need an in-game pass. P1 is planned (milestones M1–M7 under **Commands**); M1 is done. The checklist
+under **Commands** tracks progress.
 
 ## Target versions
 
@@ -220,8 +222,11 @@ below says otherwise. Mark each line `[x]` once every command on it is done.
   `/ban`, `/kick`, `/kill`, `/list`, `/me`, `/msg`, `/give`, `/gamemode`, `/help`, `/time`,
   `/weather`, `/tp`, `/enchant`. So do these aliases: `/tell`, `/w`, `/clear`, `/pardon`, `/xp`,
   `/teleport`. Register the Essentials version only under its `e` name (`/emsg`, `/egive`, …)
-  and drop the clashing aliases. Admins can opt in through a config list `override-vanilla`;
+  and drop the clashing aliases. Admins can opt in through the config list `overrideVanilla`;
   to override, remove the vanilla node from the dispatcher root before registering ours.
+  **Exception (decided):** `overrideVanilla` defaults to `["msg", "tell", "w"]`, because `/r`,
+  `/ignore` and `/socialspy` only work if private messages go through our command. Admins can
+  empty the list to get vanilla messaging back; `/emsg` always exists.
 - **Players**: parse `[player]` with `EntityArgument`. Acting on another player needs the
   command's `.others` permission node.
 - **`[player:]name`** (homes): lets admins manage other players' homes, under the
@@ -263,18 +268,88 @@ below says otherwise. Mark each line `[x]` once every command on it is done.
 
 ### P1: player utilities, chat, inventory
 
-- [ ] Teleport: `/tphere`, `/tppos`, `/tpo`, `/tpohere`, `/tpall`, `/tpaall`, `/tpoffline`,
-  `/top`, `/bottom`, `/jump`, `/tpr`, `/settpr`, `/world`
-- [ ] Player state: `/fly`, `/god`, `/heal`, `/feed`, `/rest`, `/ext`, `/afk`, `/suicide`
-- [ ] Info: `/getpos`, `/compass`, `/depth`, `/near`, `/seen`, `/whois`, `/playtime`, `/ping`,
-  `/realname`, `/motd`, `/rules`, `/info`
-- [ ] Messaging: `/msg` (as `/emsg`), `/r`, `/msgtoggle`, `/rtoggle`, `/ignore`, `/socialspy`,
-  `/helpop`, `/mail`, `/broadcast`, `/broadcastworld`, `/nick`
+Build P1 in milestones. Each milestone ends with all 6 jars building, a console smoke test, an
+in-game checklist in `docs/testing/` and a commit.
+
+**M1: shared infrastructure** (no new player-facing commands)
+
+- [x] `PlayerRecord`: one record per player in `EssData` (`format: 2`) for all per-player
+  state. Homes, `/back`, `/tptoggle` and `/tpauto` live there, plus last name, last seen time
+  and logout location (recorded on leave). P0 files (no `format` key) are migrated on load;
+  verified on real P0 data. New per-player state goes into `PlayerRecord`, changed only through
+  `EssData` methods so it gets marked dirty.
+- [x] `util.DateDiff`: `1y2mo3w4d5h6m7s`-style durations, parse and format.
+- [x] `util.Pager`: 1-based pages; `/warp <page>` uses it (numbers up to 4 digits are pages).
+- [x] `message.TextFiles`: `config/cmdessentials/{motd,rules,info}_<lang>.txt` parsed into
+  `TextDocument`s (`#chapter` headings, `##` comments), in the player's language. en_us and
+  zh_cn are bundled and written out once; they're never overwritten. Loaded and reloaded with
+  the config.
+- [x] JUnit 5 unit tests in `common/src/test` for the pure-Java helpers. Run with
+  `./gradlew :common:1.20.1:test`; CI runs them too.
+- Moved to the milestone that first needs them, so they're tested where they're used:
+  the chat hook (M2 AFK), dimension-change hook (M2 fly), latency adapter (M3 `/ping`),
+  `overrideVanilla` and the tab-list packet adapter (M5), `ItemData` (M6/M7).
+
+**M2: player state**
+
+- [ ] `/fly`, `/god`, `/heal`, `/feed`, `/rest`, `/ext`, `/afk`, `/suicide`
+  - `/god` and `/fly` are stored in `PlayerRecord` and re-applied on join, respawn and
+    gamemode change. God mode uses `Abilities.invulnerable`.
+  - `/heal`: full health, food and saturation, no fire, removes harmful effects.
+    `/rest`: resets the `TIME_SINCE_REST` stat (phantoms).
+  - AFK (decided): after `afk.autoSeconds` (default 300) without moving, chatting or running
+    commands, the player is marked AFK and it is broadcast. Auto-kick is off by default
+    (`afk.kickSeconds`). The `[AFK]` tab-list tag ships with M5's tab-list support.
+
+**M3: info**
+
+- [ ] `/getpos`, `/compass`, `/depth`, `/near`, `/seen`, `/whois`, `/playtime`, `/ping`,
+  `/motd`, `/rules`, `/info`
+  - `/seen` and `/whois` read `PlayerRecord`. Only admins (`whois` node) see IPs.
+  - `/ping` answers like Essentials ("Pong!") and adds the latency.
+  - The MOTD is shown on join if `motd.showOnJoin` is set.
+
+**M4: teleport extensions** (all through `TeleportService`)
+
+- [ ] `/tphere`, `/tppos`, `/tpo`, `/tpohere`, `/tpall`, `/tpaall`, `/tpoffline`, `/top`,
+  `/bottom`, `/jump`, `/tpr`, `/settpr`, `/world`
+  - `/tphere` respects the target's `/tptoggle`; `/tpo` and `/tpohere` override it.
+  - `/tpoffline` uses the logout location from `PlayerRecord`.
+  - `/tpr`: random spot per dimension (center, min and max range in config, set by
+    `/settpr`). Search for a safe block (no lava or water, not on the Nether roof), with a
+    limited number of attempts so it doesn't load too many chunks in one tick.
+  - `/world <dimension>` uses vanilla `DimensionArgument`.
+
+**M5: messaging** (highest risk)
+
+- [ ] `/msg` (+ `/tell`, `/w` via `overrideVanilla`, always `/emsg`), `/r`, `/msgtoggle`,
+  `/rtoggle`, `/ignore`, `/socialspy`, `/helpop`, `/mail`, `/broadcast`, `/broadcastworld`
+- [ ] `/nick`, `/realname`
+  - Nicknames need a common mixin on `Player#getDisplayName` and the tab-list name, plus a
+    tab-list update packet when a nick changes (version-specific, see M1 compat).
+  - `/ignore` (decided): blocks the ignored player's `/msg`, `/mail` and `/tpa` requests.
+    Hiding their public chat needs a version-specific chat mixin (signed chat on 1.19+) and
+    comes later as its own task.
+  - `/mail` is persisted in `PlayerRecord`; `sendtemp` uses `DateDiff`. Unread mail is
+    announced on join.
+
+**M6: inventory and portable blocks**
+
 - [ ] Inventory: `/enderchest`, `/invsee`, `/hat`, `/repair`, `/more`, `/clearinventory`,
   `/clearinventoryconfirmtoggle`, `/disposal`
+  - `/invsee`: a 6-row chest menu backed by a container that maps the target's 41 slots
+    (inventory, armor, offhand) live. Online players only.
 - [ ] Portable blocks: `/workbench`, `/anvil`, `/cartographytable`, `/grindstone`, `/loom`,
   `/smithingtable`, `/stonecutter`
-- [ ] Kits: `/kit`, `/createkit`, `/delkit`, `/showkit`, `/kitreset`
+
+**M7: kits**
+
+- [ ] `/kit`, `/createkit`, `/delkit`, `/showkit`, `/kitreset`
+  - Items are stored through `ItemData`. `/createkit <name> <delay>` takes the creator's
+    inventory, and cooldowns are kept in `PlayerRecord`.
+  - Permissions (decided): each kit stores a required OP level (default 0). On Fabric with a
+    permission provider, `cmdessentials.kits.<name>` also grants it. This avoids Forge's rule
+    that nodes must be registered at startup.
 
 ### P2: admin, world, items
 
@@ -352,5 +427,7 @@ To test another version, switch to it, test, then reset.
   change the Java versions, update that list too.
 - In zsh, write node paths with braces (`":fabric:${mc}:build"`). zsh reads `$mc:r` or
   `$mc:s` as a variable modifier and mangles the path.
-- Planned: GameTest-based tests in `common` for the services (teleport, homes, datediff parser,
-  speed mapping), run on every target with `runGameTestServer`.
+- Unit tests: `./gradlew :common:1.20.1:test` (JUnit 5, `common/src/test`). Keep them free of
+  Minecraft bootstrap so they run on the active version only. Anything that needs a running
+  server is covered by console smoke tests and the `docs/testing/` checklists.
+- Planned: GameTest-based tests for services that need a world (teleport, homes).

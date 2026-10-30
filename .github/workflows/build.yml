@@ -29,6 +29,13 @@ jobs:
           -Porg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_21_X64
           -Porg.gradle.java.installations.auto-download=false
 
+      # Pure-Java unit tests; version-independent, so the active version is enough.
+      - name: Unit tests
+        run: >-
+          ./gradlew :common:1.20.1:test
+          -Porg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_21_X64
+          -Porg.gradle.java.installations.auto-download=false
+
       - uses: actions/upload-artifact@v4
         with:
           name: cmdessentials-${{ github.sha }}

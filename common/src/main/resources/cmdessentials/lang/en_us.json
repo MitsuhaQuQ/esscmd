@@ -59,5 +59,6 @@
   "tptoggle.on": "{0} now accepts teleport requests.",
   "tptoggle.off": "{0} no longer accepts teleport requests.",
   "tpauto.on": "{0} now accepts teleport requests automatically.",
-  "tpauto.off": "{0} no longer accepts teleport requests automatically."
+  "tpauto.off": "{0} no longer accepts teleport requests automatically.",
+  "page.footer": "Page {0} of {1}. Next page: {2}"
 }
