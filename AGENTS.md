@@ -11,9 +11,10 @@ commit messages in English.
 
 All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
-played in-game on Fabric 1.20.1 only (docs/testing/p0-checklist.md); Forge and 1.18.2 / 1.21.1
-still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M5 are
-done. M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The checklist under **Commands** tracks progress.
+played in-game on Fabric 1.20.1, Forge 1.20.1 and Fabric 1.21.1 (docs/testing/p0-checklist.md);
+Forge 1.21.1 and both 1.18.2 targets still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M5 are
+done. M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
+Forge 1.20.1 and Fabric 1.21.1. The checklist under **Commands** tracks progress.
 
 ## Target versions
 
