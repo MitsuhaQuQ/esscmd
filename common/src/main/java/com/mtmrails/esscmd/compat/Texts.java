@@ -7,6 +7,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 //? if <1.19 {
 /*import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 *///?}
 
 /** Text and feedback helpers whose vanilla API differs between versions. */
@@ -18,6 +19,15 @@ public final class Texts {
         return Component.literal(text);
         //?} else {
         /*return new TextComponent(text);
+        *///?}
+    }
+
+    /** A vanilla translation key, which every client can render. Never use it for our own text. */
+    public static MutableComponent vanillaTranslatable(String key) {
+        //? if >=1.19 {
+        return Component.translatable(key);
+        //?} else {
+        /*return new TranslatableComponent(key);
         *///?}
     }
 

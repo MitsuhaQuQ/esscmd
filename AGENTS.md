@@ -12,8 +12,8 @@ commit messages in English.
 All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1, Forge 1.20.1 and Fabric 1.21.1 (docs/testing/p0-checklist.md);
-Forge 1.21.1 and both 1.18.2 targets still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M5 are
-done. M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
+Forge 1.21.1 and both 1.18.2 targets still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M6 are
+done (M6 not yet played in-game). M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
 Forge 1.20.1 and Fabric 1.21.1. The checklist under **Commands** tracks progress.
 
 ## Target versions
@@ -260,9 +260,9 @@ below says otherwise. Mark each line `[x]` once every command on it is done.
   IDs, no `:data` suffix and no Essentials `items.csv`. Item NBT changed to data components in
   1.20.5, so hide that difference behind a version helper.
 - **"world"** in Essentials means a dimension here (`/world`, `/broadcastworld`, `/time … <world>`).
-- **Container commands** (`/workbench`, `/anvil`, `/grindstone`, …): open the vanilla menu with
-  `ContainerLevelAccess.NULL` (or override `stillValid`) so it doesn't close for lack of a real
-  block. Check that the menu exists in each target version, because smithing changed in 1.20.
+- **Container commands** (`/workbench`, `/anvil`, `/grindstone`, …): subclass the vanilla menu
+  with a real `ContainerLevelAccess` and override `stillValid` (`menu/PortableMenus`). Never use
+  `ContainerLevelAccess.NULL`: results aren't computed and items left inside are lost on close.
 - All teleports go through one shared teleport service. It handles the delay, cancelling the
   teleport if the player moves, cooldowns, `/tptoggle`, saving the `/back` location, and
   moving between dimensions.
@@ -383,11 +383,15 @@ in-game checklist in `docs/testing/` and a commit.
 
 **M6: inventory and portable blocks**
 
-- [ ] Inventory: `/enderchest`, `/invsee`, `/hat`, `/repair`, `/more`, `/clearinventory`,
-  `/clearinventoryconfirmtoggle`, `/disposal`
-  - `/invsee`: a 6-row chest menu backed by a container that maps the target's 41 slots
-    (inventory, armor, offhand) live. Online players only.
-- [ ] Portable blocks: `/workbench`, `/anvil`, `/cartographytable`, `/grindstone`, `/loom`,
+- [x] Inventory: `/enderchest`, `/invsee`, `/hat`, `/repair`, `/more`, `/clearinventory`,
+  `/clearinventoryconfirmtoggle`, `/disposal` (`command/InventoryCommands`, `menu/`; checklist
+  `docs/testing/m6-checklist.md`; console-tested on all targets, not yet played in-game)
+  - `/invsee`: a 6-row chest menu backed by `InvseeContainer`, a live view of the target's 41
+    slots; padding slots are locked. Without `invsee.modify` it's read-only. Online players only.
+  - `/clearinventory`: `*` as first argument means every player; `*` as item means the main
+    inventory, `**` adds armor and offhand. Items use `ResourceLocationArgument`, because
+    `ItemArgument` needs `CommandBuildContext`.
+- [x] Portable blocks: `/workbench`, `/anvil`, `/cartographytable`, `/grindstone`, `/loom`,
   `/smithingtable`, `/stonecutter`
 
 **M7: kits**

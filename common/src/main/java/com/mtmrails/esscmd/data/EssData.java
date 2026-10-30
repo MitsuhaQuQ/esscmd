@@ -193,6 +193,16 @@ public final class EssData extends VersionedSavedData {
         }
     }
 
+    public boolean clearConfirm(UUID player) {
+        PlayerRecord record = players.get(player);
+        return record != null && record.clearConfirm;
+    }
+
+    public void setClearConfirm(UUID player, boolean confirm) {
+        record(player).clearConfirm = confirm;
+        setDirty();
+    }
+
     public boolean socialSpy(UUID player) {
         PlayerRecord record = players.get(player);
         return record != null && record.socialSpy;

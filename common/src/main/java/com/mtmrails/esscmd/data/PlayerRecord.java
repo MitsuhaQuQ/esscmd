@@ -36,6 +36,7 @@ public final class PlayerRecord {
     boolean messagesDisabled;
     boolean replyToRecipient;
     boolean socialSpy;
+    boolean clearConfirm;
     String nickname = "";
     final Set<UUID> ignored = new HashSet<>();
     final List<MailMessage> mail = new ArrayList<>();
@@ -117,6 +118,7 @@ public final class PlayerRecord {
         if (logoutLocation != null) {
             tag.put("logoutLocation", logoutLocation.toTag());
         }
+        tag.putBoolean("clearConfirm", clearConfirm);
         tag.putBoolean("fly", fly);
         tag.putBoolean("god", god);
         tag.putBoolean("messagesDisabled", messagesDisabled);
@@ -145,6 +147,7 @@ public final class PlayerRecord {
         if (tag.contains("logoutLocation")) {
             record.logoutLocation = StoredLocation.fromTag(tag.getCompound("logoutLocation"));
         }
+        record.clearConfirm = tag.getBoolean("clearConfirm");
         record.fly = tag.getBoolean("fly");
         record.god = tag.getBoolean("god");
         record.messagesDisabled = tag.getBoolean("messagesDisabled");

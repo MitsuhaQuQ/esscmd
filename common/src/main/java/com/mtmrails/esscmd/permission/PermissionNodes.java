@@ -113,6 +113,25 @@ public final class PermissionNodes {
     public static final PermissionNode NICK_OTHERS = node("nick.others", ADMINS);
     public static final PermissionNode REALNAME = node("realname", ALL_PLAYERS);
 
+    public static final PermissionNode ENDERCHEST = node("enderchest", ADMINS);
+    public static final PermissionNode ENDERCHEST_OTHERS = node("enderchest.others", ADMINS);
+    public static final PermissionNode INVSEE = node("invsee", ADMINS);
+    public static final PermissionNode INVSEE_MODIFY = node("invsee.modify", ADMINS);
+    public static final PermissionNode HAT = node("hat", ADMINS);
+    public static final PermissionNode REPAIR = node("repair", ADMINS);
+    public static final PermissionNode REPAIR_ALL = node("repair.all", ADMINS);
+    public static final PermissionNode MORE = node("more", ADMINS);
+    public static final PermissionNode CLEARINVENTORY = node("clearinventory", ADMINS);
+    public static final PermissionNode CLEARINVENTORY_OTHERS = node("clearinventory.others", ADMINS);
+    public static final PermissionNode DISPOSAL = node("disposal", ALL_PLAYERS);
+    public static final PermissionNode WORKBENCH = node("workbench", ADMINS);
+    public static final PermissionNode ANVIL = node("anvil", ADMINS);
+    public static final PermissionNode CARTOGRAPHYTABLE = node("cartographytable", ADMINS);
+    public static final PermissionNode GRINDSTONE = node("grindstone", ADMINS);
+    public static final PermissionNode LOOM = node("loom", ADMINS);
+    public static final PermissionNode SMITHINGTABLE = node("smithingtable", ADMINS);
+    public static final PermissionNode STONECUTTER = node("stonecutter", ADMINS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -132,6 +151,7 @@ public final class PermissionNodes {
             MSG, REPLY, MSGTOGGLE, MSGTOGGLE_OTHERS, RTOGGLE, RTOGGLE_OTHERS, IGNORE,
             SOCIALSPY, SOCIALSPY_OTHERS, HELPOP, HELPOP_RECEIVE, MAIL, MAIL_OTHERS, MAIL_SENDALL,
             BROADCAST, BROADCASTWORLD, NICK, NICK_OTHERS, REALNAME,
+            ENDERCHEST, ENDERCHEST_OTHERS, INVSEE, INVSEE_MODIFY, HAT, REPAIR, REPAIR_ALL, MORE, CLEARINVENTORY, CLEARINVENTORY_OTHERS, DISPOSAL, WORKBENCH, ANVIL, CARTOGRAPHYTABLE, GRINDSTONE, LOOM, SMITHINGTABLE, STONECUTTER,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

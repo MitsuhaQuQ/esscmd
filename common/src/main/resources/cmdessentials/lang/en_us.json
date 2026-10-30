@@ -157,5 +157,22 @@
   "nick.set": "Set {0}'s nickname to {1}.",
   "nick.off": "Removed {0}'s nickname.",
   "realname.not-found": "No player has the nickname {0}.",
-  "realname.result": "{0} is {1}."
+  "realname.result": "{0} is {1}.",
+  "enderchest.title": "{0}'s ender chest",
+  "invsee.title": "{0}'s inventory",
+  "invsee.self": "Use your own inventory for that.",
+  "disposal.title": "Disposal: items here are destroyed",
+  "hat.done": "Enjoy your new hat!",
+  "hat.removed": "Hat removed.",
+  "hat.none": "You are not wearing anything on your head.",
+  "hat.no-room": "Your inventory is full.",
+  "hat.empty-hand": "You are not holding anything.",
+  "repair.done": "Repaired {0} item(s).",
+  "repair.invalid": "This item cannot be repaired.",
+  "more.done": "The stack now has {0} items.",
+  "clear.done": "Removed {0} item(s) from {1} player(s).",
+  "clear.confirm": "Run the same command again within 30 seconds to confirm.",
+  "clear.confirm-on": "/clearinventory will now ask for confirmation.",
+  "clear.confirm-off": "/clearinventory will no longer ask for confirmation.",
+  "clear.unknown-item": "Unknown item {0}."
 }

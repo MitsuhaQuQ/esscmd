@@ -82,6 +82,16 @@ the command's `.others` permission (admins by default).
 | `/suicide` | Kill yourself | everyone |
 | `/gmc`, `/gms`, `/gma`, `/gmsp` `[targets]`, `/gm` | Gamemode shortcuts; `/gamemode` and `/gm` also accept `c s a sp` and `0-3`. They run vanilla `/gamemode`, so its permission applies | admins |
 
+**Inventory**
+
+| Command | Description | Default |
+|---|---|---|
+| `/workbench`, `/anvil`, `/cartographytable`, `/grindstone`, `/loom`, `/smithingtable`, `/stonecutter` | Use a block's menu anywhere | admins |
+| `/enderchest [player]`, `/invsee <player>` | Open an ender chest; view or edit an online player's inventory | admins |
+| `/hat [remove]`, `/repair [hand\|all]`, `/more [amount]` | Wear the held item, repair, fill a stack | admins |
+| `/clearinventory [player\|*] [item\|*\|**] [amount]`, `/clearinventoryconfirmtoggle` | Clear items, optionally asking for confirmation | admins |
+| `/disposal` | Destroy unwanted items | everyone |
+
 **Information**
 
 | Command | Description | Default |

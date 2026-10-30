@@ -157,5 +157,22 @@
   "nick.set": "已将 {0} 的昵称设为 {1}。",
   "nick.off": "已移除 {0} 的昵称。",
   "realname.not-found": "没有玩家使用昵称 {0}。",
-  "realname.result": "{0} 是 {1}。"
+  "realname.result": "{0} 是 {1}。",
+  "enderchest.title": "{0} 的末影箱",
+  "invsee.title": "{0} 的背包",
+  "invsee.self": "请直接打开你自己的背包。",
+  "disposal.title": "垃圾桶：放入的物品会被销毁",
+  "hat.done": "新帽子不错！",
+  "hat.removed": "已摘下帽子。",
+  "hat.none": "你头上没有戴东西。",
+  "hat.no-room": "你的背包已满。",
+  "hat.empty-hand": "你手上没有物品。",
+  "repair.done": "已修复 {0} 件物品。",
+  "repair.invalid": "这个物品无法修复。",
+  "more.done": "这组物品现在有 {0} 个。",
+  "clear.done": "已从 {1} 名玩家身上移除 {0} 个物品。",
+  "clear.confirm": "30 秒内再次执行相同命令以确认。",
+  "clear.confirm-on": "/clearinventory 现在需要确认。",
+  "clear.confirm-off": "/clearinventory 不再需要确认。",
+  "clear.unknown-item": "未知物品 {0}。"
 }
