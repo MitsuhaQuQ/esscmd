@@ -10,6 +10,7 @@ import com.mtmrails.esscmd.command.PlayerStateCommands;
 import com.mtmrails.esscmd.command.SpawnCommands;
 import com.mtmrails.esscmd.command.SpeedCommand;
 import com.mtmrails.esscmd.command.TpaCommands;
+import com.mtmrails.esscmd.command.VanillaAliases;
 import com.mtmrails.esscmd.command.WarpCommands;
 import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.config.ConfigManager;
@@ -72,6 +73,7 @@ public final class CmdEssentials {
         WarpCommands.register(dispatcher);
         PlayerStateCommands.register(dispatcher);
         AfkCommand.register(dispatcher);
+        VanillaAliases.register(dispatcher);
     }
 
     public static void onServerStopping(MinecraftServer server) {

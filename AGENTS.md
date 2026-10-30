@@ -237,6 +237,10 @@ below says otherwise. Mark each line `[x]` once every command on it is done.
   **Exception (decided):** `overrideVanilla` defaults to `["msg", "tell", "w"]`, because `/r`,
   `/ignore` and `/socialspy` only work if private messages go through our command. Admins can
   empty the list to get vanilla messaging back; `/emsg` always exists.
+- **Aliases of vanilla commands** (`command/VanillaAliases`): short names that only redirect
+  to a vanilla command, which keeps its own behaviour and permission check. So far: `/gm` →
+  `/gamemode` (requested by the user). These don't replace anything, so they're allowed by
+  default.
 - **Players**: parse `[player]` with `EntityArgument`. Acting on another player needs the
   command's `.others` permission node.
 - **`[player:]name`** (homes): lets admins manage other players' homes, under the
