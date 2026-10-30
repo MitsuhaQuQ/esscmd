@@ -12,6 +12,7 @@ import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.message.Messages;
 import com.mtmrails.esscmd.permission.PermissionNodes;
+import com.mtmrails.esscmd.player.JailService;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,6 +39,10 @@ public final class TeleportService {
      * have the bypass nodes. Sends its own feedback. Returns false if it was refused.
      */
     public static boolean teleport(ServerPlayer player, Supplier<StoredLocation> target) {
+        if (JailService.isJailed(player)) {
+            Players.send(player, Messages.error(player, "jail.no-teleport"));
+            return false;
+        }
         EssConfig.Teleport config = ConfigManager.get().teleport;
         int now = player.server.getTickCount();
         Integer until = COOLDOWN_UNTIL.get(player.getUUID());

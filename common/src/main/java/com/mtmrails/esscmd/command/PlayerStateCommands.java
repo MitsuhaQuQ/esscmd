@@ -14,6 +14,7 @@ import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.permission.PermissionNode;
 import com.mtmrails.esscmd.permission.PermissionNodes;
 import com.mtmrails.esscmd.player.AbilityService;
+import com.mtmrails.esscmd.player.VanishService;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -58,6 +59,8 @@ public final class PlayerStateCommands {
         dispatcher.register(action("rest", PermissionNodes.REST, PermissionNodes.REST_OTHERS,
                 player -> player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST))));
         dispatcher.register(action("ext", PermissionNodes.EXT, PermissionNodes.EXT_OTHERS, ServerPlayer::clearFire));
+        dispatcher.register(toggle("vanish", PermissionNodes.VANISH, PermissionNodes.VANISH_OTHERS,
+                (source, player) -> VanishService.isVanished(player), VanishService::set));
         dispatcher.register(Commands.literal("suicide")
                 .requires(PermissionNodes.SUICIDE.require())
                 .executes(ctx -> {

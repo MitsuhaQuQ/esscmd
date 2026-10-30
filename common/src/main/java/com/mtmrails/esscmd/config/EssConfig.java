@@ -33,6 +33,7 @@ public final class EssConfig {
     public Warps warps = new Warps();
     public Kits kits = new Kits();
     public Items items = new Items();
+    public Jail jail = new Jail();
     /** Commands this mod shouldn't register (Essentials' disabled-commands). Needs a restart. */
     public java.util.List<String> disabledCommands = new java.util.ArrayList<>();
 
@@ -159,6 +160,13 @@ public final class EssConfig {
         public int defaultStackSize = -1;
         /** repair-enchanted: /repair may fix enchanted items. */
         public boolean repairEnchanted = true;
+    }
+
+    public static final class Jail {
+        /** Blocks a jailed player may walk from the jail point before being pulled back. */
+        public int radius = 8;
+        /** teleport-when-freed: back, spawn or off. */
+        public String teleportWhenFreed = "back";
     }
 
     public static final class Near {

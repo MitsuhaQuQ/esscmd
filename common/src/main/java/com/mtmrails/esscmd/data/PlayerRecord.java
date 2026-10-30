@@ -37,6 +37,13 @@ public final class PlayerRecord {
     boolean replyToRecipient;
     boolean socialSpy;
     boolean clearConfirm;
+    /** Jail name, or empty when free. */
+    String jail = "";
+    /** Epoch millis of release; -1 = until freed. */
+    long jailUntil;
+    @Nullable
+    StoredLocation jailReturn;
+    String jailGameMode = "";
     /** Epoch millis the mute ends; 0 = not muted, -1 = until unmuted. */
     long muteUntil;
     String muteReason = "";
@@ -76,6 +83,23 @@ public final class PlayerRecord {
     @Nullable
     public StoredLocation logoutLocation() {
         return logoutLocation;
+    }
+
+    public String jail() {
+        return jail;
+    }
+
+    public long jailUntil() {
+        return jailUntil;
+    }
+
+    @Nullable
+    public StoredLocation jailReturn() {
+        return jailReturn;
+    }
+
+    public String jailGameMode() {
+        return jailGameMode;
     }
 
     public boolean fly() {
@@ -124,6 +148,12 @@ public final class PlayerRecord {
             tag.put("logoutLocation", logoutLocation.toTag());
         }
         tag.putBoolean("clearConfirm", clearConfirm);
+        tag.putString("jail", jail);
+        tag.putLong("jailUntil", jailUntil);
+        tag.putString("jailGameMode", jailGameMode);
+        if (jailReturn != null) {
+            tag.put("jailReturn", jailReturn.toTag());
+        }
         tag.putLong("muteUntil", muteUntil);
         tag.putString("muteReason", muteReason);
         CompoundTag kitTag = new CompoundTag();
@@ -158,6 +188,12 @@ public final class PlayerRecord {
             record.logoutLocation = StoredLocation.fromTag(tag.getCompound("logoutLocation"));
         }
         record.clearConfirm = tag.getBoolean("clearConfirm");
+        record.jail = tag.getString("jail");
+        record.jailUntil = tag.getLong("jailUntil");
+        record.jailGameMode = tag.getString("jailGameMode");
+        if (tag.contains("jailReturn")) {
+            record.jailReturn = StoredLocation.fromTag(tag.getCompound("jailReturn"));
+        }
         record.muteUntil = tag.getLong("muteUntil");
         record.muteReason = tag.getString("muteReason");
         CompoundTag kitTag = tag.getCompound("kitUses");

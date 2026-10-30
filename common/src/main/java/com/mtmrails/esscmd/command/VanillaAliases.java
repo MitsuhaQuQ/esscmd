@@ -37,7 +37,13 @@ public final class VanillaAliases {
             new Mode("adventure", "gma", List.of("a", "2")),
             new Mode("spectator", "gmsp", List.of("sp", "3")));
 
-    private static final Map<String, String> ALIASES = Map.of("gm", GAMEMODE);
+    /** Essentials' {@code e} names give the vanilla command when {@code overrideVanilla} isn't used. */
+    private static final Map<String, String> ALIASES = Map.ofEntries(
+            Map.entry("gm", GAMEMODE), Map.entry("egamemode", GAMEMODE), Map.entry("eban", "ban"),
+            Map.entry("ebanip", "ban-ip"), Map.entry("ekick", "kick"), Map.entry("ekill", "kill"),
+            Map.entry("elist", "list"), Map.entry("eme", "me"), Map.entry("etime", "time"),
+            Map.entry("eweather", "weather"), Map.entry("egive", "give"), Map.entry("etp", "tp"),
+            Map.entry("eenchant", "enchant"));
 
     private VanillaAliases() {}
 
@@ -65,6 +71,10 @@ public final class VanillaAliases {
 
         ALIASES.forEach((alias, target) -> {
             CommandNode<CommandSourceStack> node = dispatcher.getRoot().getChild(target);
+            if (node == null) {
+                CmdEssentials.LOGGER.warn("Vanilla /{} not found, skipping alias /{}", target, alias);
+                return;
+            }
             dispatcher.register(Commands.literal(alias)
                     .requires(node.getRequirement())
                     .executes(node.getCommand())

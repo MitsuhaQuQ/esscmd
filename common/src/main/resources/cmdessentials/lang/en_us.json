@@ -217,5 +217,20 @@
   "kit.no-room": "Not enough room in your inventory for kit {0}.",
   "mail.rate-limit": "You're sending mail too quickly. Try again in a minute.",
   "repair.enchanted": "Enchanted items cannot be repaired.",
-  "error.duration-limit": "The duration can be at most {0}."
+  "error.duration-limit": "The duration can be at most {0}.",
+  "jail.set": "Jail {0} set.",
+  "jail.deleted": "Jail {0} deleted.",
+  "jail.not-found": "Jail {0} not found.",
+  "jail.none": "There are no jails.",
+  "jail.list": "Jails: {0}",
+  "jail.nobody": "Nobody is in jail.",
+  "jail.jailed": "In jail: {0}",
+  "jail.not-jailed": "{0} is not in jail. Name a jail to jail them.",
+  "jail.done": "Jailed {0} in {1} for {2}.",
+  "jail.jailed-you": "You have been jailed in {0} for {1}.",
+  "jail.freed": "Freed {0}.",
+  "jail.released": "You have been released from jail.",
+  "jail.no-teleport": "You can't teleport while in jail.",
+  "vanish.on": "{0} is now vanished.",
+  "vanish.off": "{0} is visible again."
 }

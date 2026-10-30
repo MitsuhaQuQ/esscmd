@@ -217,5 +217,20 @@
   "kit.no-room": "背包空间不足，无法领取礼包 {0}。",
   "mail.rate-limit": "你发送邮件太频繁了，请一分钟后再试。",
   "repair.enchanted": "附魔物品无法修复。",
-  "error.duration-limit": "时长最多为 {0}。"
+  "error.duration-limit": "时长最多为 {0}。",
+  "jail.set": "已设置监狱 {0}。",
+  "jail.deleted": "已删除监狱 {0}。",
+  "jail.not-found": "找不到监狱 {0}。",
+  "jail.none": "还没有监狱。",
+  "jail.list": "监狱：{0}",
+  "jail.nobody": "没有人在监狱里。",
+  "jail.jailed": "监狱中的玩家：{0}",
+  "jail.not-jailed": "{0} 不在监狱里。指定监狱名称才能关押。",
+  "jail.done": "已将 {0} 关进 {1}，时长 {2}。",
+  "jail.jailed-you": "你已被关进 {0}，时长 {1}。",
+  "jail.freed": "已释放 {0}。",
+  "jail.released": "你已被释放出狱。",
+  "jail.no-teleport": "在监狱中无法传送。",
+  "vanish.on": "{0} 已隐身。",
+  "vanish.off": "{0} 已恢复可见。"
 }

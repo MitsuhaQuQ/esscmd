@@ -8,6 +8,7 @@ import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.permission.PermissionNodes;
+import com.mtmrails.esscmd.player.VanishService;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -84,6 +85,7 @@ public final class LocationInfoCommands {
         double maxSqr = (double) capped * capped;
         List<ServerPlayer> nearby = Players.level(center).players().stream()
                 .filter(other -> other != center && other.distanceToSqr(center) <= maxSqr)
+                .filter(other -> !(source.getEntity() instanceof ServerPlayer viewer && VanishService.hiddenFrom(other, viewer)))
                 .sorted(Comparator.comparingDouble(other -> other.distanceToSqr(center)))
                 .toList();
         if (nearby.isEmpty()) {

@@ -28,6 +28,7 @@ public final class EssData extends VersionedSavedData {
     private final Map<UUID, PlayerRecord> players = new HashMap<>();
     private final Map<String, StoredLocation> warps = new TreeMap<>();
     private final Map<String, Kit> kits = new TreeMap<>();
+    private final Map<String, StoredLocation> jails = new TreeMap<>();
     @Nullable
     private StoredLocation spawn;
 
@@ -192,6 +193,48 @@ public final class EssData extends VersionedSavedData {
             record.replyToRecipient = enabled;
             setDirty();
         }
+    }
+
+    // Jail
+
+    public Map<String, StoredLocation> jails() {
+        return Collections.unmodifiableMap(jails);
+    }
+
+    public void setJail(String name, StoredLocation location) {
+        jails.put(name, location);
+        setDirty();
+    }
+
+    public boolean removeJail(String name) {
+        boolean removed = jails.remove(name) != null;
+        if (removed) {
+            setDirty();
+        }
+        return removed;
+    }
+
+    public void setJailed(UUID player, String jail, long until, StoredLocation returnTo, String gameMode) {
+        PlayerRecord record = record(player);
+        record.jail = jail;
+        record.jailUntil = until;
+        record.jailReturn = returnTo;
+        record.jailGameMode = gameMode;
+        setDirty();
+    }
+
+    public void clearJailed(UUID player) {
+        PlayerRecord record = record(player);
+        record.jail = "";
+        record.jailUntil = 0;
+        record.jailReturn = null;
+        record.jailGameMode = "";
+        setDirty();
+    }
+
+    /** Names of everyone in jail, sorted. */
+    public List<String> jailedNames() {
+        return players.values().stream().filter(record -> !record.jail.isEmpty()).map(PlayerRecord::lastName).sorted().toList();
     }
 
     // /mute
@@ -429,6 +472,7 @@ public final class EssData extends VersionedSavedData {
         players.forEach((id, record) -> playersTag.put(id.toString(), record.toTag()));
         tag.put("players", playersTag);
         tag.put("warps", writeLocations(warps));
+        tag.put("jails", writeLocations(jails));
         CompoundTag kitsTag = new CompoundTag();
         kits.forEach((name, kit) -> kitsTag.put(name, kit.toTag()));
         tag.put("kits", kitsTag);
@@ -449,6 +493,7 @@ public final class EssData extends VersionedSavedData {
             data.migrateFormat1(tag);
         }
         readLocations(tag.getCompound("warps"), data.warps);
+        readLocations(tag.getCompound("jails"), data.jails);
         CompoundTag kitsTag = tag.getCompound("kits");
         for (String name : kitsTag.getAllKeys()) {
             data.kits.put(name, Kit.fromTag(kitsTag.getCompound(name)));

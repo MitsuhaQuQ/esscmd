@@ -157,6 +157,16 @@ public final class PermissionNodes {
     public static final PermissionNode MUTE_UNLIMITED = node("mute.unlimited", ADMINS);
     public static final PermissionNode TEMPBAN_UNLIMITED = node("tempban.unlimited", ADMINS);
 
+    public static final PermissionNode SETJAIL = node("setjail", ADMINS);
+    public static final PermissionNode DELJAIL = node("deljail", ADMINS);
+    public static final PermissionNode JAILS = node("jails", ADMINS);
+    public static final PermissionNode JAILEDPLAYERS = node("jailedplayers", ADMINS);
+    public static final PermissionNode TOGGLEJAIL = node("togglejail", ADMINS);
+    public static final PermissionNode JAIL_EXEMPT = node("jail.exempt", ADMINS);
+    public static final PermissionNode VANISH = node("vanish", ADMINS);
+    public static final PermissionNode VANISH_OTHERS = node("vanish.others", ADMINS);
+    public static final PermissionNode VANISH_SEE = node("vanish.see", ADMINS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -180,6 +190,7 @@ public final class PermissionNodes {
             KIT, KIT_OTHERS, SHOWKIT, CREATEKIT, DELKIT, KITRESET,
             MUTE, MUTE_EXEMPT, TEMPBAN, TEMPBAN_EXEMPT, TEMPBANIP, UNBAN, UNBANIP, KICKALL, SUDO, SUDO_EXEMPT, GC,
             HEAL_COOLDOWN_BYPASS, MUTE_UNLIMITED, TEMPBAN_UNLIMITED,
+            SETJAIL, DELJAIL, JAILS, JAILEDPLAYERS, TOGGLEJAIL, JAIL_EXEMPT, VANISH, VANISH_OTHERS, VANISH_SEE,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =
