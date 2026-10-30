@@ -18,6 +18,7 @@ public final class EssConfig {
     public Back back = new Back();
     public Tpa tpa = new Tpa();
     public Speed speed = new Speed();
+    public Afk afk = new Afk();
 
     public static final class Teleport {
         /** Seconds to wait before a player's own teleport happens. 0 teleports at once. */
@@ -48,6 +49,15 @@ public final class EssConfig {
     public static final class Tpa {
         /** Seconds before an unanswered /tpa request expires. */
         public int timeoutSeconds = 120;
+    }
+
+    public static final class Afk {
+        /** Seconds without moving, chatting or commands before a player is marked AFK. 0 = never. */
+        public int autoSeconds = 300;
+        /** Seconds without activity before an AFK player is kicked. 0 = never. */
+        public int kickSeconds = 0;
+        /** Announce AFK changes to everyone; otherwise only the player is told. */
+        public boolean broadcast = true;
     }
 
     public static final class Speed {

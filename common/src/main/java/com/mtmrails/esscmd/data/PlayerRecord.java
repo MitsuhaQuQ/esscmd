@@ -23,6 +23,8 @@ public final class PlayerRecord {
     long lastSeen;
     @Nullable
     StoredLocation logoutLocation;
+    boolean fly;
+    boolean god;
 
     PlayerRecord() {}
 
@@ -56,6 +58,14 @@ public final class PlayerRecord {
         return logoutLocation;
     }
 
+    public boolean fly() {
+        return fly;
+    }
+
+    public boolean god() {
+        return god;
+    }
+
     CompoundTag toTag() {
         CompoundTag tag = new CompoundTag();
         tag.put("homes", EssData.writeLocations(homes));
@@ -69,6 +79,8 @@ public final class PlayerRecord {
         if (logoutLocation != null) {
             tag.put("logoutLocation", logoutLocation.toTag());
         }
+        tag.putBoolean("fly", fly);
+        tag.putBoolean("god", god);
         return tag;
     }
 
@@ -85,6 +97,8 @@ public final class PlayerRecord {
         if (tag.contains("logoutLocation")) {
             record.logoutLocation = StoredLocation.fromTag(tag.getCompound("logoutLocation"));
         }
+        record.fly = tag.getBoolean("fly");
+        record.god = tag.getBoolean("god");
         return record;
     }
 }

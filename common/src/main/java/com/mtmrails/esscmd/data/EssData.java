@@ -131,6 +131,34 @@ public final class EssData extends VersionedSavedData {
         }
     }
 
+    // /fly and /god (re-applied by AbilityService)
+
+    public boolean fly(UUID player) {
+        PlayerRecord record = players.get(player);
+        return record != null && record.fly;
+    }
+
+    public void setFly(UUID player, boolean fly) {
+        PlayerRecord record = record(player);
+        if (record.fly != fly) {
+            record.fly = fly;
+            setDirty();
+        }
+    }
+
+    public boolean god(UUID player) {
+        PlayerRecord record = players.get(player);
+        return record != null && record.god;
+    }
+
+    public void setGod(UUID player, boolean god) {
+        PlayerRecord record = record(player);
+        if (record.god != god) {
+            record.god = god;
+            setDirty();
+        }
+    }
+
     // Warps
 
     public Map<String, StoredLocation> warps() {

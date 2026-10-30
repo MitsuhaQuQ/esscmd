@@ -2,9 +2,11 @@ package com.mtmrails.esscmd;
 
 import java.io.IOException;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mtmrails.esscmd.command.AfkCommand;
 import com.mtmrails.esscmd.command.BackCommand;
 import com.mtmrails.esscmd.command.EssentialsCommand;
 import com.mtmrails.esscmd.command.HomeCommands;
+import com.mtmrails.esscmd.command.PlayerStateCommands;
 import com.mtmrails.esscmd.command.SpawnCommands;
 import com.mtmrails.esscmd.command.SpeedCommand;
 import com.mtmrails.esscmd.command.TpaCommands;
@@ -14,6 +16,8 @@ import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.platform.Platform;
+import com.mtmrails.esscmd.player.AbilityService;
+import com.mtmrails.esscmd.player.AfkService;
 import com.mtmrails.esscmd.teleport.TeleportService;
 import com.mtmrails.esscmd.teleport.TpaRequests;
 import net.minecraft.commands.CommandSourceStack;
@@ -35,6 +39,26 @@ public final class CmdEssentials {
             ConfigManager.load();
         } catch (IOException e) {
             LOGGER.error("Could not load the cmdEssentials config, using defaults", e);
+        }        if (Boolean.getBoolean("cmdessentials.debug.loadMixinTargets")) {
+            loadMixinTargets();
+        }
+    }
+
+    /**
+     * Testing aid: mixin targets such as the network handler normally load only when a player
+     * joins, so a broken injection would crash then. With
+     * {@code -Dcmdessentials.debug.loadMixinTargets=true} they load at startup instead.
+     */
+    private static void loadMixinTargets() {
+        for (String target : new String[] {
+                "net.minecraft.server.level.ServerPlayer",
+                "net.minecraft.server.network.ServerGamePacketListenerImpl"}) {
+            try {
+                Class.forName(target, true, CmdEssentials.class.getClassLoader());
+                LOGGER.info("Mixin target {} loaded", target);
+            } catch (ReflectiveOperationException | LinkageError e) {
+                throw new IllegalStateException("Mixin target " + target + " failed to load", e);
+            }
         }
     }
 
@@ -46,20 +70,26 @@ public final class CmdEssentials {
         BackCommand.register(dispatcher);
         TpaCommands.register(dispatcher);
         WarpCommands.register(dispatcher);
+        PlayerStateCommands.register(dispatcher);
+        AfkCommand.register(dispatcher);
     }
 
     public static void onServerStopping(MinecraftServer server) {
         TeleportService.clear();
         TpaRequests.clear();
+        AfkService.clear();
     }
 
     public static void onServerTick(MinecraftServer server) {
         TeleportService.tick(server);
         TpaRequests.tick(server);
+        AbilityService.tick(server);
+        AfkService.tick(server);
     }
 
     public static void onPlayerJoin(ServerPlayer player) {
         EssData.get(player.server).playerJoined(player.getUUID(), player.getGameProfile().getName());
+        AfkService.onJoin(player);
         if (ConfigManager.get().spawn.firstJoinAtSpawn && Players.isFirstJoin(player)) {
             StoredLocation spawn = EssData.get(player.server).spawn();
             if (spawn != null) {
@@ -73,6 +103,7 @@ public final class CmdEssentials {
                 StoredLocation.of(player), System.currentTimeMillis());
         TeleportService.cancel(player);
         TpaRequests.forget(player.getUUID());
+        AfkService.onLeave(player);
     }
 
     /** Called with the dead player, still at the place of death. */

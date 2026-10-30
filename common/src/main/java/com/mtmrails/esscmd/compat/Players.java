@@ -33,6 +33,14 @@ public final class Players {
         *///?}
     }
 
+    public static void sendToConsole(MinecraftServer server, Component message) {
+        //? if >=1.19 {
+        server.sendSystemMessage(message);
+        //?} else {
+        /*server.sendMessage(message, Util.NIL_UUID);
+        *///?}
+    }
+
     public static void teleport(ServerPlayer player, ServerLevel level, double x, double y, double z, float yaw, float pitch) {
         player.teleportTo(level, x, y, z, yaw, pitch);
     }

@@ -44,6 +44,24 @@ public final class PermissionNodes {
     public static final PermissionNode SETWARP = node("setwarp", ADMINS);
     public static final PermissionNode DELWARP = node("delwarp", ADMINS);
 
+    public static final PermissionNode FLY = node("fly", ADMINS);
+    public static final PermissionNode FLY_OTHERS = node("fly.others", ADMINS);
+    public static final PermissionNode GOD = node("god", ADMINS);
+    public static final PermissionNode GOD_OTHERS = node("god.others", ADMINS);
+    public static final PermissionNode HEAL = node("heal", ADMINS);
+    public static final PermissionNode HEAL_OTHERS = node("heal.others", ADMINS);
+    public static final PermissionNode FEED = node("feed", ADMINS);
+    public static final PermissionNode FEED_OTHERS = node("feed.others", ADMINS);
+    public static final PermissionNode REST = node("rest", ADMINS);
+    public static final PermissionNode REST_OTHERS = node("rest.others", ADMINS);
+    public static final PermissionNode EXT = node("ext", ADMINS);
+    public static final PermissionNode EXT_OTHERS = node("ext.others", ADMINS);
+    public static final PermissionNode SUICIDE = node("suicide", ALL_PLAYERS);
+    public static final PermissionNode AFK = node("afk", ALL_PLAYERS);
+    public static final PermissionNode AFK_OTHERS = node("afk.others", ADMINS);
+    /** Never kicked for being AFK (afk.kickSeconds). */
+    public static final PermissionNode AFK_KICK_EXEMPT = node("afk.kickexempt", ADMINS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -55,6 +73,8 @@ public final class PermissionNodes {
             BACK, BACK_OTHERS,
             TPA, TPAHERE, TPACCEPT, TPDENY, TPACANCEL, TPTOGGLE, TPTOGGLE_OTHERS, TPAUTO, TPAUTO_OTHERS,
             WARP, WARP_OTHERS, WARPINFO, SETWARP, DELWARP,
+            FLY, FLY_OTHERS, GOD, GOD_OTHERS, HEAL, HEAL_OTHERS, FEED, FEED_OTHERS,
+            REST, REST_OTHERS, EXT, EXT_OTHERS, SUICIDE, AFK, AFK_OTHERS, AFK_KICK_EXEMPT,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

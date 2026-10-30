@@ -60,5 +60,17 @@
   "tptoggle.off": "{0} no longer accepts teleport requests.",
   "tpauto.on": "{0} now accepts teleport requests automatically.",
   "tpauto.off": "{0} no longer accepts teleport requests automatically.",
-  "page.footer": "Page {0} of {1}. Next page: {2}"
+  "page.footer": "Page {0} of {1}. Next page: {2}",
+  "fly.on": "Flight enabled for {0}.",
+  "fly.off": "Flight disabled for {0}.",
+  "god.on": "God mode enabled for {0}.",
+  "god.off": "God mode disabled for {0}.",
+  "heal.done": "{0} has been healed.",
+  "feed.done": "{0} is no longer hungry.",
+  "rest.done": "{0} is rested; phantoms will leave them alone for now.",
+  "ext.done": "{0} has been extinguished.",
+  "afk.now": "{0} is now AFK.",
+  "afk.now-message": "{0} is now AFK: {1}",
+  "afk.back": "{0} is no longer AFK.",
+  "afk.kicked": "You were kicked for being AFK too long."
 }

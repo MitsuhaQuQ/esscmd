@@ -12,7 +12,8 @@ commit messages in English.
 All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1 only (docs/testing/p0-checklist.md); Forge and 1.18.2 / 1.21.1
-still need an in-game pass. P1 is planned (milestones M1–M7 under **Commands**); M1 is done. The checklist
+still need an in-game pass. P1 is planned (milestones M1–M7 under **Commands**); M1 and M2 are
+done (M2 not yet played in-game). The checklist
 under **Commands** tracks progress.
 
 ## Target versions
@@ -117,11 +118,20 @@ cmdEssentials/
 - **Mixins** live in `common/.../compat/mixin/` and are listed in
   `cmdessentials.common.mixins.json`, which `fabric.mod.json` and `loom.forge.mixinConfigs(...)`
   register. Architectury Loom adds the refmap (intermediary on Fabric, SRG on Forge). Only add
-  loader-specific mixins when unavoidable. Prefer events over mixins. The only one so far is
-  `ServerPlayerMixin`: before 1.20.2 vanilla doesn't keep the client's language, so it stores
-  it (see `Players.language`). From 1.20.2 the mixin is empty and `clientInformation()` is used.
-  To check that a mixin applies, start a dev server with
-  `JAVA_TOOL_OPTIONS=-Dmixin.debug.export=true` and look in `run/<mc>-<loader>/.mixin.out/`.
+  loader-specific mixins when unavoidable. Prefer events over mixins. Current mixins:
+  - `ServerPlayerMixin`: before 1.20.2 vanilla doesn't keep the client's language, so it
+    stores it (see `Players.language`). From 1.20.2 it's empty and `clientInformation()` is used.
+  - `ServerGamePacketListenerImplMixin`: chat and command activity for AFK. Handlers:
+    `handleChat` (all), `handleChatCommand` (1.19+), `handleSignedChatCommand` (1.20.5+).
+  - **Verifying mixins**: targets like the network handler only load when a player joins, so
+    a broken injection would crash then. Start a server with
+    `-Dcmdessentials.debug.loadMixinTargets=true` (loads every target at startup; add new
+    targets to `CmdEssentials.loadMixinTargets`) and `-Dmixin.debug.export=true`, then check
+    the injected `handler$...` methods with `javap -p` in `.mixin.out/`. On dev servers pass
+    both through `JAVA_TOOL_OPTIONS`.
+  - The Forge 1.21.1 jar's refmap only has Fabric intermediary names. That is fine: Forge
+    1.21.1 runs on Mojang names, so Mixin falls back to the names in the annotations
+    (verified on a real Forge 1.21.1 server).
 - **Server-only flag**: Fabric uses `"environment": "server"` with a `server` entrypoint
   (`DedicatedServerModInitializer`). Forge sets `displayTest = "IGNORE_SERVER_VERSION"` in
   mods.toml. On 1.18.2, `CmdEssentialsForge` also registers `IExtensionPoint.DisplayTest` in
@@ -292,14 +302,21 @@ in-game checklist in `docs/testing/` and a commit.
 
 **M2: player state**
 
-- [ ] `/fly`, `/god`, `/heal`, `/feed`, `/rest`, `/ext`, `/afk`, `/suicide`
-  - `/god` and `/fly` are stored in `PlayerRecord` and re-applied on join, respawn and
-    gamemode change. God mode uses `Abilities.invulnerable`.
+- [x] `/fly`, `/god`, `/heal`, `/feed`, `/rest`, `/ext`, `/afk`, `/suicide`
+  (`command/PlayerStateCommands`, `command/AfkCommand`, `player/AbilityService`,
+  `player/AfkService`; checklist `docs/testing/m2-checklist.md`, not yet played in-game)
+  - `/god` and `/fly` are stored in `PlayerRecord`. Instead of hooking every reset (respawn,
+    gamemode change, join), `AbilityService` re-applies them once a second; turning one off
+    rebuilds abilities from the gamemode first, so creative flight survives. God mode uses
+    `Abilities.invulnerable` and keeps food full.
   - `/heal`: full health, food and saturation, no fire, removes harmful effects.
     `/rest`: resets the `TIME_SINCE_REST` stat (phantoms).
-  - AFK (decided): after `afk.autoSeconds` (default 300) without moving, chatting or running
-    commands, the player is marked AFK and it is broadcast. Auto-kick is off by default
-    (`afk.kickSeconds`). The `[AFK]` tab-list tag ships with M5's tab-list support.
+  - AFK (decided): after `afk.autoSeconds` (default 300) without moving, turning, chatting or
+    running commands, the player is marked AFK and it is broadcast (`afk.broadcast`). Auto-kick
+    is off by default (`afk.kickSeconds`; `cmdessentials.afk.kickexempt` is never kicked).
+    Chat and commands are seen by `ServerGamePacketListenerImplMixin`, which runs on the
+    network thread on 1.19+ and therefore only records a timestamp; state changes happen in
+    `AfkService.tick`. The `[AFK]` tab-list tag ships with M5's tab-list support.
 
 **M3: info**
 
