@@ -10,7 +10,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mtmrails.esscmd.compat.Players;
-import com.mtmrails.esscmd.compat.mixin.CommandNodeAccessor;
+import com.mtmrails.esscmd.compat.CommandTrees;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.message.Messages;
@@ -85,10 +85,7 @@ public final class MessagingCommands {
 
     @SuppressWarnings("unchecked")
     private static void removeRoot(CommandDispatcher<CommandSourceStack> dispatcher, String name) {
-        CommandNodeAccessor<CommandSourceStack> root = (CommandNodeAccessor<CommandSourceStack>) dispatcher.getRoot();
-        root.cmdessentials$children().remove(name);
-        root.cmdessentials$literals().remove(name);
-        root.cmdessentials$arguments().remove(name);
+        CommandTrees.removeRootCommand(dispatcher, name);
     }
 
     private static int send(CommandSourceStack source, ServerPlayer target, String text) throws CommandSyntaxException {

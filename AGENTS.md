@@ -132,6 +132,9 @@ cmdEssentials/
     targets to `CmdEssentials.loadMixinTargets`) and `-Dmixin.debug.export=true`, then check
     the injected `handler$...` methods with `javap -p` in `.mixin.out/`. On dev servers pass
     both through `JAVA_TOOL_OPTIONS`.
+  - Never target library classes such as Brigadier: Forge doesn't transform them, so the
+    mixin silently doesn't apply and casts crash at startup. `compat/CommandTrees` uses
+    reflection to remove vanilla commands instead.
   - The Forge 1.21.1 jar's refmap only has Fabric intermediary names. That is fine: Forge
     1.21.1 runs on Mojang names, so Mixin falls back to the names in the annotations
     (verified on a real Forge 1.21.1 server).
@@ -368,8 +371,8 @@ in-game checklist in `docs/testing/` and a commit.
 
 - [x] `/msg` (+ `/tell`, `/w` via `overrideVanilla`, always `/emsg`), `/r`, `/msgtoggle`,
   `/rtoggle`, `/ignore`, `/socialspy`, `/helpop`, `/mail`, `/broadcast`, `/broadcastworld`
-- [x] `/nick`, `/realname` (`docs/testing/m5-checklist.md`; all six jars and the Fabric 1.20.1
-  console smoke test pass; in-game pass pending)
+- [x] `/nick`, `/realname` (`docs/testing/m5-checklist.md`; all six targets pass console smoke
+  tests with mixin verification; in-game pass pending)
   - Nicknames need a common mixin on `Player#getDisplayName` and the tab-list name, plus a
     tab-list update packet when a nick changes (version-specific, see M1 compat).
   - `/ignore` (decided): blocks the ignored player's `/msg`, `/mail` and `/tpa` requests.

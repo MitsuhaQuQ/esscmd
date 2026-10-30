@@ -63,6 +63,7 @@ public final class CmdEssentials {
      */
     private static void loadMixinTargets() {
         for (String target : new String[] {
+                "net.minecraft.world.entity.player.Player",
                 "net.minecraft.server.level.ServerPlayer",
                 "net.minecraft.server.network.ServerGamePacketListenerImpl"}) {
             try {
