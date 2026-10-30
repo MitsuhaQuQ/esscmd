@@ -11,6 +11,7 @@ import com.mtmrails.esscmd.command.PlayerInfoCommands;
 import com.mtmrails.esscmd.command.PlayerStateCommands;
 import com.mtmrails.esscmd.command.SpawnCommands;
 import com.mtmrails.esscmd.command.SpeedCommand;
+import com.mtmrails.esscmd.command.TeleportExtraCommands;
 import com.mtmrails.esscmd.command.TextCommands;
 import com.mtmrails.esscmd.command.TpaCommands;
 import com.mtmrails.esscmd.command.VanillaAliases;
@@ -81,6 +82,7 @@ public final class CmdEssentials {
         LocationInfoCommands.register(dispatcher);
         PlayerInfoCommands.register(dispatcher);
         TextCommands.register(dispatcher);
+        TeleportExtraCommands.register(dispatcher);
     }
 
     public static void onServerStopping(MinecraftServer server) {

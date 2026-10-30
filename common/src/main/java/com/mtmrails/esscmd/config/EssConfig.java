@@ -21,6 +21,7 @@ public final class EssConfig {
     public Afk afk = new Afk();
     public Near near = new Near();
     public Motd motd = new Motd();
+    public Tpr tpr = new Tpr();
 
     public static final class Teleport {
         /** Seconds to wait before a player's own teleport happens. 0 teleports at once. */
@@ -72,6 +73,31 @@ public final class EssConfig {
     public static final class Motd {
         /** Show motd_<lang>.txt (its intro, before the first #chapter) when a player joins. */
         public boolean showOnJoin = true;
+    }
+
+    public static final class Tpr {
+        /** Spots tried per /tpr; each may load or generate a chunk. */
+        public int attempts = 10;
+        /** Dimension id -> area. /tpr is only allowed in dimensions listed here; /settpr edits it. */
+        public java.util.Map<String, TprArea> areas = new java.util.LinkedHashMap<>(java.util.Map.of(
+                "minecraft:overworld", new TprArea(0, 0, 200, 5000),
+                "minecraft:the_nether", new TprArea(0, 0, 50, 1000)));
+    }
+
+    public static final class TprArea {
+        public int centerX;
+        public int centerZ;
+        public int minRange;
+        public int maxRange;
+
+        public TprArea() {}
+
+        public TprArea(int centerX, int centerZ, int minRange, int maxRange) {
+            this.centerX = centerX;
+            this.centerZ = centerZ;
+            this.minRange = minRange;
+            this.maxRange = maxRange;
+        }
     }
 
     public static final class Speed {

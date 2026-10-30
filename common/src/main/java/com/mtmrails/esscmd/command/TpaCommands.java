@@ -84,15 +84,19 @@ public final class TpaCommands {
         TpaRequests.add(new Request(requester.getUUID(), name(requester), target.getUUID(), name(target), type,
                 source.getServer().getTickCount() + timeout * 20));
 
-        String requesterName = name(requester);
+        notifyTarget(target, name(requester), type, timeout);
+        return CommandUtil.ok(source, "tpa.sent", name(target));
+    }
+
+    /** The request text plus clickable [Accept] [Deny] buttons, in the target's language. */
+    static void notifyTarget(ServerPlayer target, String requesterName, Type type, int timeoutSeconds) {
         Players.send(target, Messages.info(target, type == Type.HERE ? "tpa.request-here" : "tpa.request", requesterName));
         Players.send(target, Texts.empty()
                 .append(button(target, "tpa.accept-button", "/tpaccept " + requesterName, ChatFormatting.GREEN))
                 .append(Texts.literal(" "))
                 .append(button(target, "tpa.deny-button", "/tpdeny " + requesterName, ChatFormatting.RED))
                 .append(Texts.literal(" "))
-                .append(Messages.info(target, "tpa.expires", timeout)));
-        return CommandUtil.ok(source, "tpa.sent", name(target));
+                .append(Messages.info(target, "tpa.expires", timeoutSeconds)));
     }
 
     private static MutableComponent button(ServerPlayer viewer, String key, String command, ChatFormatting color) {

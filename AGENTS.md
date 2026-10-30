@@ -13,7 +13,7 @@ All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1 only (docs/testing/p0-checklist.md); Forge and 1.18.2 / 1.21.1
 still need an in-game pass. P1 is planned (milestones M1–M7 under **Commands**); M1 and M2 are
-done (M2 played in-game on Fabric 1.20.1), M3 is done but not yet played in-game. The checklist
+done (M2 played in-game on Fabric 1.20.1), M3 and M4 are done but not yet played in-game. The checklist
 under **Commands** tracks progress.
 
 ## Target versions
@@ -339,14 +339,25 @@ in-game checklist in `docs/testing/` and a commit.
 
 **M4: teleport extensions** (all through `TeleportService`)
 
-- [ ] `/tphere`, `/tppos`, `/tpo`, `/tpohere`, `/tpall`, `/tpaall`, `/tpoffline`, `/top`,
-  `/bottom`, `/jump`, `/tpr`, `/settpr`, `/world`
+- [x] `/tphere`, `/tppos`, `/tpo`, `/tpohere`, `/tpall`, `/tpaall`, `/tpoffline`, `/top`,
+  `/bottom`, `/jump`, `/tpr`, `/settpr`, `/world` (`command/TeleportExtraCommands`,
+  `teleport/SafeSpots`, `teleport/RandomTeleport`; checklist `docs/testing/m4-checklist.md`,
+  not yet played in-game)
+  - A player's own move (`/tppos`, `/top`, `/bottom`, `/jump`, `/tpr`, `/world`) goes through
+    `TeleportService.teleport` (delay, cooldown); moving someone else uses `teleportNow`.
+  - `SafeSpots`: sturdy, harmless floor and two free, dry blocks. It uses collision shapes and
+    `isFaceSturdy`, because `blocksMotion()` doesn't exist on 1.18.2. Dimensions with a ceiling
+    are scanned downwards from below the roof.
+  - Commands that change the config (`/settpr`) validate first, then mutate
+    `ConfigManager.get()` on the server thread and call `ConfigManager.save()`.
   - `/tphere` respects the target's `/tptoggle`; `/tpo` and `/tpohere` override it.
   - `/tpoffline` uses the logout location from `PlayerRecord`.
-  - `/tpr`: random spot per dimension (center, min and max range in config, set by
-    `/settpr`). Search for a safe block (no lava or water, not on the Nether roof), with a
-    limited number of attempts so it doesn't load too many chunks in one tick.
-  - `/world <dimension>` uses vanilla `DimensionArgument`.
+  - `/tpr`: random spot in a ring per dimension (`tpr.areas`: center, min and max range; only
+    listed dimensions allow /tpr; the End isn't listed by default). Up to `tpr.attempts`
+    tries, each loading one chunk on the server thread, so expect a short hitch in fresh land.
+  - `/world [dimension]` (vanilla `DimensionArgument`): overworld → world spawn, End → spawn
+    platform or the main island, others → the coordinate-scaled position at a safe height.
+    Without an argument it switches between the overworld and the Nether.
 
 **M5: messaging** (highest risk)
 

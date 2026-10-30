@@ -100,5 +100,17 @@
   "ping.pong": "Pong!",
   "ping.latency": "Pong! Your latency is {0} ms.",
   "text.missing": "There is no {0} text.",
-  "text.no-chapter": "There is no chapter {0}."
+  "text.no-chapter": "There is no chapter {0}.",
+  "tphere.done": "Brought {0} to you.",
+  "tpo.done": "Teleported {0} to {1}.",
+  "tpall.done": "Teleported {0} player(s) to {1}.",
+  "tpaall.sent": "Sent a teleport request to {0} player(s).",
+  "tpoffline.none": "No logout location is known for {0}.",
+  "tpoffline.done": "Teleported to where {0} logged out.",
+  "teleport.no-safe-spot": "No safe place to stand was found there.",
+  "jump.nothing": "You are not looking at a block within range.",
+  "tpr.disabled": "Random teleport is not enabled in {0}.",
+  "tpr.failed": "Could not find a safe random location. Try again.",
+  "settpr.show": "Random teleport in {0}: center {1}, range {2} to {3} blocks.",
+  "settpr.invalid-range": "The minimum range ({0}) must be smaller than the maximum ({1})."
 }

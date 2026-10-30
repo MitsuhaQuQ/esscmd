@@ -79,6 +79,20 @@ public final class PermissionNodes {
     public static final PermissionNode RULES = node("rules", ALL_PLAYERS);
     public static final PermissionNode INFO = node("info", ALL_PLAYERS);
 
+    public static final PermissionNode TPHERE = node("tphere", ADMINS);
+    public static final PermissionNode TPOHERE = node("tpohere", ADMINS);
+    public static final PermissionNode TPO = node("tpo", ADMINS);
+    public static final PermissionNode TPPOS = node("tppos", ADMINS);
+    public static final PermissionNode TPALL = node("tpall", ADMINS);
+    public static final PermissionNode TPAALL = node("tpaall", ADMINS);
+    public static final PermissionNode TPOFFLINE = node("tpoffline", ADMINS);
+    public static final PermissionNode TOP = node("top", ADMINS);
+    public static final PermissionNode BOTTOM = node("bottom", ADMINS);
+    public static final PermissionNode JUMP = node("jump", ADMINS);
+    public static final PermissionNode TPR = node("tpr", ALL_PLAYERS);
+    public static final PermissionNode SETTPR = node("settpr", ADMINS);
+    public static final PermissionNode WORLD = node("world", ADMINS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -94,6 +108,7 @@ public final class PermissionNodes {
             REST, REST_OTHERS, EXT, EXT_OTHERS, SUICIDE, AFK, AFK_OTHERS, AFK_KICK_EXEMPT,
             GETPOS, GETPOS_OTHERS, COMPASS, DEPTH, NEAR, NEAR_OTHERS, SEEN, WHOIS, WHOIS_IP,
             PLAYTIME, PLAYTIME_OTHERS, PING, MOTD, RULES, INFO,
+            TPHERE, TPOHERE, TPO, TPPOS, TPALL, TPAALL, TPOFFLINE, TOP, BOTTOM, JUMP, TPR, SETTPR, WORLD,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

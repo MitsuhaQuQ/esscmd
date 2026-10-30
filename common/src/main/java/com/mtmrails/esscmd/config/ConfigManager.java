@@ -48,6 +48,22 @@ public final class ConfigManager {
         }).thenAcceptAsync(ConfigManager::apply, server);
     }
 
+    /**
+     * Writes the current config after a command changed it (e.g. /settpr). The JSON is built
+     * on the calling (server) thread; only the file write happens elsewhere.
+     */
+    public static CompletableFuture<Void> save() {
+        String json = GSON.toJson(config);
+        Path file = dir().resolve("config.json");
+        return CompletableFuture.runAsync(() -> {
+            try {
+                Files.writeString(file, json, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        });
+    }
+
     private record Loaded(EssConfig config, Map<String, Map<String, String>> messages,
                           Map<String, Map<String, TextDocument>> texts) {}
 

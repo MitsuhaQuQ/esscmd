@@ -100,5 +100,17 @@
   "ping.pong": "Pong!",
   "ping.latency": "Pong! 你的延迟是 {0} 毫秒。",
   "text.missing": "没有 {0} 文本。",
-  "text.no-chapter": "没有名为 {0} 的章节。"
+  "text.no-chapter": "没有名为 {0} 的章节。",
+  "tphere.done": "已将 {0} 传送到你身边。",
+  "tpo.done": "已将 {0} 传送到 {1}。",
+  "tpall.done": "已将 {0} 名玩家传送到 {1}。",
+  "tpaall.sent": "已向 {0} 名玩家发送传送请求。",
+  "tpoffline.none": "没有 {0} 的下线位置记录。",
+  "tpoffline.done": "已传送到 {0} 的下线位置。",
+  "teleport.no-safe-spot": "那里找不到可以安全站立的地方。",
+  "jump.nothing": "你看向的方向在范围内没有方块。",
+  "tpr.disabled": "{0} 没有开启随机传送。",
+  "tpr.failed": "没能找到安全的随机位置，请再试一次。",
+  "settpr.show": "{0} 的随机传送：中心 {1}，范围 {2} 到 {3} 格。",
+  "settpr.invalid-range": "最小范围（{0}）必须小于最大范围（{1}）。"
 }
