@@ -62,6 +62,23 @@ public final class PermissionNodes {
     /** Never kicked for being AFK (afk.kickSeconds). */
     public static final PermissionNode AFK_KICK_EXEMPT = node("afk.kickexempt", ADMINS);
 
+    public static final PermissionNode GETPOS = node("getpos", ALL_PLAYERS);
+    public static final PermissionNode GETPOS_OTHERS = node("getpos.others", ADMINS);
+    public static final PermissionNode COMPASS = node("compass", ALL_PLAYERS);
+    public static final PermissionNode DEPTH = node("depth", ALL_PLAYERS);
+    public static final PermissionNode NEAR = node("near", ADMINS);
+    public static final PermissionNode NEAR_OTHERS = node("near.others", ADMINS);
+    public static final PermissionNode SEEN = node("seen", ALL_PLAYERS);
+    public static final PermissionNode WHOIS = node("whois", ADMINS);
+    /** Shows the IP address in /whois. */
+    public static final PermissionNode WHOIS_IP = node("whois.ip", ADMINS);
+    public static final PermissionNode PLAYTIME = node("playtime", ALL_PLAYERS);
+    public static final PermissionNode PLAYTIME_OTHERS = node("playtime.others", ALL_PLAYERS);
+    public static final PermissionNode PING = node("ping", ALL_PLAYERS);
+    public static final PermissionNode MOTD = node("motd", ALL_PLAYERS);
+    public static final PermissionNode RULES = node("rules", ALL_PLAYERS);
+    public static final PermissionNode INFO = node("info", ALL_PLAYERS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -75,6 +92,8 @@ public final class PermissionNodes {
             WARP, WARP_OTHERS, WARPINFO, SETWARP, DELWARP,
             FLY, FLY_OTHERS, GOD, GOD_OTHERS, HEAL, HEAL_OTHERS, FEED, FEED_OTHERS,
             REST, REST_OTHERS, EXT, EXT_OTHERS, SUICIDE, AFK, AFK_OTHERS, AFK_KICK_EXEMPT,
+            GETPOS, GETPOS_OTHERS, COMPASS, DEPTH, NEAR, NEAR_OTHERS, SEEN, WHOIS, WHOIS_IP,
+            PLAYTIME, PLAYTIME_OTHERS, PING, MOTD, RULES, INFO,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

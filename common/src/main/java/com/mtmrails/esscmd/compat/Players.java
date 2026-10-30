@@ -2,7 +2,6 @@ package com.mtmrails.esscmd.compat;
 
 import java.util.Optional;
 import java.util.UUID;
-import com.mojang.authlib.GameProfile;
 import com.mtmrails.esscmd.data.EssData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -54,24 +53,30 @@ public final class Players {
         //?}
     }
 
+    /** Round-trip latency in milliseconds, as shown in the tab list. */
+    public static int latency(ServerPlayer player) {
+        //? if >=1.20.2 {
+        /*return player.connection.latency();
+        *///?} else {
+        return player.latency;
+        //?}
+    }
+
     /** True if the player has never left the server before, i.e. this is their first session. */
     public static boolean isFirstJoin(ServerPlayer player) {
         return player.getStats().getValue(Stats.CUSTOM.get(Stats.LEAVE_GAME)) == 0;
     }
 
     /**
-     * Finds a player's UUID by name: online players first, then players the mod has stored,
-     * then the server's profile cache.
+     * Finds a player's UUID by name: online players first, then players the mod has recorded
+     * (names are stored on join). Deliberately not the vanilla profile cache: for unknown names
+     * it asks Mojang's API, blocking the server thread.
      */
     public static Optional<UUID> findId(MinecraftServer server, String name) {
         ServerPlayer online = server.getPlayerList().getPlayerByName(name);
         if (online != null) {
             return Optional.of(online.getUUID());
         }
-        Optional<UUID> known = EssData.get(server).findByName(name);
-        if (known.isPresent()) {
-            return known;
-        }
-        return server.getProfileCache().get(name).map(GameProfile::getId);
+        return EssData.get(server).findByName(name);
     }
 }

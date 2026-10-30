@@ -6,9 +6,12 @@ import com.mtmrails.esscmd.command.AfkCommand;
 import com.mtmrails.esscmd.command.BackCommand;
 import com.mtmrails.esscmd.command.EssentialsCommand;
 import com.mtmrails.esscmd.command.HomeCommands;
+import com.mtmrails.esscmd.command.LocationInfoCommands;
+import com.mtmrails.esscmd.command.PlayerInfoCommands;
 import com.mtmrails.esscmd.command.PlayerStateCommands;
 import com.mtmrails.esscmd.command.SpawnCommands;
 import com.mtmrails.esscmd.command.SpeedCommand;
+import com.mtmrails.esscmd.command.TextCommands;
 import com.mtmrails.esscmd.command.TpaCommands;
 import com.mtmrails.esscmd.command.VanillaAliases;
 import com.mtmrails.esscmd.command.WarpCommands;
@@ -19,6 +22,7 @@ import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.platform.Platform;
 import com.mtmrails.esscmd.player.AbilityService;
 import com.mtmrails.esscmd.player.AfkService;
+import com.mtmrails.esscmd.player.Sessions;
 import com.mtmrails.esscmd.teleport.TeleportService;
 import com.mtmrails.esscmd.teleport.TpaRequests;
 import net.minecraft.commands.CommandSourceStack;
@@ -74,12 +78,16 @@ public final class CmdEssentials {
         PlayerStateCommands.register(dispatcher);
         AfkCommand.register(dispatcher);
         VanillaAliases.register(dispatcher);
+        LocationInfoCommands.register(dispatcher);
+        PlayerInfoCommands.register(dispatcher);
+        TextCommands.register(dispatcher);
     }
 
     public static void onServerStopping(MinecraftServer server) {
         TeleportService.clear();
         TpaRequests.clear();
         AfkService.clear();
+        Sessions.clear();
     }
 
     public static void onServerTick(MinecraftServer server) {
@@ -92,6 +100,10 @@ public final class CmdEssentials {
     public static void onPlayerJoin(ServerPlayer player) {
         EssData.get(player.server).playerJoined(player.getUUID(), player.getGameProfile().getName());
         AfkService.onJoin(player);
+        Sessions.onJoin(player);
+        if (ConfigManager.get().motd.showOnJoin) {
+            TextCommands.showMotd(player);
+        }
         if (ConfigManager.get().spawn.firstJoinAtSpawn && Players.isFirstJoin(player)) {
             StoredLocation spawn = EssData.get(player.server).spawn();
             if (spawn != null) {
@@ -106,6 +118,7 @@ public final class CmdEssentials {
         TeleportService.cancel(player);
         TpaRequests.forget(player.getUUID());
         AfkService.onLeave(player);
+        Sessions.onLeave(player);
     }
 
     /** Called with the dead player, still at the place of death. */

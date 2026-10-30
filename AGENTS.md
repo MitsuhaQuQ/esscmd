@@ -13,7 +13,7 @@ All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1 only (docs/testing/p0-checklist.md); Forge and 1.18.2 / 1.21.1
 still need an in-game pass. P1 is planned (milestones M1–M7 under **Commands**); M1 and M2 are
-done (M2 not yet played in-game). The checklist
+done (M2 played in-game on Fabric 1.20.1), M3 is done but not yet played in-game. The checklist
 under **Commands** tracks progress.
 
 ## Target versions
@@ -237,10 +237,11 @@ below says otherwise. Mark each line `[x]` once every command on it is done.
   **Exception (decided):** `overrideVanilla` defaults to `["msg", "tell", "w"]`, because `/r`,
   `/ignore` and `/socialspy` only work if private messages go through our command. Admins can
   empty the list to get vanilla messaging back; `/emsg` always exists.
-- **Aliases of vanilla commands** (`command/VanillaAliases`): short names that only redirect
-  to a vanilla command, which keeps its own behaviour and permission check. So far: `/gm` →
-  `/gamemode` (requested by the user). These don't replace anything, so they're allowed by
-  default.
+- **Shortcuts for vanilla commands** (`command/VanillaAliases`, requested by the user): they
+  only redirect to, or run, the real vanilla command through the dispatcher, so vanilla keeps
+  its behaviour, feedback and permission check. They don't replace anything, so they're
+  allowed by default. So far: `/gm` → `/gamemode`; `/gamemode` (and `/gm`) also accept
+  `c s a sp` and `0 1 2 3` (merged into vanilla's node); `/gmc /gms /gma /gmsp [targets]`.
 - **Players**: parse `[player]` with `EntityArgument`. Acting on another player needs the
   command's `.others` permission node.
 - **`[player:]name`** (homes): lets admins manage other players' homes, under the
@@ -324,8 +325,14 @@ in-game checklist in `docs/testing/` and a commit.
 
 **M3: info**
 
-- [ ] `/getpos`, `/compass`, `/depth`, `/near`, `/seen`, `/whois`, `/playtime`, `/ping`,
-  `/motd`, `/rules`, `/info`
+- [x] `/getpos`, `/compass`, `/depth`, `/near`, `/seen`, `/whois`, `/playtime`, `/ping`,
+  `/motd`, `/rules`, `/info` (`command/LocationInfoCommands`, `PlayerInfoCommands`,
+  `TextCommands`; checklist `docs/testing/m3-checklist.md`, not yet played in-game)
+  - Player names resolve through `Players.findId`: online players, then names the mod recorded
+    on join. **Never** use the vanilla profile cache for lookups: for unknown names it calls
+    Mojang's API and blocks the server thread.
+  - Offline `/playtime` reads `<world>/stats/<uuid>.json` off the server thread.
+  - Text lines support `&` colour codes and `{player}`, `{online}`, `{max}`.
   - `/seen` and `/whois` read `PlayerRecord`. Only admins (`whois` node) see IPs.
   - `/ping` answers like Essentials ("Pong!") and adds the latency.
   - The MOTD is shown on join if `motd.showOnJoin` is set.

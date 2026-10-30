@@ -19,6 +19,8 @@ public final class EssConfig {
     public Tpa tpa = new Tpa();
     public Speed speed = new Speed();
     public Afk afk = new Afk();
+    public Near near = new Near();
+    public Motd motd = new Motd();
 
     public static final class Teleport {
         /** Seconds to wait before a player's own teleport happens. 0 teleports at once. */
@@ -58,6 +60,18 @@ public final class EssConfig {
         public int kickSeconds = 0;
         /** Announce AFK changes to everyone; otherwise only the player is told. */
         public boolean broadcast = true;
+    }
+
+    public static final class Near {
+        /** Radius for /near without a radius. */
+        public int defaultRadius = 200;
+        /** Larger requested radii are capped to this. */
+        public int maxRadius = 1000;
+    }
+
+    public static final class Motd {
+        /** Show motd_<lang>.txt (its intro, before the first #chapter) when a player joins. */
+        public boolean showOnJoin = true;
     }
 
     public static final class Speed {
