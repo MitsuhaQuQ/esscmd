@@ -9,3 +9,6 @@ out/
 
 # Source snapshot of essentialsx.net/commands; docs/essentials-commands.md is the text version
 EssentialsX.pdf
+
+# Local in-game test servers
+testserver/

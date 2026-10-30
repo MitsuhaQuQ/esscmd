@@ -346,6 +346,10 @@ To test another version, switch to it, test, then reset.
   happens only in dev; production jars don't contain that launcher.
 - Before finishing a task, run `./gradlew buildAndCollect`. A change that compiles on only the
   active version isn't done.
+- CI: `.github/workflows/build.yml` runs `buildAndCollect` on pushes to `main` and on pull
+  requests, with Temurin 17 and 21, and uploads the 6 jars as an artifact. Gradle finds the JDKs
+  through `org.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_21_X64`. If you
+  change the Java versions, update that list too.
 - In zsh, write node paths with braces (`":fabric:${mc}:build"`). zsh reads `$mc:r` or
   `$mc:s` as a variable modifier and mangles the path.
 - Planned: GameTest-based tests in `common` for the services (teleport, homes, datediff parser,

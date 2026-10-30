@@ -1,5 +1,7 @@
 # esscmd (cmdEssentials)
 
+[![Build](https://github.com/MitsuhaQuQ/esscmd/actions/workflows/build.yml/badge.svg)](https://github.com/MitsuhaQuQ/esscmd/actions/workflows/build.yml)
+
 A **server-only** Minecraft mod that brings the commands of the Bukkit
 [EssentialsX](https://essentialsx.net/commands) plugin to Fabric and Forge servers.
 
@@ -103,7 +105,8 @@ Gradle's toolchain support finds or downloads it.
 ./gradlew buildAndCollect
 ```
 
-All 6 jars end up in `build/libs/all/`.
+All 6 jars end up in `build/libs/all/`. GitHub Actions builds them on every push to `main` and
+every pull request. Download them from the run's **Artifacts**.
 
 ### Development
 
@@ -129,6 +132,10 @@ Useful tasks:
 Only the active version can be built or run on its own. A dev server doesn't exit after `stop`;
 press Ctrl+C once the world is saved. [AGENTS.md](AGENTS.md#build--run) covers these and other
 details, such as testing Forge 1.21.1 on a real server.
+
+## License
+
+[MIT](LICENSE)
 
 ## Credits
 

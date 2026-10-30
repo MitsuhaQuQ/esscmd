@@ -1,0 +1,36 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # JDK 21 runs Gradle and builds 1.21.1; the 1.18.2 and 1.20.1 targets need a JDK 17 toolchain.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: |
+            17
+            21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Point Gradle's toolchain lookup at the JDKs installed above.
+      - name: Build all jars
+        run: >-
+          ./gradlew buildAndCollect --stacktrace
+          -Porg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_21_X64
+          -Porg.gradle.java.installations.auto-download=false
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cmdessentials-${{ github.sha }}
+          path: build/libs/all/*.jar
+          if-no-files-found: error
