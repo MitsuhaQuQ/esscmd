@@ -11,8 +11,8 @@ commit messages in English.
 
 All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
-played in-game on Fabric 1.20.1, Forge 1.20.1 and Fabric 1.21.1 (docs/testing/p0-checklist.md);
-Forge 1.21.1 and both 1.18.2 targets still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M7 are
+played in-game on Fabric and Forge 1.18.2, Fabric and Forge 1.20.1 and Fabric 1.21.1
+(docs/testing/p0-checklist.md); Forge 1.21.1 still needs an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M7 are
 done, so P1 is complete. M6 and M7 have been played in-game on Fabric 1.20.1. P2 is in progress: M8
 (moderation) is done but not yet played in-game. M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
 Forge 1.20.1 and Fabric 1.21.1. The checklist under **Commands** tracks progress.
@@ -494,6 +494,9 @@ To test another version, switch to it, test, then reset.
   requests, with Temurin 17 and 21, and uploads the 6 jars as an artifact. Gradle finds the JDKs
   through `org.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_21_X64`. If you
   change the Java versions, update that list too.
+- Test servers on 1.18.2: take Fabric API from Modrinth. The aggregate `fabric-api` jars for
+  1.18.2 on maven.fabricmc.net are ~5 KB stubs with no modules, and the mod then crashes with
+  `NoClassDefFoundError: ...CommandRegistrationCallback`. Dev runs aren't affected.
 - In zsh, write node paths with braces (`":fabric:${mc}:build"`). zsh reads `$mc:r` or
   `$mc:s` as a variable modifier and mangles the path.
 - Unit tests: `./gradlew :common:1.20.1:test` (JUnit 5, `common/src/test`). Keep them free of
