@@ -13,7 +13,7 @@ All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1, Forge 1.20.1 and Fabric 1.21.1 (docs/testing/p0-checklist.md);
 Forge 1.21.1 and both 1.18.2 targets still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M7 are
-done, so P1 is complete (M6 and M7 not yet played in-game). M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
+done, so P1 is complete. M6 and M7 have been played in-game on Fabric 1.20.1. M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
 Forge 1.20.1 and Fabric 1.21.1. The checklist under **Commands** tracks progress.
 
 ## Target versions
@@ -387,7 +387,7 @@ in-game checklist in `docs/testing/` and a commit.
 
 - [x] Inventory: `/enderchest`, `/invsee`, `/hat`, `/repair`, `/more`, `/clearinventory`,
   `/clearinventoryconfirmtoggle`, `/disposal` (`command/InventoryCommands`, `menu/`; checklist
-  `docs/testing/m6-checklist.md`; console-tested on all targets, not yet played in-game)
+  `docs/testing/m6-checklist.md`; played in-game on Fabric 1.20.1)
   - `/invsee`: a 6-row chest menu backed by `InvseeContainer`, a live view of the target's 41
     slots; padding slots are locked. Without `invsee.modify` it's read-only. Online players only.
   - `/clearinventory`: `*` as first argument means every player; `*` as item means the main
@@ -399,7 +399,7 @@ in-game checklist in `docs/testing/` and a commit.
 **M7: kits**
 
 - [x] `/kit`, `/createkit`, `/delkit`, `/showkit`, `/kitreset` (`command/KitCommands`,
-  `data/Kit`, `compat/ItemData`; checklist `docs/testing/m7-checklist.md`, not yet played in-game)
+  `data/Kit`, `compat/ItemData`; checklist `docs/testing/m7-checklist.md`, played in-game on Fabric 1.20.1)
   - Items are stored as serialised tags with standard IDs and decoded through `ItemData`.
     `/showkit` prints the IDs. `/createkit <name> <delay> [opLevel]` takes the creator's
     inventory. Delay: seconds, a `1d2h` duration, or -1 for one claim. Claims are kept in
