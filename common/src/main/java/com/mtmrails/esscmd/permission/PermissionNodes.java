@@ -167,6 +167,22 @@ public final class PermissionNodes {
     public static final PermissionNode VANISH_OTHERS = node("vanish.others", ADMINS);
     public static final PermissionNode VANISH_SEE = node("vanish.see", ADMINS);
 
+    public static final PermissionNode PTIME = node("ptime", ADMINS);
+    public static final PermissionNode PTIME_OTHERS = node("ptime.others", ADMINS);
+    public static final PermissionNode PWEATHER = node("pweather", ADMINS);
+    public static final PermissionNode THUNDER = node("thunder", ADMINS);
+    public static final PermissionNode LIGHTNING = node("lightning", ADMINS);
+    public static final PermissionNode LIGHTNING_OTHERS = node("lightning.others", ADMINS);
+    public static final PermissionNode BURN = node("burn", ADMINS);
+    public static final PermissionNode ICE = node("ice", ADMINS);
+    public static final PermissionNode ICE_OTHERS = node("ice.others", ADMINS);
+    public static final PermissionNode REMOVE = node("remove", ADMINS);
+    public static final PermissionNode SPAWNER = node("spawner", ADMINS);
+    public static final PermissionNode SPAWNMOB = node("spawnmob", ADMINS);
+    public static final PermissionNode TREE = node("tree", ADMINS);
+    public static final PermissionNode BREAK = node("break", ADMINS);
+    public static final PermissionNode BREAK_BEDROCK = node("break.bedrock", OWNERS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -191,6 +207,7 @@ public final class PermissionNodes {
             MUTE, MUTE_EXEMPT, TEMPBAN, TEMPBAN_EXEMPT, TEMPBANIP, UNBAN, UNBANIP, KICKALL, SUDO, SUDO_EXEMPT, GC,
             HEAL_COOLDOWN_BYPASS, MUTE_UNLIMITED, TEMPBAN_UNLIMITED,
             SETJAIL, DELJAIL, JAILS, JAILEDPLAYERS, TOGGLEJAIL, JAIL_EXEMPT, VANISH, VANISH_OTHERS, VANISH_SEE,
+            PTIME, PTIME_OTHERS, PWEATHER, THUNDER, LIGHTNING, LIGHTNING_OTHERS, BURN, ICE, ICE_OTHERS, REMOVE, SPAWNER, SPAWNMOB, TREE, BREAK, BREAK_BEDROCK,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

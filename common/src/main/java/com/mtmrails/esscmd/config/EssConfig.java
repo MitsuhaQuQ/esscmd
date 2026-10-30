@@ -34,6 +34,8 @@ public final class EssConfig {
     public Kits kits = new Kits();
     public Items items = new Items();
     public Jail jail = new Jail();
+    /** spawnmob-limit: most mobs per /spawnmob. */
+    public int spawnmobLimit = 10;
     /** Commands this mod shouldn't register (Essentials' disabled-commands). Needs a restart. */
     public java.util.List<String> disabledCommands = new java.util.ArrayList<>();
 

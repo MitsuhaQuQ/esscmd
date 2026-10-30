@@ -23,6 +23,8 @@ import com.mtmrails.esscmd.command.TeleportExtraCommands;
 import com.mtmrails.esscmd.command.TextCommands;
 import com.mtmrails.esscmd.command.TpaCommands;
 import com.mtmrails.esscmd.command.VanillaAliases;
+import com.mtmrails.esscmd.command.ViewCommands;
+import com.mtmrails.esscmd.command.WorldCommands;
 import com.mtmrails.esscmd.command.WarpCommands;
 import com.mtmrails.esscmd.compat.CommandTrees;
 import com.mtmrails.esscmd.compat.Players;
@@ -35,6 +37,7 @@ import com.mtmrails.esscmd.message.Messages;
 import com.mtmrails.esscmd.player.AbilityService;
 import com.mtmrails.esscmd.player.AfkService;
 import com.mtmrails.esscmd.player.JailService;
+import com.mtmrails.esscmd.player.PlayerView;
 import com.mtmrails.esscmd.player.Sessions;
 import com.mtmrails.esscmd.player.VanishService;
 import com.mtmrails.esscmd.teleport.TeleportService;
@@ -103,6 +106,8 @@ public final class CmdEssentials {
         KitCommands.register(dispatcher);
         ModerationCommands.register(dispatcher);
         JailCommands.register(dispatcher);
+        ViewCommands.register(dispatcher);
+        WorldCommands.register(dispatcher);
         ConfigManager.get().disabledCommands.forEach(name -> CommandTrees.removeRootCommand(dispatcher, name));
         MessagingCommands.register(dispatcher);
         MailCommands.register(dispatcher);
@@ -115,6 +120,7 @@ public final class CmdEssentials {
         TpaRequests.clear();
         AfkService.clear();
         VanishService.clear();
+        PlayerView.clear();
         Sessions.clear();
         MessagingService.clear();
     }
@@ -125,6 +131,7 @@ public final class CmdEssentials {
         AbilityService.tick(server);
         AfkService.tick(server);
         JailService.tick(server);
+        PlayerView.tick(server);
     }
 
     public static void onPlayerJoin(ServerPlayer player) {
@@ -154,6 +161,7 @@ public final class CmdEssentials {
         TpaRequests.forget(player.getUUID());
         AfkService.onLeave(player);
         VanishService.onLeave(player);
+        PlayerView.onLeave(player);
         if (ConfigManager.get().god.removeOnDisconnect) {
             EssData.get(player.server).setGod(player.getUUID(), false);
         }
