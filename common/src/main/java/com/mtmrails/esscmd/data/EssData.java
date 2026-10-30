@@ -194,6 +194,36 @@ public final class EssData extends VersionedSavedData {
         }
     }
 
+    // /mute
+
+    public boolean muted(UUID player) {
+        PlayerRecord record = players.get(player);
+        if (record == null || record.muteUntil == 0) {
+            return false;
+        }
+        if (record.muteUntil > 0 && System.currentTimeMillis() >= record.muteUntil) {
+            clearMute(player);
+            return false;
+        }
+        return true;
+    }
+
+    public void setMute(UUID player, long until, String reason) {
+        PlayerRecord record = record(player);
+        record.muteUntil = until;
+        record.muteReason = reason;
+        setDirty();
+    }
+
+    public void clearMute(UUID player) {
+        PlayerRecord record = players.get(player);
+        if (record != null) {
+            record.muteUntil = 0;
+            record.muteReason = "";
+            setDirty();
+        }
+    }
+
     // Kits
 
     public Map<String, Kit> kits() {

@@ -101,6 +101,16 @@ the command's `.others` permission (admins by default).
 
 Items and blocks always use standard IDs such as `minecraft:diamond`.
 
+**Moderation**
+
+| Command | Description | Default |
+|---|---|---|
+| `/mute <player> [duration] [reason]` | Block chat, `/msg` and `/mail`; run again to unmute | admins |
+| `/tempban <player> <duration> [reason]`, `/tempbanip <player\|ip> <duration> [reason]` | Temporary bans on the vanilla ban lists | admins |
+| `/unban <player>`, `/unbanip <ip>`, `/kickall [reason]` | Remove bans; kick everyone else | admins |
+| `/gc` | Uptime, TPS, memory, chunks and entities | admins |
+| `/sudo <player> <command>` | Run a command as a player | OP level 4 |
+
 **Information**
 
 | Command | Description | Default |
@@ -170,7 +180,7 @@ commands listed in [docs/essentials-commands.md](docs/essentials-commands.md).
     `/whois`, `/motd`, …), teleport extensions (`/tpr`, `/top`, `/world`, …), gamemode
     shortcuts, messaging (`/msg`, `/r`, `/ignore`, `/socialspy`, `/mail`, `/nick`, …)
   - next: in-game testing of inventory tools and kits on all targets
-- **P2:** moderation, jails, world and item tools
+- **P2 (in progress):** moderation is done; next are jails, `/vanish`, world and item tools
 - **P3 (optional):** economy, fun commands
 - **Out of scope:** Discord/XMPP integration, `/customtext`, `/backup`
 

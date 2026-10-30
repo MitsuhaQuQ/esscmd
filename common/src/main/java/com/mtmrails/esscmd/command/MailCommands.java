@@ -15,6 +15,7 @@ import com.mtmrails.esscmd.data.MailMessage;
 import com.mtmrails.esscmd.data.PlayerRecord;
 import com.mtmrails.esscmd.message.Messages;
 import com.mtmrails.esscmd.permission.PermissionNodes;
+import com.mtmrails.esscmd.player.Mutes;
 import com.mtmrails.esscmd.util.DateDiff;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -136,6 +137,9 @@ public final class MailCommands {
     }
 
     private static int send(CommandSourceStack source, String targetName, String text, long expiresAt) {
+        if (source.getEntity() instanceof ServerPlayer sender && Mutes.blockChat(sender)) {
+            return 0;
+        }
         if (!(source.getEntity() instanceof ServerPlayer sender)) {
             return CommandUtil.fail(source, "mail.player-only");
         }

@@ -13,6 +13,7 @@ import com.mtmrails.esscmd.command.LocationInfoCommands;
 import com.mtmrails.esscmd.command.MailCommands;
 import com.mtmrails.esscmd.command.MessagingCommands;
 import com.mtmrails.esscmd.command.NickCommands;
+import com.mtmrails.esscmd.command.ModerationCommands;
 import com.mtmrails.esscmd.command.PlayerInfoCommands;
 import com.mtmrails.esscmd.command.PlayerStateCommands;
 import com.mtmrails.esscmd.command.SpawnCommands;
@@ -94,6 +95,7 @@ public final class CmdEssentials {
         TeleportExtraCommands.register(dispatcher);
         InventoryCommands.register(dispatcher);
         KitCommands.register(dispatcher);
+        ModerationCommands.register(dispatcher);
         MessagingCommands.register(dispatcher);
         MailCommands.register(dispatcher);
         BroadcastCommands.register(dispatcher);

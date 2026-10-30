@@ -18,6 +18,7 @@ import com.mtmrails.esscmd.message.MessagingService;
 import com.mtmrails.esscmd.message.Nicknames;
 import com.mtmrails.esscmd.permission.PermissionNode;
 import com.mtmrails.esscmd.permission.PermissionNodes;
+import com.mtmrails.esscmd.player.Mutes;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -93,6 +94,9 @@ public final class MessagingCommands {
     }
 
     private static int send(CommandSourceStack source, ServerPlayer sender, ServerPlayer target, String text) {
+        if (Mutes.blockChat(sender)) {
+            return 0;
+        }
         if (sender == target) {
             return CommandUtil.fail(source, "msg.self");
         }

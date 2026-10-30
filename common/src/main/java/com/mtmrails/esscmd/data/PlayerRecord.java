@@ -37,6 +37,9 @@ public final class PlayerRecord {
     boolean replyToRecipient;
     boolean socialSpy;
     boolean clearConfirm;
+    /** Epoch millis the mute ends; 0 = not muted, -1 = until unmuted. */
+    long muteUntil;
+    String muteReason = "";
     /** Kit name -> epoch millis of the last claim. */
     final Map<String, Long> kitUses = new TreeMap<>();
     String nickname = "";
@@ -121,6 +124,8 @@ public final class PlayerRecord {
             tag.put("logoutLocation", logoutLocation.toTag());
         }
         tag.putBoolean("clearConfirm", clearConfirm);
+        tag.putLong("muteUntil", muteUntil);
+        tag.putString("muteReason", muteReason);
         CompoundTag kitTag = new CompoundTag();
         kitUses.forEach(kitTag::putLong);
         tag.put("kitUses", kitTag);
@@ -153,6 +158,8 @@ public final class PlayerRecord {
             record.logoutLocation = StoredLocation.fromTag(tag.getCompound("logoutLocation"));
         }
         record.clearConfirm = tag.getBoolean("clearConfirm");
+        record.muteUntil = tag.getLong("muteUntil");
+        record.muteReason = tag.getString("muteReason");
         CompoundTag kitTag = tag.getCompound("kitUses");
         for (String kit : kitTag.getAllKeys()) {
             record.kitUses.put(kit, kitTag.getLong(kit));

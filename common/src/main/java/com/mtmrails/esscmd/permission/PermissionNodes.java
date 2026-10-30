@@ -7,6 +7,8 @@ import com.mtmrails.esscmd.config.ConfigManager;
 public final class PermissionNodes {
     private static final int ALL_PLAYERS = 0;
     private static final int ADMINS = 2;
+    /** Running commands as someone else is as powerful as the console. */
+    private static final int OWNERS = 4;
 
     public static final PermissionNode ESSENTIALS = node("essentials", ALL_PLAYERS);
     public static final PermissionNode ESSENTIALS_RELOAD = node("essentials.reload", ADMINS);
@@ -139,6 +141,18 @@ public final class PermissionNodes {
     public static final PermissionNode DELKIT = node("delkit", ADMINS);
     public static final PermissionNode KITRESET = node("kitreset", ADMINS);
 
+    public static final PermissionNode MUTE = node("mute", ADMINS);
+    public static final PermissionNode MUTE_EXEMPT = node("mute.exempt", ADMINS);
+    public static final PermissionNode TEMPBAN = node("tempban", ADMINS);
+    public static final PermissionNode TEMPBAN_EXEMPT = node("tempban.exempt", ADMINS);
+    public static final PermissionNode TEMPBANIP = node("tempbanip", ADMINS);
+    public static final PermissionNode UNBAN = node("unban", ADMINS);
+    public static final PermissionNode UNBANIP = node("unbanip", ADMINS);
+    public static final PermissionNode KICKALL = node("kickall", ADMINS);
+    public static final PermissionNode SUDO = node("sudo", OWNERS);
+    public static final PermissionNode SUDO_EXEMPT = node("sudo.exempt", OWNERS);
+    public static final PermissionNode GC = node("gc", ADMINS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -160,6 +174,7 @@ public final class PermissionNodes {
             BROADCAST, BROADCASTWORLD, NICK, NICK_OTHERS, REALNAME,
             ENDERCHEST, ENDERCHEST_OTHERS, INVSEE, INVSEE_MODIFY, HAT, REPAIR, REPAIR_ALL, MORE, CLEARINVENTORY, CLEARINVENTORY_OTHERS, DISPOSAL, WORKBENCH, ANVIL, CARTOGRAPHYTABLE, GRINDSTONE, LOOM, SMITHINGTABLE, STONECUTTER,
             KIT, KIT_OTHERS, SHOWKIT, CREATEKIT, DELKIT, KITRESET,
+            MUTE, MUTE_EXEMPT, TEMPBAN, TEMPBAN_EXEMPT, TEMPBANIP, UNBAN, UNBANIP, KICKALL, SUDO, SUDO_EXEMPT, GC,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

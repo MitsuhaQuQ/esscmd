@@ -13,7 +13,8 @@ All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1, Forge 1.20.1 and Fabric 1.21.1 (docs/testing/p0-checklist.md);
 Forge 1.21.1 and both 1.18.2 targets still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M7 are
-done, so P1 is complete. M6 and M7 have been played in-game on Fabric 1.20.1. M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
+done, so P1 is complete. M6 and M7 have been played in-game on Fabric 1.20.1. P2 is in progress: M8
+(moderation) is done but not yet played in-game. M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The P0 and M5 core checks also passed on
 Forge 1.20.1 and Fabric 1.21.1. The checklist under **Commands** tracks progress.
 
 ## Target versions
@@ -124,8 +125,8 @@ cmdEssentials/
   loader-specific mixins when unavoidable. Prefer events over mixins. Current mixins:
   - `ServerPlayerMixin`: before 1.20.2 vanilla doesn't keep the client's language, so it
     stores it (see `Players.language`). From 1.20.2 it's empty and `clientInformation()` is used.
-  - `ServerGamePacketListenerImplMixin`: chat and command activity for AFK. Handlers:
-    `handleChat` (all), `handleChatCommand` (1.19+), `handleSignedChatCommand` (1.20.5+).
+  - `ServerGamePacketListenerImplMixin`: chat and command activity for AFK, plus `/mute`.
+    Expected injected handlers: 2 on 1.18.2, 3 on 1.20.1, 4 on 1.21.1.
   - **Verifying mixins**: targets like the network handler only load when a player joins, so
     a broken injection would crash then. Start a server with
     `-Dcmdessentials.debug.loadMixinTargets=true` (loads every target at startup; add new
@@ -410,8 +411,19 @@ in-game checklist in `docs/testing/` and a commit.
 
 ### P2: admin, world, items
 
-- [ ] Moderation: `/mute`, `/tempban`, `/tempbanip`, `/unban`, `/unbanip`, `/kickall`,
-  `/vanish`, `/sudo`, `/gc`
+Build P2 in milestones like P1: M8 moderation (below), M9 jail, M10 `/vanish` and the
+vanilla-clash versions, M11 per-player view and world tools, M12 items and power tools.
+
+- [x] M8 moderation: `/mute`, `/tempban`, `/tempbanip`, `/unban`, `/unbanip`, `/kickall`,
+  `/sudo`, `/gc` (`command/ModerationCommands`, `player/Mutes`; checklist
+  `docs/testing/m8-checklist.md`; injections verified on all targets, not yet played in-game)
+  - `/mute` cancels at `broadcastChatMessage` (1.19.3+) or the private
+    `handleChat(FilteredText)` (before), never when the packet arrives: dropping a chat packet
+    desyncs signed chat's last-seen tracking and gets the player kicked. It also blocks `/msg`
+    and `/mail`; other commands keep working.
+  - Bans use the vanilla ban lists, so `/banlist` and `/pardon` work with them.
+  - `/sudo` defaults to OP level 4: it is as powerful as the console.
+- [ ] M10: `/vanish`
 - [ ] Vanilla-clash versions (only as `e` names): `/ban`, `/banip`, `/kick`, `/kill`, `/list`,
   `/me`, `/gamemode`, `/time`, `/weather`, `/give`, `/tp`
 - [ ] Jail: `/setjail`, `/deljail`, `/jails`, `/togglejail`, `/jailedplayers`
