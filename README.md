@@ -7,8 +7,11 @@ A **server-only** Minecraft mod that brings the commands of the Bukkit
 
 Install it on the server only. Players join with an unmodified vanilla client.
 
-> **Status: early development.** The first batch of commands (homes, spawn, `/speed`, `/back`,
-> `/tpa`, warps) is implemented. More are planned; see the [roadmap](#roadmap).
+> **Status: early development.** Homes, spawn, warps, `/back`, the `/tpa` family, player
+> state (`/fly`, `/god`, `/heal`, AFK, …), info commands and teleport extensions (`/tpr`,
+> `/top`, `/world`, …) are implemented. Messaging, inventory tools and kits come next; see the
+> [roadmap](#roadmap). Tested in-game on Fabric 1.20.1; the other targets pass build and
+> console tests.
 
 ## Supported versions
 
@@ -33,37 +36,83 @@ The mod doesn't load in singleplayer or on clients. That is intentional.
 ## Commands
 
 Syntax follows [EssentialsX](https://essentialsx.net/commands). "Admins" means OP level 2
-unless a permission plugin says otherwise.
+unless a permission plugin says otherwise. `[player]` arguments that act on someone else need
+the command's `.others` permission (admins by default).
+
+**Homes, spawn and warps**
 
 | Command | Description | Default |
 |---|---|---|
 | `/sethome [name]`, `/home [name]`, `/delhome <name>`, `/renamehome <name> <new>` | Homes. No bed needed, work across dimensions. Admins can use `player:name`. | everyone |
-| `/spawn [player]` | Teleport to the spawn (others: admins) | everyone |
+| `/spawn [player]` | Teleport to the spawn | everyone |
 | `/setspawn` | Set the spawn where you stand | admins |
 | `/back [player]` | Return to where you were before the last teleport or death | everyone |
+| `/warp [warp\|page] [player]`, `/warpinfo <warp>` | List warps or teleport to one | everyone |
+| `/setwarp <warp>`, `/delwarp <warp>` | Manage warps | admins |
+
+**Teleport requests**
+
+| Command | Description | Default |
+|---|---|---|
 | `/tpa <player>`, `/tpahere <player>` | Ask to teleport to a player, or ask them to come to you | everyone |
 | `/tpaccept [player]`, `/tpdeny [player]`, `/tpacancel [player]` | Answer or cancel requests (chat buttons included) | everyone |
 | `/tptoggle [player] [on\|off]`, `/tpauto [player] [on\|off]` | Block requests, or accept them automatically | everyone |
-| `/warp [warp] [player]`, `/warpinfo <warp>` | List warps or teleport to one | everyone |
-| `/setwarp <warp>`, `/delwarp <warp>` | Manage warps | admins |
+| `/tpaall [player]` | Ask everyone to come to you | admins |
+
+**More teleports**
+
+| Command | Description | Default |
+|---|---|---|
+| `/tpr` | Random safe spot in the dimension's configured ring | everyone |
+| `/tphere <player>`, `/tpo <player> [target]`, `/tpohere <player>` | Bring or send players; `tpo`/`tpohere` ignore `/tptoggle` | admins |
+| `/tppos <x> <y> <z> [yaw] [pitch] [world]` | Teleport to coordinates (`~` works) | admins |
+| `/tpall [player]`, `/tpoffline <player>` | Bring everyone; go to a player's logout spot | admins |
+| `/top`, `/bottom`, `/jump` | Highest or lowest safe spot here, or the block you look at | admins |
+| `/world [dimension]` | Switch dimension (Nether at scaled coordinates) | admins |
+| `/settpr <world> [center\|minrange\|maxrange] [value]` | Configure `/tpr` | admins |
+
+**Player state**
+
+| Command | Description | Default |
+|---|---|---|
+| `/fly`, `/god` `[player] [on\|off]` | Flight and invulnerability; kept across relog, respawn and gamemode changes | admins |
+| `/heal`, `/feed`, `/rest`, `/ext` `[player]` | Heal (also clears harmful effects), fill hunger, reset phantoms, put out fire | admins |
 | `/speed [walk\|fly] <0-10> [player]` | Walking or flying speed (1 = vanilla) | admins |
-| `/cmdessentials [reload]` (alias `/ess`) | Version info; reload config and messages | everyone / admins |
+| `/afk [message]` | Toggle AFK; players also go AFK automatically after 5 minutes idle | everyone |
+| `/suicide` | Kill yourself | everyone |
+| `/gmc`, `/gms`, `/gma`, `/gmsp` `[targets]`, `/gm` | Gamemode shortcuts; `/gamemode` and `/gm` also accept `c s a sp` and `0-3`. They run vanilla `/gamemode`, so its permission applies | admins |
+
+**Information**
+
+| Command | Description | Default |
+|---|---|---|
+| `/getpos [player]`, `/compass`, `/depth` | Position, facing, height above sea level | everyone |
+| `/seen <player>`, `/playtime [player]`, `/ping` | Last seen, play time, latency | everyone |
+| `/near [player] [radius]`, `/whois <player>` | Nearby players; full player details (IP with `whois.ip`) | admins |
+| `/motd`, `/rules`, `/info` `[chapter] [page]` | Server texts, editable per language | everyone |
+| `/cmdessentials [reload]` (alias `/ess`) | Version info; reload config, messages and texts | everyone / admins |
 
 A player's own teleports wait 3 seconds and are cancelled if they move. Admins skip the wait.
 
 ## Configuration
 
-`config/cmdessentials/config.json` is created on first start. It covers the teleport delay
-and cooldown, home limit, spawn behaviour, `/back` on death, `/tpa` timeout and the speed
-limits. Run `/cmdessentials reload` after editing it.
+Everything lives in `config/cmdessentials/`, created on first start. Run
+`/cmdessentials reload` after editing.
+
+- `config.json`: teleport delay and cooldown, home limit, spawn behaviour, `/back` on death,
+  `/tpa` timeout, speed limits, AFK timers (`afk.autoSeconds`, `afk.kickSeconds`), `/near`
+  radius, MOTD on join, and the `/tpr` areas per dimension.
+- `messages_<lang>.json`: every message (see [Languages](#languages)).
+- `motd_<lang>.txt`, `rules_<lang>.txt`, `info_<lang>.txt`: texts for `/motd`, `/rules` and
+  `/info`. Lines starting with `#name` begin a chapter, `##` lines are comments, `&` colour
+  codes work, and `{player}`, `{online}`, `{max}` are replaced.
 
 ## Languages
 
-Messages live in `config/cmdessentials/messages_<lang>.json`. English and Simplified Chinese
-are included. **Each player sees messages in their own Minecraft language** when a file for
-it exists. Otherwise the server's `language` setting is used, then English. To add a
-language, copy `messages_en_us.json` to, for example, `messages_ja_jp.json`, translate it and
-run `/cmdessentials reload`.
+English and Simplified Chinese are included. **Each player sees messages and texts in their
+own Minecraft language** when a file for it exists. Otherwise the server's `language` setting
+is used, then English. To add a language, copy `messages_en_us.json` (and the text files) to,
+for example, `messages_ja_jp.json`, translate it and run `/cmdessentials reload`.
 
 ## Permissions
 
@@ -85,16 +134,22 @@ LuckPerms meta value on Fabric, or an integer node on Forge.
 The full plan lives in [AGENTS.md](AGENTS.md#commands). It is based on the 163 EssentialsX
 commands listed in [docs/essentials-commands.md](docs/essentials-commands.md).
 
-- **P0 (done):** `/sethome` `/home` `/delhome` `/renamehome`, `/setspawn` `/spawn`, `/speed`,
-  `/back`, `/tpa` and friends, warps
-- **P1:** more teleport commands, player state (`/fly`, `/god`, `/heal`, …), messaging and
-  mail, inventory tools, portable workbenches, kits
+- **P0 (done):** homes, spawn, `/speed`, `/back`, `/tpa` and friends, warps
+- **P1 (in progress):**
+  - done: player state (`/fly`, `/god`, `/heal`, `/afk`, …), info commands (`/seen`,
+    `/whois`, `/motd`, …), teleport extensions (`/tpr`, `/top`, `/world`, …), gamemode
+    shortcuts
+  - next: messaging (`/msg`, `/r`, `/ignore`, `/socialspy`, `/mail`, `/nick`, …), inventory
+    tools and portable workbenches, kits
 - **P2:** moderation, jails, world and item tools
 - **P3 (optional):** economy, fun commands
 - **Out of scope:** Discord/XMPP integration, `/customtext`, `/backup`
 
-Vanilla commands (`/msg`, `/give`, `/tp`, …) are never replaced by default. The Essentials
-versions are registered under their `e`-prefixed names (`/emsg`, `/egive`, …).
+Vanilla commands are not replaced by default. Where the names clash, the Essentials version
+gets an `e`-prefixed name (`/egive`, `/etp`, …). The planned exception is private messages:
+`/msg`, `/tell` and `/w` will be replaced by default so that `/r`, `/ignore` and `/socialspy`
+work (configurable with `overrideVanilla`). Shortcuts like `/gmc` only call the vanilla
+command.
 
 ## Building from source
 
@@ -105,8 +160,9 @@ Gradle's toolchain support finds or downloads it.
 ./gradlew buildAndCollect
 ```
 
-All 6 jars end up in `build/libs/all/`. GitHub Actions builds them on every push to `main` and
-every pull request. Download them from the run's **Artifacts**.
+All 6 jars end up in `build/libs/all/`. Unit tests run with `./gradlew :common:1.20.1:test`.
+GitHub Actions builds the jars and runs the tests on every push to `main` and every pull
+request. Download the jars from the run's **Artifacts**.
 
 ### Development
 
@@ -131,7 +187,8 @@ Useful tasks:
 
 Only the active version can be built or run on its own. A dev server doesn't exit after `stop`;
 press Ctrl+C once the world is saved. [AGENTS.md](AGENTS.md#build--run) covers these and other
-details, such as testing Forge 1.21.1 on a real server.
+details, such as testing Forge 1.21.1 on a real server. In-game test checklists are in
+[docs/testing/](docs/testing/).
 
 ## License
 

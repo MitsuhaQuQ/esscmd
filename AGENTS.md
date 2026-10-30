@@ -47,9 +47,12 @@ cmdEssentials/
 │     ├─ platform/Platform.java  # the loader abstraction (ServiceLoader)
 │     ├─ permission/           # PermissionNode, IntOption, PermissionNodes (the one list)
 │     ├─ config/               # EssConfig (JSON) and ConfigManager (load, async reload)
-│     ├─ message/Messages.java # per-player translated messages
-│     ├─ data/                 # EssData (SavedData) and StoredLocation
-│     ├─ teleport/             # TeleportService (delay, cooldown, /back), TpaRequests
+│     ├─ message/              # Messages (per-player), TextFiles/TextDocument, Broadcast
+│     ├─ data/                 # EssData (SavedData), PlayerRecord, StoredLocation
+│     ├─ teleport/             # TeleportService (delay, cooldown, /back), TpaRequests,
+│     │                        #   SafeSpots, RandomTeleport
+│     ├─ player/               # AbilityService (/fly, /god), AfkService, Sessions
+│     ├─ util/                 # DateDiff, Pager (pure Java, unit-tested)
 │     ├─ compat/               # version adapters, the only place with //? blocks
 │     │  └─ mixin/             # mixins (cmdessentials.common.mixins.json)
 │     └─ command/              # one class per command or command family
@@ -189,10 +192,12 @@ well as setting `redirect`, because a bare Brigadier redirect does nothing.
 
 ## Data & config
 
-- Persistent data (homes, warps, the spawn point, `/back` locations, `/tptoggle` and `/tpauto`)
-  is one `EssData` (`SavedData`) on the overworld: `<world>/data/cmdessentials.dat`. Locations
-  are `StoredLocation`s: dimension id, position, yaw and pitch. `/tpa` requests and pending
-  teleports are in memory only.
+- Persistent data is one `EssData` (`SavedData`, `format: 2`) on the overworld:
+  `<world>/data/cmdessentials.dat`. Server-wide: warps and the spawn point. Per player, one
+  `PlayerRecord`: homes, `/back`, `/tptoggle`, `/tpauto`, `/fly`, `/god`, last name, last seen
+  and logout location. Locations
+  are `StoredLocation`s: dimension id, position, yaw and pitch. `/tpa` requests, pending
+  teleports, AFK state and session start times are in memory only.
 - Config: `config/cmdessentials/config.json` (`EssConfig`), parsed with the Gson that ships
   with Minecraft. That's why it's JSON and not TOML: neither loader would need an extra
   library. Missing options are filled with defaults and written back. `/cmdessentials reload`
