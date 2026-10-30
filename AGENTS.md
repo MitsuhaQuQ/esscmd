@@ -13,8 +13,7 @@ All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1 only (docs/testing/p0-checklist.md); Forge and 1.18.2 / 1.21.1
 still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M5 are
-done. M2, M3 and M4 have been played in-game on Fabric 1.20.1; M5 has passed build and console
-smoke tests and still needs an in-game pass. The checklist under **Commands** tracks progress.
+done. M2, M3, M4 and M5 have been played in-game on Fabric 1.20.1. The checklist under **Commands** tracks progress.
 
 ## Target versions
 
@@ -372,7 +371,7 @@ in-game checklist in `docs/testing/` and a commit.
 - [x] `/msg` (+ `/tell`, `/w` via `overrideVanilla`, always `/emsg`), `/r`, `/msgtoggle`,
   `/rtoggle`, `/ignore`, `/socialspy`, `/helpop`, `/mail`, `/broadcast`, `/broadcastworld`
 - [x] `/nick`, `/realname` (`docs/testing/m5-checklist.md`; all six targets pass console smoke
-  tests with mixin verification; in-game pass pending)
+  tests with mixin verification; played in-game on Fabric 1.20.1)
   - Nicknames need a common mixin on `Player#getDisplayName` and the tab-list name, plus a
     tab-list update packet when a nick changes (version-specific, see M1 compat).
   - `/ignore` (decided): blocks the ignored player's `/msg`, `/mail` and `/tpa` requests.
