@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import com.mtmrails.esscmd.compat.Players;
+import com.mtmrails.esscmd.compat.TabListNames;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.config.EssConfig;
 import com.mtmrails.esscmd.message.Broadcast;
@@ -59,6 +60,7 @@ public final class AfkService {
             markActive(player);
             announce(player, "afk.back", name);
         }
+        TabListNames.refresh(player);
     }
 
     public static void onJoin(ServerPlayer player) {

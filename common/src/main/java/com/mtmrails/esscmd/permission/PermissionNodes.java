@@ -93,6 +93,26 @@ public final class PermissionNodes {
     public static final PermissionNode SETTPR = node("settpr", ADMINS);
     public static final PermissionNode WORLD = node("world", ADMINS);
 
+    public static final PermissionNode MSG = node("msg", ALL_PLAYERS);
+    public static final PermissionNode REPLY = node("reply", ALL_PLAYERS);
+    public static final PermissionNode MSGTOGGLE = node("msgtoggle", ALL_PLAYERS);
+    public static final PermissionNode MSGTOGGLE_OTHERS = node("msgtoggle.others", ADMINS);
+    public static final PermissionNode RTOGGLE = node("rtoggle", ALL_PLAYERS);
+    public static final PermissionNode RTOGGLE_OTHERS = node("rtoggle.others", ADMINS);
+    public static final PermissionNode IGNORE = node("ignore", ALL_PLAYERS);
+    public static final PermissionNode SOCIALSPY = node("socialspy", ADMINS);
+    public static final PermissionNode SOCIALSPY_OTHERS = node("socialspy.others", ADMINS);
+    public static final PermissionNode HELPOP = node("helpop", ALL_PLAYERS);
+    public static final PermissionNode HELPOP_RECEIVE = node("helpop.receive", ADMINS);
+    public static final PermissionNode MAIL = node("mail", ALL_PLAYERS);
+    public static final PermissionNode MAIL_OTHERS = node("mail.others", ADMINS);
+    public static final PermissionNode MAIL_SENDALL = node("mail.sendall", ADMINS);
+    public static final PermissionNode BROADCAST = node("broadcast", ADMINS);
+    public static final PermissionNode BROADCASTWORLD = node("broadcastworld", ADMINS);
+    public static final PermissionNode NICK = node("nick", ADMINS);
+    public static final PermissionNode NICK_OTHERS = node("nick.others", ADMINS);
+    public static final PermissionNode REALNAME = node("realname", ALL_PLAYERS);
+
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
 
@@ -109,6 +129,9 @@ public final class PermissionNodes {
             GETPOS, GETPOS_OTHERS, COMPASS, DEPTH, NEAR, NEAR_OTHERS, SEEN, WHOIS, WHOIS_IP,
             PLAYTIME, PLAYTIME_OTHERS, PING, MOTD, RULES, INFO,
             TPHERE, TPOHERE, TPO, TPPOS, TPALL, TPAALL, TPOFFLINE, TOP, BOTTOM, JUMP, TPR, SETTPR, WORLD,
+            MSG, REPLY, MSGTOGGLE, MSGTOGGLE_OTHERS, RTOGGLE, RTOGGLE_OTHERS, IGNORE,
+            SOCIALSPY, SOCIALSPY_OTHERS, HELPOP, HELPOP_RECEIVE, MAIL, MAIL_OTHERS, MAIL_SENDALL,
+            BROADCAST, BROADCASTWORLD, NICK, NICK_OTHERS, REALNAME,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =

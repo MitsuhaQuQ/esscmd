@@ -4,9 +4,13 @@ import java.io.IOException;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mtmrails.esscmd.command.AfkCommand;
 import com.mtmrails.esscmd.command.BackCommand;
+import com.mtmrails.esscmd.command.BroadcastCommands;
 import com.mtmrails.esscmd.command.EssentialsCommand;
 import com.mtmrails.esscmd.command.HomeCommands;
 import com.mtmrails.esscmd.command.LocationInfoCommands;
+import com.mtmrails.esscmd.command.MailCommands;
+import com.mtmrails.esscmd.command.MessagingCommands;
+import com.mtmrails.esscmd.command.NickCommands;
 import com.mtmrails.esscmd.command.PlayerInfoCommands;
 import com.mtmrails.esscmd.command.PlayerStateCommands;
 import com.mtmrails.esscmd.command.SpawnCommands;
@@ -21,6 +25,8 @@ import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.platform.Platform;
+import com.mtmrails.esscmd.message.MessagingService;
+import com.mtmrails.esscmd.message.Messages;
 import com.mtmrails.esscmd.player.AbilityService;
 import com.mtmrails.esscmd.player.AfkService;
 import com.mtmrails.esscmd.player.Sessions;
@@ -83,6 +89,10 @@ public final class CmdEssentials {
         PlayerInfoCommands.register(dispatcher);
         TextCommands.register(dispatcher);
         TeleportExtraCommands.register(dispatcher);
+        MessagingCommands.register(dispatcher);
+        MailCommands.register(dispatcher);
+        BroadcastCommands.register(dispatcher);
+        NickCommands.register(dispatcher);
     }
 
     public static void onServerStopping(MinecraftServer server) {
@@ -90,6 +100,7 @@ public final class CmdEssentials {
         TpaRequests.clear();
         AfkService.clear();
         Sessions.clear();
+        MessagingService.clear();
     }
 
     public static void onServerTick(MinecraftServer server) {
@@ -103,6 +114,10 @@ public final class CmdEssentials {
         EssData.get(player.server).playerJoined(player.getUUID(), player.getGameProfile().getName());
         AfkService.onJoin(player);
         Sessions.onJoin(player);
+        int unreadMail = EssData.get(player.server).unreadMail(player.getUUID(), System.currentTimeMillis());
+        if (unreadMail > 0) {
+            Players.send(player, Messages.info(player, "mail.unread", unreadMail));
+        }
         if (ConfigManager.get().motd.showOnJoin) {
             TextCommands.showMotd(player);
         }
@@ -121,6 +136,7 @@ public final class CmdEssentials {
         TpaRequests.forget(player.getUUID());
         AfkService.onLeave(player);
         Sessions.onLeave(player);
+        MessagingService.forget(player.getUUID());
     }
 
     /** Called with the dead player, still at the place of death. */

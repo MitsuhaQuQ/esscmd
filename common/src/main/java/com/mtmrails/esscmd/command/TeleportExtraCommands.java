@@ -185,7 +185,8 @@ public final class TeleportExtraCommands {
         int timeout = ConfigManager.get().tpa.timeoutSeconds;
         int sent = 0;
         for (ServerPlayer target : server.getPlayerList().getPlayers()) {
-            if (target == requester || data.teleportDisabled(target.getUUID())) {
+            if (target == requester || data.teleportDisabled(target.getUUID())
+                    || data.ignores(target.getUUID(), requester.getUUID())) {
                 continue;
             }
             TpaRequests.add(new TpaRequests.Request(requester.getUUID(), name(requester), target.getUUID(), name(target),

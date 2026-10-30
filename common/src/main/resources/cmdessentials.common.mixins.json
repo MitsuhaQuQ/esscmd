@@ -4,7 +4,10 @@
   "package": "com.mtmrails.esscmd.compat.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "CommandNodeAccessor",
+    "PlayerMixin",
     "ServerGamePacketListenerImplMixin",
+    "ServerPlayerListNameMixin",
     "ServerPlayerMixin"
   ],
   "injectors": {

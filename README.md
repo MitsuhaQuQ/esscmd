@@ -9,7 +9,7 @@ Install it on the server only. Players join with an unmodified vanilla client.
 
 > **Status: early development.** Homes, spawn, warps, `/back`, the `/tpa` family, player
 > state (`/fly`, `/god`, `/heal`, AFK, …), info commands and teleport extensions (`/tpr`,
-> `/top`, `/world`, …) are implemented. Messaging, inventory tools and kits come next; see the
+> `/top`, `/world`, …), messaging, mail and nicknames are implemented. Inventory tools and kits come next; see the
 > [roadmap](#roadmap). Tested in-game on Fabric 1.20.1; the other targets pass build and
 > console tests.
 
@@ -92,6 +92,17 @@ the command's `.others` permission (admins by default).
 | `/motd`, `/rules`, `/info` `[chapter] [page]` | Server texts, editable per language | everyone |
 | `/cmdessentials [reload]` (alias `/ess`) | Version info; reload config, messages and texts | everyone / admins |
 
+**Messaging**
+
+| Command | Description | Default |
+|---|---|---|
+| `/msg <player> <message>`, `/r <message>` | Private messages and replies (`/emsg` is always available) | everyone |
+| `/msgtoggle`, `/rtoggle`, `/ignore <player>` | Message acceptance, reply direction and ignored players | everyone |
+| `/mail` `read\|clear\|send\|sendtemp\|sendall` | Persistent and expiring player mail | everyone / admins |
+| `/helpop <message>`, `/socialspy` | Contact staff; monitor private messages and mail | everyone / admins |
+| `/broadcast`, `/broadcastworld` | Server-wide or dimension-wide announcements | admins |
+| `/nick [player] <nickname\|off>`, `/realname <nickname>` | Persistent display and tab-list nicknames | admins / everyone |
+
 A player's own teleports wait 3 seconds and are cancelled if they move. Admins skip the wait.
 
 ## Configuration
@@ -101,7 +112,7 @@ Everything lives in `config/cmdessentials/`, created on first start. Run
 
 - `config.json`: teleport delay and cooldown, home limit, spawn behaviour, `/back` on death,
   `/tpa` timeout, speed limits, AFK timers (`afk.autoSeconds`, `afk.kickSeconds`), `/near`
-  radius, MOTD on join, and the `/tpr` areas per dimension.
+  radius, MOTD on join, `/tpr` areas per dimension, and `overrideVanilla` command names.
 - `messages_<lang>.json`: every message (see [Languages](#languages)).
 - `motd_<lang>.txt`, `rules_<lang>.txt`, `info_<lang>.txt`: texts for `/motd`, `/rules` and
   `/info`. Lines starting with `#name` begin a chapter, `##` lines are comments, `&` colour
@@ -138,16 +149,15 @@ commands listed in [docs/essentials-commands.md](docs/essentials-commands.md).
 - **P1 (in progress):**
   - done: player state (`/fly`, `/god`, `/heal`, `/afk`, …), info commands (`/seen`,
     `/whois`, `/motd`, …), teleport extensions (`/tpr`, `/top`, `/world`, …), gamemode
-    shortcuts
-  - next: messaging (`/msg`, `/r`, `/ignore`, `/socialspy`, `/mail`, `/nick`, …), inventory
-    tools and portable workbenches, kits
+    shortcuts, messaging (`/msg`, `/r`, `/ignore`, `/socialspy`, `/mail`, `/nick`, …)
+  - next: inventory tools and portable workbenches, kits
 - **P2:** moderation, jails, world and item tools
 - **P3 (optional):** economy, fun commands
 - **Out of scope:** Discord/XMPP integration, `/customtext`, `/backup`
 
 Vanilla commands are not replaced by default. Where the names clash, the Essentials version
-gets an `e`-prefixed name (`/egive`, `/etp`, …). The planned exception is private messages:
-`/msg`, `/tell` and `/w` will be replaced by default so that `/r`, `/ignore` and `/socialspy`
+gets an `e`-prefixed name (`/egive`, `/etp`, …). The exception is private messages:
+`/msg`, `/tell` and `/w` are replaced by default so that `/r`, `/ignore` and `/socialspy`
 work (configurable with `overrideVanilla`). Shortcuts like `/gmc` only call the vanilla
 command.
 

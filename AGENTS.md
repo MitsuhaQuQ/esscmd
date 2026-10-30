@@ -12,9 +12,9 @@ commit messages in English.
 All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
 `/cmdessentials`) is implemented and passes console smoke tests on every target. It has been
 played in-game on Fabric 1.20.1 only (docs/testing/p0-checklist.md); Forge and 1.18.2 / 1.21.1
-still need an in-game pass. P1 is planned (milestones M1–M7 under **Commands**); M1 and M2 are
-done; M2–M4 are also done. M2, M3 and M4 have been played in-game on Fabric 1.20.1. The checklist
-under **Commands** tracks progress.
+still need an in-game pass. P1 is in progress (milestones M1–M7 under **Commands**); M1–M5 are
+done. M2, M3 and M4 have been played in-game on Fabric 1.20.1; M5 has passed build and console
+smoke tests and still needs an in-game pass. The checklist under **Commands** tracks progress.
 
 ## Target versions
 
@@ -157,12 +157,12 @@ cmdEssentials/
 
 ### Commands
 
-Register commands with Brigadier only. Put each command in its own class under
-`common/.../command/`. Each class exposes a static `register(dispatcher)` method that is called
-from `CmdEssentials.registerCommands`. Guard every node with a `PermissionNodes` entry through
-`.requires(NODE.require())`. For an alias with no arguments, copy `executes` onto the alias as
-well as setting `redirect`, because a bare Brigadier redirect does nothing.
-`EssentialsCommand` shows the pattern.
+Register commands with Brigadier only. Put each command, or a small family of closely related
+commands, in a class under `common/.../command/`. Each command class exposes a static
+`register(dispatcher)` method that is called from `CmdEssentials.registerCommands`. Guard every
+node with a `PermissionNodes` entry through `.requires(NODE.require())`. For an alias with no
+arguments, copy `executes` onto the alias as well as setting `redirect`, because a bare Brigadier
+redirect does nothing. `EssentialsCommand` shows the pattern.
 
 ## Server-only rules (hard constraints)
 
@@ -366,9 +366,10 @@ in-game checklist in `docs/testing/` and a commit.
 
 **M5: messaging** (highest risk)
 
-- [ ] `/msg` (+ `/tell`, `/w` via `overrideVanilla`, always `/emsg`), `/r`, `/msgtoggle`,
+- [x] `/msg` (+ `/tell`, `/w` via `overrideVanilla`, always `/emsg`), `/r`, `/msgtoggle`,
   `/rtoggle`, `/ignore`, `/socialspy`, `/helpop`, `/mail`, `/broadcast`, `/broadcastworld`
-- [ ] `/nick`, `/realname`
+- [x] `/nick`, `/realname` (`docs/testing/m5-checklist.md`; all six jars and the Fabric 1.20.1
+  console smoke test pass; in-game pass pending)
   - Nicknames need a common mixin on `Player#getDisplayName` and the tab-list name, plus a
     tab-list update packet when a nick changes (version-specific, see M1 compat).
   - `/ignore` (decided): blocks the ignored player's `/msg`, `/mail` and `/tpa` requests.

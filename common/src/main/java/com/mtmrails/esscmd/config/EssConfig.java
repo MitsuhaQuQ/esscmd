@@ -12,6 +12,8 @@ public final class EssConfig {
     public String language = "en_us";
     /** Show each player messages in their own client language when a messages file exists for it. */
     public boolean perPlayerLanguage = true;
+    /** Vanilla commands replaced by cmdEssentials. /emsg is always available. */
+    public java.util.List<String> overrideVanilla = new java.util.ArrayList<>(java.util.List.of("msg", "tell", "w"));
     public Teleport teleport = new Teleport();
     public Homes homes = new Homes();
     public Spawn spawn = new Spawn();

@@ -1,9 +1,17 @@
 package com.mtmrails.esscmd.data;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
+import java.util.ArrayList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -25,6 +33,12 @@ public final class PlayerRecord {
     StoredLocation logoutLocation;
     boolean fly;
     boolean god;
+    boolean messagesDisabled;
+    boolean replyToRecipient;
+    boolean socialSpy;
+    String nickname = "";
+    final Set<UUID> ignored = new HashSet<>();
+    final List<MailMessage> mail = new ArrayList<>();
 
     PlayerRecord() {}
 
@@ -66,6 +80,30 @@ public final class PlayerRecord {
         return god;
     }
 
+    public boolean messagesDisabled() {
+        return messagesDisabled;
+    }
+
+    public boolean replyToRecipient() {
+        return replyToRecipient;
+    }
+
+    public boolean socialSpy() {
+        return socialSpy;
+    }
+
+    public String nickname() {
+        return nickname;
+    }
+
+    public Set<UUID> ignored() {
+        return Collections.unmodifiableSet(ignored);
+    }
+
+    public List<MailMessage> mail() {
+        return Collections.unmodifiableList(mail);
+    }
+
     CompoundTag toTag() {
         CompoundTag tag = new CompoundTag();
         tag.put("homes", EssData.writeLocations(homes));
@@ -81,6 +119,16 @@ public final class PlayerRecord {
         }
         tag.putBoolean("fly", fly);
         tag.putBoolean("god", god);
+        tag.putBoolean("messagesDisabled", messagesDisabled);
+        tag.putBoolean("replyToRecipient", replyToRecipient);
+        tag.putBoolean("socialSpy", socialSpy);
+        tag.putString("nickname", nickname);
+        ListTag ignoredTag = new ListTag();
+        ignored.forEach(id -> ignoredTag.add(StringTag.valueOf(id.toString())));
+        tag.put("ignored", ignoredTag);
+        ListTag mailTag = new ListTag();
+        mail.forEach(message -> mailTag.add(message.toTag()));
+        tag.put("mail", mailTag);
         return tag;
     }
 
@@ -99,6 +147,18 @@ public final class PlayerRecord {
         }
         record.fly = tag.getBoolean("fly");
         record.god = tag.getBoolean("god");
+        record.messagesDisabled = tag.getBoolean("messagesDisabled");
+        record.replyToRecipient = tag.getBoolean("replyToRecipient");
+        record.socialSpy = tag.getBoolean("socialSpy");
+        record.nickname = tag.getString("nickname");
+        ListTag ignoredTag = tag.getList("ignored", Tag.TAG_STRING);
+        for (int i = 0; i < ignoredTag.size(); i++) {
+            record.ignored.add(UUID.fromString(ignoredTag.getString(i)));
+        }
+        ListTag mailTag = tag.getList("mail", Tag.TAG_COMPOUND);
+        for (int i = 0; i < mailTag.size(); i++) {
+            record.mail.add(MailMessage.fromTag(mailTag.getCompound(i)));
+        }
         return record;
     }
 }

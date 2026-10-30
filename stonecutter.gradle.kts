@@ -18,6 +18,6 @@ for (node in stonecutter.tree.nodes) {
     if (node.metadata != stonecutter.current || node.branch.id !in setOf("fabric", "forge")) continue
     tasks.register("runActiveServer${node.branch.id.upperCaseFirst()}") {
         group = "project"
-        dependsOn("${node.hierarchy}runServer")
+        dependsOn("${node.hierarchy}:runServer")
     }
 }

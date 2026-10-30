@@ -1,11 +1,13 @@
 package com.mtmrails.esscmd.data;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.Set;
 import com.mtmrails.esscmd.compat.VersionedSavedData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -37,6 +39,10 @@ public final class EssData extends VersionedSavedData {
     /** The player's record, or empty if the mod has never stored anything for them. */
     public Optional<PlayerRecord> player(UUID player) {
         return Optional.ofNullable(players.get(player));
+    }
+
+    public Set<UUID> knownPlayers() {
+        return Collections.unmodifiableSet(players.keySet());
     }
 
     private PlayerRecord record(UUID player) {
@@ -157,6 +163,150 @@ public final class EssData extends VersionedSavedData {
             record.god = god;
             setDirty();
         }
+    }
+
+    // Messaging
+
+    public boolean messagesDisabled(UUID player) {
+        PlayerRecord record = players.get(player);
+        return record != null && record.messagesDisabled;
+    }
+
+    public void setMessagesDisabled(UUID player, boolean disabled) {
+        PlayerRecord record = record(player);
+        if (record.messagesDisabled != disabled) {
+            record.messagesDisabled = disabled;
+            setDirty();
+        }
+    }
+
+    public boolean replyToRecipient(UUID player) {
+        PlayerRecord record = players.get(player);
+        return record != null && record.replyToRecipient;
+    }
+
+    public void setReplyToRecipient(UUID player, boolean enabled) {
+        PlayerRecord record = record(player);
+        if (record.replyToRecipient != enabled) {
+            record.replyToRecipient = enabled;
+            setDirty();
+        }
+    }
+
+    public boolean socialSpy(UUID player) {
+        PlayerRecord record = players.get(player);
+        return record != null && record.socialSpy;
+    }
+
+    public void setSocialSpy(UUID player, boolean enabled) {
+        PlayerRecord record = record(player);
+        if (record.socialSpy != enabled) {
+            record.socialSpy = enabled;
+            setDirty();
+        }
+    }
+
+    public boolean ignores(UUID player, UUID ignored) {
+        PlayerRecord record = players.get(player);
+        return record != null && record.ignored.contains(ignored);
+    }
+
+    /** Returns true when the player is ignored after the toggle. */
+    public boolean toggleIgnored(UUID player, UUID ignored) {
+        PlayerRecord record = record(player);
+        boolean value;
+        if (record.ignored.remove(ignored)) {
+            value = false;
+        } else {
+            record.ignored.add(ignored);
+            value = true;
+        }
+        setDirty();
+        return value;
+    }
+
+    public String nickname(UUID player) {
+        PlayerRecord record = players.get(player);
+        return record == null ? "" : record.nickname;
+    }
+
+    public void setNickname(UUID player, String nickname) {
+        PlayerRecord record = record(player);
+        if (!record.nickname.equals(nickname)) {
+            record.nickname = nickname;
+            setDirty();
+        }
+    }
+
+    public Optional<UUID> findByNickname(String nickname) {
+        for (Map.Entry<UUID, PlayerRecord> entry : players.entrySet()) {
+            if (!entry.getValue().nickname.isEmpty() && entry.getValue().nickname.equalsIgnoreCase(nickname)) {
+                return Optional.of(entry.getKey());
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void addMail(UUID player, MailMessage message) {
+        record(player).mail.add(message);
+        setDirty();
+    }
+
+    /** Removes expired mail, then returns a snapshot. */
+    public List<MailMessage> mail(UUID player, long now) {
+        PlayerRecord record = players.get(player);
+        if (record == null) {
+            return List.of();
+        }
+        if (record.mail.removeIf(message -> message.expired(now))) {
+            setDirty();
+        }
+        return List.copyOf(record.mail);
+    }
+
+    public int unreadMail(UUID player, long now) {
+        return (int) mail(player, now).stream().filter(message -> !message.read()).count();
+    }
+
+    public void markMailRead(UUID player) {
+        PlayerRecord record = players.get(player);
+        if (record == null) {
+            return;
+        }
+        boolean changed = false;
+        for (int i = 0; i < record.mail.size(); i++) {
+            MailMessage message = record.mail.get(i);
+            if (!message.read()) {
+                record.mail.set(i, message.withRead(true));
+                changed = true;
+            }
+        }
+        if (changed) {
+            setDirty();
+        }
+    }
+
+    public boolean removeMail(UUID player, int number) {
+        PlayerRecord record = players.get(player);
+        if (record == null || number < 1 || number > record.mail.size()) {
+            return false;
+        }
+        record.mail.remove(number - 1);
+        setDirty();
+        return true;
+    }
+
+    public int clearMail(UUID player) {
+        PlayerRecord record = players.get(player);
+        if (record == null) {
+            return 0;
+        }
+        int count = record.mail.size();
+        if (count > 0) {
+            record.mail.clear();
+            setDirty();
+        }
+        return count;
     }
 
     // Warps

@@ -72,6 +72,9 @@ public final class TpaCommands {
             return CommandUtil.fail(source, "tpa.self");
         }
         EssData data = EssData.get(source.getServer());
+        if (data.ignores(target.getUUID(), requester.getUUID())) {
+            return CommandUtil.fail(source, "tpa.ignored", name(target));
+        }
         if (data.teleportDisabled(target.getUUID())) {
             return CommandUtil.fail(source, "tpa.disabled", name(target));
         }
