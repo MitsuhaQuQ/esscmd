@@ -5,9 +5,8 @@ A **server-only** Minecraft mod that brings the commands of the Bukkit
 
 Install it on the server only. Players join with an unmodified vanilla client.
 
-> **Status: early development.** The multi-loader, multi-version build works, but only the
-> `/cmdessentials` command exists so far. Homes, spawn, `/speed`, `/tpa`, warps and the rest are
-> planned. See the [roadmap](#roadmap).
+> **Status: early development.** The first batch of commands (homes, spawn, `/speed`, `/back`,
+> `/tpa`, warps) is implemented. More are planned; see the [roadmap](#roadmap).
 
 ## Supported versions
 
@@ -31,16 +30,45 @@ The mod doesn't load in singleplayer or on clients. That is intentional.
 
 ## Commands
 
-| Command | Description | Permission | Default |
-|---|---|---|---|
-| `/cmdessentials` (alias `/ess`) | Shows the mod version and loader | `cmdessentials.essentials` | everyone |
-| `/cmdessentials reload` | Reloads the configuration | `cmdessentials.essentials.reload` | OP level 2 |
+Syntax follows [EssentialsX](https://essentialsx.net/commands). "Admins" means OP level 2
+unless a permission plugin says otherwise.
 
-There is no configuration file yet, so `reload` currently has nothing to reload.
+| Command | Description | Default |
+|---|---|---|
+| `/sethome [name]`, `/home [name]`, `/delhome <name>`, `/renamehome <name> <new>` | Homes. No bed needed, work across dimensions. Admins can use `player:name`. | everyone |
+| `/spawn [player]` | Teleport to the spawn (others: admins) | everyone |
+| `/setspawn` | Set the spawn where you stand | admins |
+| `/back [player]` | Return to where you were before the last teleport or death | everyone |
+| `/tpa <player>`, `/tpahere <player>` | Ask to teleport to a player, or ask them to come to you | everyone |
+| `/tpaccept [player]`, `/tpdeny [player]`, `/tpacancel [player]` | Answer or cancel requests (chat buttons included) | everyone |
+| `/tptoggle [player] [on\|off]`, `/tpauto [player] [on\|off]` | Block requests, or accept them automatically | everyone |
+| `/warp [warp] [player]`, `/warpinfo <warp>` | List warps or teleport to one | everyone |
+| `/setwarp <warp>`, `/delwarp <warp>` | Manage warps | admins |
+| `/speed [walk\|fly] <0-10> [player]` | Walking or flying speed (1 = vanilla) | admins |
+| `/cmdessentials [reload]` (alias `/ess`) | Version info; reload config and messages | everyone / admins |
+
+A player's own teleports wait 3 seconds and are cancelled if they move. Admins skip the wait.
+
+## Configuration
+
+`config/cmdessentials/config.json` is created on first start. It covers the teleport delay
+and cooldown, home limit, spawn behaviour, `/back` on death, `/tpa` timeout and the speed
+limits. Run `/cmdessentials reload` after editing it.
+
+## Languages
+
+Messages live in `config/cmdessentials/messages_<lang>.json`. English and Simplified Chinese
+are included. **Each player sees messages in their own Minecraft language** when a file for
+it exists. Otherwise the server's `language` setting is used, then English. To add a
+language, copy `messages_en_us.json` to, for example, `messages_ja_jp.json`, translate it and
+run `/cmdessentials reload`.
 
 ## Permissions
 
-Every command is guarded by a permission node of the form `cmdessentials.<command>[.<sub>]`.
+Every command is guarded by a permission node of the form `cmdessentials.<command>[.<sub>]`,
+for example `cmdessentials.home`, `cmdessentials.spawn.others` or
+`cmdessentials.teleport.bypass.delay`. `cmdessentials.sethome.limit` is a numeric option: a
+LuckPerms meta value on Fabric, or an integer node on Forge.
 
 - **Fabric:** if a provider of
   [fabric-permissions-api](https://github.com/lucko/fabric-permissions-api) is installed, such
@@ -55,8 +83,8 @@ Every command is guarded by a permission node of the form `cmdessentials.<comman
 The full plan lives in [AGENTS.md](AGENTS.md#commands). It is based on the 163 EssentialsX
 commands listed in [docs/essentials-commands.md](docs/essentials-commands.md).
 
-- **P0:** `/sethome` `/home` `/delhome` `/renamehome`, `/setspawn` `/spawn`, `/speed`, `/back`,
-  `/tpa` and friends, warps
+- **P0 (done):** `/sethome` `/home` `/delhome` `/renamehome`, `/setspawn` `/spawn`, `/speed`,
+  `/back`, `/tpa` and friends, warps
 - **P1:** more teleport commands, player state (`/fly`, `/god`, `/heal`, …), messaging and
   mail, inventory tools, portable workbenches, kits
 - **P2:** moderation, jails, world and item tools

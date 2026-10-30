@@ -51,6 +51,7 @@ dependencies {
 val runDirPath = "../../../run/$minecraft-$loader"
 
 loom {
+    forge.mixinConfigs("cmdessentials.common.mixins.json")
     runConfigs.all {
         isIdeConfigGenerated = true
         runDir = runDirPath

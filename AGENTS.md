@@ -9,9 +9,9 @@ commit messages in English.
 
 ## Status
 
-The build is scaffolded: all 6 jars build, and only `/cmdessentials` (alias `/ess`) is
-implemented. The command checklist under **Commands** tracks
-progress.
+All 6 jars build. P0 (homes, spawn, `/speed`, `/back`, `/tpa` family, warps,
+`/cmdessentials`) is implemented and passes console smoke tests on every target, but it hasn't
+been played in-game yet. The checklist under **Commands** tracks progress.
 
 ## Target versions
 
@@ -40,11 +40,16 @@ cmdEssentials/
 ├─ buildSrc/                   # build helpers: `mod`, `versionProp(...)`, `properties(...)`
 ├─ common/                     # ALL logic. Only vanilla Minecraft (Mojmap) + Brigadier
 │  └─ src/main/java/com/mtmrails/esscmd/
-│     ├─ CmdEssentials.java    # init() and registerCommands(): the hooks loaders call
+│     ├─ CmdEssentials.java    # the hooks loaders call (init, commands, tick, join, death, ...)
 │     ├─ platform/Platform.java  # the loader abstraction (ServiceLoader)
-│     ├─ permission/           # PermissionNode, PermissionNodes (the one node list)
+│     ├─ permission/           # PermissionNode, IntOption, PermissionNodes (the one list)
+│     ├─ config/               # EssConfig (JSON) and ConfigManager (load, async reload)
+│     ├─ message/Messages.java # per-player translated messages
+│     ├─ data/                 # EssData (SavedData) and StoredLocation
+│     ├─ teleport/             # TeleportService (delay, cooldown, /back), TpaRequests
 │     ├─ compat/               # version adapters, the only place with //? blocks
-│     └─ command/              # one class per command
+│     │  └─ mixin/             # mixins (cmdessentials.common.mixins.json)
+│     └─ command/              # one class per command or command family
 ├─ fabric/                     # entrypoint, FabricPlatform, fabric.mod.json
 └─ forge/                      # @Mod class, ForgePlatform, mods.toml, pack.mcmeta
 ```
@@ -85,26 +90,36 @@ cmdEssentials/
 - **`common`** may import `net.minecraft.*`, `com.mojang.brigadier.*` and our own code only.
   It must never import `net.fabricmc.*` or `net.minecraftforge.*`.
 - Loader-specific features go through **`platform.Platform`** in `common` (loader name, mod
-  version, config dir, permission checks). There is one implementation per loader
+  version, config dir, permission checks, integer options). There is one implementation per loader
   (`FabricPlatform`, `ForgePlatform`), loaded with `java.util.ServiceLoader` from
   `META-INF/services/com.mtmrails.esscmd.platform.Platform`. Add new loader needs as
   methods there. Don't use `@ExpectPlatform`, because it needs Architectury's transformer at
   runtime.
-- **Events**: `common` exposes plain hooks. These exist now: `CmdEssentials.init()` and
-  `registerCommands(dispatcher)`. Add these as features need them: `onServerStarted/Stopping`,
-  `onPlayerJoin/Leave/Death/Respawn`, `onPlayerChangeDimension`, `onServerTick`. When a command
-  needs `CommandBuildContext` (1.19+ only), add it behind a `//? if >=1.19` condition.
+- **Events**: `common` exposes plain hooks on `CmdEssentials`: `init`, `registerCommands`,
+  `onServerStopping`, `onServerTick`, `onPlayerJoin/Leave`, `onPlayerDeath` (dead entity, still
+  at the death spot) and `onPlayerRespawn` (new entity, only after death, not after the End).
+  Add more as features need them. When a command needs `CommandBuildContext` (1.19+ only),
+  add it behind a `//? if >=1.19` condition.
   Each loader module subscribes to its own events (Fabric callbacks, the Forge event bus) and
   only forwards them. The loader modules contain no logic beyond that.
   - Command registration: Fabric uses `CommandRegistrationCallback` (v2 API on 1.19+, v1 on
     1.18.2); Forge uses `RegisterCommandsEvent`.
+  - Death on Fabric: Fabric API for 1.18.2 has no death event, so `ServerPlayerEvents.AFTER_RESPAWN`
+    with `alive == false` calls `onPlayerDeath(oldPlayer)` then `onPlayerRespawn(newPlayer)`.
+    Forge uses `LivingDeathEvent` and `PlayerRespawnEvent`.
+  - Server tick on Forge: `TickEvent.ServerTickEvent.Post` on 1.21+, the phase-checked event
+    before. `getServer()` on that event only exists from 1.20.
   - Permissions: Fabric uses `Permissions.check(source, node, opLevel)`. Forge registers every
     node in `PermissionGatherEvent.Nodes` and then checks it with `PermissionAPI`. Keep the
     node list in `common` (one `PermissionNodes` class) so both loaders use the same list.
-- **Mixins**: there are none yet. The first one goes in `common`, in
-  `cmdessentials.common.mixins.json`. Register that config in `fabric.mod.json` and through
-  `loom.forge.mixinConfigs(...)`. Only add loader-specific mixins when unavoidable. Prefer
-  events over mixins.
+- **Mixins** live in `common/.../compat/mixin/` and are listed in
+  `cmdessentials.common.mixins.json`, which `fabric.mod.json` and `loom.forge.mixinConfigs(...)`
+  register. Architectury Loom adds the refmap (intermediary on Fabric, SRG on Forge). Only add
+  loader-specific mixins when unavoidable. Prefer events over mixins. The only one so far is
+  `ServerPlayerMixin`: before 1.20.2 vanilla doesn't keep the client's language, so it stores
+  it (see `Players.language`). From 1.20.2 the mixin is empty and `clientInformation()` is used.
+  To check that a mixin applies, start a dev server with
+  `JAVA_TOOL_OPTIONS=-Dmixin.debug.export=true` and look in `run/<mc>-<loader>/.mixin.out/`.
 - **Server-only flag**: Fabric uses `"environment": "server"` with a `server` entrypoint
   (`DedicatedServerModInitializer`). Forge sets `displayTest = "IGNORE_SERVER_VERSION"` in
   mods.toml. On 1.18.2, `CmdEssentialsForge` also registers `IExtensionPoint.DisplayTest` in
@@ -153,23 +168,42 @@ well as setting `redirect`, because a bare Brigadier redirect does nothing.
 - With no permission provider, fall back to an OP level per node (default: basic player
   commands = 0, admin commands = 2).
 - Node format: `cmdessentials.<command>[.<sub>]`, e.g. `cmdessentials.home`,
-  `cmdessentials.home.others`, `cmdessentials.sethome.multiple`, `cmdessentials.speed.others`.
+  `cmdessentials.home.others`, `cmdessentials.speed.others`. Teleport bypasses:
+  `cmdessentials.teleport.bypass.delay` / `.cooldown`.
 - Any command that acts on another player needs its own `.others` node.
+- Numeric per-player values are `IntOption`s, for example `cmdessentials.sethome.limit` (home
+  count, -1 = unlimited). On Fabric that is a LuckPerms meta value (`Options.get`); on Forge it
+  is an integer `PermissionNode`. Without a provider the config default applies.
 
 ## Data & config
 
-- Per-world data (homes, warps, the spawn point, `/back` locations) is stored in `SavedData`
-  under `<world>/data/cmdessentials_*.dat`. Store dimension, position, yaw and pitch.
-- Config: `config/cmdessentials.toml`, reloadable with `/cmdessentials reload` (no restart).
-  Settings to cover: home limit, teleport delay, cooldowns, `/tpa` timeout, speed caps, and
-  cancelling a teleport when the player moves.
-- Never block the server thread on file I/O while the server is running.
+- Persistent data (homes, warps, the spawn point, `/back` locations, `/tptoggle` and `/tpauto`)
+  is one `EssData` (`SavedData`) on the overworld: `<world>/data/cmdessentials.dat`. Locations
+  are `StoredLocation`s: dimension id, position, yaw and pitch. `/tpa` requests and pending
+  teleports are in memory only.
+- Config: `config/cmdessentials/config.json` (`EssConfig`), parsed with the Gson that ships
+  with Minecraft. That's why it's JSON and not TOML: neither loader would need an extra
+  library. Missing options are filled with defaults and written back. `/cmdessentials reload`
+  re-reads the config and messages without a restart.
+- Never block the server thread on file I/O while the server is running: the initial load
+  happens during mod init, and reload reads the files on another thread
+  (`ConfigManager.reload`) and swaps them in on the server thread.
 
 ## Messages
 
-- Every user-facing string comes from `config/cmdessentials/messages_<lang>.json` (default
-  `en_us`; ship `zh_cn` too), and is turned into a `Component` on the server.
-- Use one consistent style: gold prefix, gray body, and red for errors.
+- Every user-facing string comes from `config/cmdessentials/messages_<lang>.json` and is turned
+  into a `Component` on the server. `en_us` and `zh_cn` are bundled in
+  `common/src/main/resources/cmdessentials/lang/` and written out on first run. New keys are
+  merged into existing files. Admins can add more languages by dropping in another
+  `messages_<lang>.json`.
+- **Per-player language**: each player sees their client's language when a file for it exists.
+  Otherwise the config's `language` applies, then `en_us`, then the raw key. The console uses
+  `language`. `perPlayerLanguage: false` makes everyone use `language`.
+- `Messages.info/error/raw` take the **recipient** (a `ServerPlayer` or `CommandSourceStack`),
+  never a bare key, so no message is rendered without deciding whose language it is in. Use
+  `CommandUtil.ok/fail/tell` in commands. Templates use `{0}`, `{1}`, …
+- Style: gray body, gold arguments, red for errors, and an optional gold `prefix` key.
+- Every key added to `en_us.json` must also be added to `zh_cn.json`.
 
 ## Commands
 
@@ -207,23 +241,25 @@ below says otherwise. Mark each line `[x]` once every command on it is done.
 
 ### P0: homes, spawn, teleport basics
 
-- [ ] `/sethome`, `/home`, `/delhome`, `/renamehome`: homes don't need a bed and work across
+- [x] `/sethome`, `/home`, `/delhome`, `/renamehome`: homes don't need a bed and work across
   dimensions. `/home` with no name lists your homes if you have more than one (Essentials has
-  no `/homes`). The number of homes is limited by the config or the
-  `cmdessentials.sethome.multiple.<n>` node.
-- [ ] `/setspawn`, `/spawn`: `/setspawn` sets the spawn and `/spawn` teleports to it, falling
+  no `/homes`). The number of homes is limited by `homes.defaultLimit` or the
+  `cmdessentials.sethome.limit` option. `player:name` works in all four for admins
+  (`/renamehome` needs it quoted: `/renamehome "Steve:base" home2`).
+- [x] `/setspawn`, `/spawn`: `/setspawn` sets the spawn and `/spawn` teleports to it, falling
   back to the world spawn if none is set. Options: respawn there after death and on first join.
-- [ ] `/speed [walk|fly] <0-10> [player]`: with no type given, use `fly` while the player is
+- [x] `/speed [walk|fly] <0-10> [player]`: with no type given, use `fly` while the player is
   flying and `walk` otherwise. `1` = vanilla default.
   - Fly: set `Abilities.flyingSpeed`, then call `onUpdateAbilities()`.
   - Walk: add or replace a transient `MOVEMENT_SPEED` attribute modifier. Don't use
     `Abilities.walkingSpeed`, which only changes the client's FOV.
   - Mapping: below 1, scale the default linearly (`default * v`); from 1 to 10, interpolate
     linearly from the default to a configured maximum.
-- [ ] `/back`: your location before the last teleport. Optionally your death location too.
-- [ ] `/tpa`, `/tpahere`, `/tpaccept`, `/tpdeny`, `/tpacancel`, `/tptoggle`, `/tpauto`
-- [ ] `/warp`, `/setwarp`, `/delwarp`, `/warpinfo`
-- [ ] `/essentials` → `/cmdessentials` (alias `/ess`): `reload` and version info
+  - The change is not persisted: it resets on relog and respawn.
+- [x] `/back`: your location before the last teleport. Optionally your death location too.
+- [x] `/tpa`, `/tpahere`, `/tpaccept`, `/tpdeny`, `/tpacancel`, `/tptoggle`, `/tpauto`
+- [x] `/warp`, `/setwarp`, `/delwarp`, `/warpinfo`
+- [x] `/essentials` → `/cmdessentials` (alias `/ess`): `reload` and version info
 
 ### P1: player utilities, chat, inventory
 

@@ -11,6 +11,9 @@
       "com.mtmrails.esscmd.fabric.CmdEssentialsFabric"
     ]
   },
+  "mixins": [
+    "cmdessentials.common.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.14",
     "fabric-api": "*",
