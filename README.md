@@ -26,7 +26,7 @@ NeoForge is not supported yet.
 ## Installation
 
 1. Download the jar that matches your loader and Minecraft version, for example
-   `cmdessentials-fabric-0.1.0-alpha+1.20.1.jar` or `cmdessentials-forge-0.1.0-alpha+1.21.1.jar`.
+   `cmdessentials-fabric-0.2.0-alpha+1.20.1.jar` or `cmdessentials-forge-0.2.0-alpha+1.21.1.jar`.
 2. Put it in the server's `mods/` folder.
 3. **Fabric only:** also install [Fabric API](https://modrinth.com/mod/fabric-api) from
    Modrinth. For 1.18.2, the aggregate jars on the Fabric Maven are empty stubs.
