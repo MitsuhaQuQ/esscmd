@@ -2,12 +2,13 @@
 
 [![Build](https://github.com/MitsuhaQuQ/esscmd/actions/workflows/build.yml/badge.svg)](https://github.com/MitsuhaQuQ/esscmd/actions/workflows/build.yml)
 
-A **server-only** Minecraft mod that brings the commands of the Bukkit
+A **server-side** Minecraft mod that brings the commands of the Bukkit
 [EssentialsX](https://essentialsx.net/commands) plugin to Fabric and Forge servers.
 
-Install it on the server only. Players join with an unmodified vanilla client.
+Install it on the server. Players join with an unmodified vanilla client; they don't need the mod.
+You can also install it on a client to use the commands in singleplayer and on LAN worlds you host.
 
-> **Status: early development.** All of P0 and P1 is implemented: homes, spawn, warps, `/back`,
+> **Status: beta.** All of P0 and P1 is implemented: homes, spawn, warps, `/back`,
 > the `/tpa` family, teleport extensions, player state, AFK, info commands, messaging, mail,
 > nicknames, inventory tools, portable workbenches and kits. So is P2, except `/book`, `/firework` and `/potion`.
 > See the [roadmap](#roadmap). Core features have been played in-game on five of the eight
@@ -28,13 +29,15 @@ NeoForge is not supported yet.
 ## Installation
 
 1. Download the jar that matches your loader and Minecraft version, for example
-   `cmdessentials-fabric-0.3.0-alpha+1.20.1.jar` or `cmdessentials-forge-0.3.0-alpha+1.21.1.jar`.
+   `cmdessentials-fabric-0.4.0-beta+1.20.1.jar` or `cmdessentials-forge-0.4.0-beta+1.21.1.jar`.
 2. Put it in the server's `mods/` folder.
 3. **Fabric only:** also install [Fabric API](https://modrinth.com/mod/fabric-api) from
    Modrinth. For 1.18.2, the aggregate jars on the Fabric Maven are empty stubs.
 4. Start the server.
 
-The mod doesn't load in singleplayer or on clients. That is intentional.
+In singleplayer or on a LAN world, put the jar (and Fabric API on Fabric) in the client's `mods/`
+folder. It then runs on the integrated server. Having it on the client is never required to join a
+server, and a client with it can still join servers without it.
 
 ## Commands
 

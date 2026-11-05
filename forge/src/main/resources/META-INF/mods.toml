@@ -7,7 +7,8 @@ modId = "${id}"
 version = "${version}"
 displayName = "${name}"
 description = "${description}"
-# Server-only: vanilla and unmodded clients may join. 1.18.2 registers this in code instead.
+# Optional on both sides: vanilla clients may join, and a client with it can join any server.
+# Installed on a client, it runs on the integrated server (singleplayer, LAN). 1.18.2 registers this in code.
 displayTest = "IGNORE_SERVER_VERSION"
 
 [[dependencies.${id}]]
@@ -15,11 +16,11 @@ modId = "forge"
 mandatory = true
 versionRange = "[${forge_major},)"
 ordering = "NONE"
-side = "SERVER"
+side = "BOTH"
 
 [[dependencies.${id}]]
 modId = "minecraft"
 mandatory = true
 versionRange = "${minecraft}"
 ordering = "NONE"
-side = "SERVER"
+side = "BOTH"

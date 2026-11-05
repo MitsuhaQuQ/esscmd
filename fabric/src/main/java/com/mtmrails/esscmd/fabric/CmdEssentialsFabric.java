@@ -1,7 +1,7 @@
 package com.mtmrails.esscmd.fabric;
 
 import com.mtmrails.esscmd.CmdEssentials;
-import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -13,9 +13,9 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 *///?}
 
 /** Forwards Fabric events to {@link CmdEssentials}; no logic of its own. */
-public final class CmdEssentialsFabric implements DedicatedServerModInitializer {
+public final class CmdEssentialsFabric implements ModInitializer {
     @Override
-    public void onInitializeServer() {
+    public void onInitialize() {
         CmdEssentials.init();
         //? if >=1.19 {
         CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) ->

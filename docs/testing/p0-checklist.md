@@ -14,7 +14,7 @@ Run this checklist against a real server with real clients. Console tests can't 
 
 Mark each line ✅ or ❌. For ❌, note what happened and any console error.
 
-## 0. Server-only and language
+## 0. Vanilla clients and language
 
 | # | Do | Expect |
 |---|---|---|
@@ -22,6 +22,8 @@ Mark each line ✅ or ❌. For ❌, note what happened and any console error.
 | 0.2 | B: `/home` | Chinese: `你还没有设置家。请使用 /sethome。` |
 | 0.3 | A: `/home` | English: `You haven't set a home yet. Use /sethome.` |
 | 0.4 | B: switch the client to English, then `/home` | Now English. The language follows the client live |
+| 0.5 | Install the jar on a client, open a singleplayer world, `/sethome`, `/home` | Commands work on the integrated server |
+| 0.6 | That modded client: join a server without the mod | Joins normally |
 
 ## 1. Homes
 

@@ -1,6 +1,6 @@
 # cmdEssentials
 
-A **server-only** Minecraft mod that brings the commands and features of the Bukkit
+A **server-side** Minecraft mod that brings the commands and features of the Bukkit
 [EssentialsX](https://essentialsx.net/commands) plugin to Fabric and Forge servers.
 Vanilla clients must be able to join a server running this mod without installing anything.
 
@@ -14,6 +14,7 @@ All 8 jars build; CI builds them and runs the unit tests on every push.
 - **Done:** P0, P1 (M1–M7) and P2 (M8–M12), except `/book`, `/firework` and `/potion`.
 - **In-game testing:** P0 and M2–M7 on Fabric 1.20.1. P0 and M5 core checks on Forge 1.20.1 and
   Fabric 1.21.1. Both 1.18.2 targets passed a pass covering P0, M5, M6, M7 and M8 core checks.
+- **Client install:** singleplayer passed (user-tested).
 - **Not yet tested in-game:** Forge 1.21.1 (console only), `/mute` with signed chat (1.19+),
   all of M9–M12 and all of 26.3. Both 26.3 targets pass a console smoke test with mixin
   verification (Forge on a real server, `testserver/26.3-forge`).
@@ -152,10 +153,14 @@ cmdEssentials/
   - Never target library classes such as Brigadier: Forge doesn't transform them, so the
     mixin silently doesn't apply and casts crash at startup. `compat/CommandTrees` uses
     reflection to remove vanilla commands instead.
-- **Server-only flag**: Fabric uses `"environment": "server"` with a `server` entrypoint
-  (`DedicatedServerModInitializer`). Forge sets `displayTest = "IGNORE_SERVER_VERSION"` in
+- **Sides (decided: server + client)**: the mod loads on dedicated servers and on clients, where it
+  runs on the integrated server (singleplayer, LAN). It is optional on the client: vanilla
+  clients join, and a client with it joins servers without it. Fabric uses `"environment": "*"`
+  with a `main` entrypoint (`ModInitializer`), which also runs on clients, so it may only register
+  server events. Forge sets `displayTest = "IGNORE_SERVER_VERSION"` and `side = "BOTH"` in
   mods.toml. On 1.18.2, `CmdEssentialsForge` also registers `IExtensionPoint.DisplayTest` in
-  code, behind `//? if <1.20`.
+  code, behind `//? if <1.20`. Static in-memory state must be cleared in `onServerStopping`,
+  because a client starts a new integrated server for each world it opens.
 
 ### Multi-version with Stonecutter
 
@@ -186,12 +191,13 @@ node with a `PermissionNodes` entry through `.requires(NODE.require())`. For an 
 arguments, copy `executes` onto the alias as well as setting `redirect`, because a bare Brigadier
 redirect does nothing. `EssentialsCommand` shows the pattern.
 
-## Server-only rules (hard constraints)
+## Server-side rules (hard constraints)
 
 - Never reference client classes (`net.minecraft.client.*`, `@Environment(EnvType.CLIENT)`,
   `Dist.CLIENT`).
-- Mark the mod as server-only on both loaders, so vanilla clients aren't rejected (see
-  **Code split → Server-only flag**). Don't add any client entrypoint.
+- Keep the mod optional on the client on both loaders, so vanilla clients aren't rejected (see
+  **Code split → Sides**). Don't add any client entrypoint or client-only logic: on a client
+  the mod only acts through the integrated server.
 - Don't add custom items, blocks, entities, network packets, registries or resource-pack
   content. Anything a vanilla client can't render is not allowed.
 - Don't use translation keys from this mod (`Component.translatable("cmdessentials.*")`): the
@@ -523,7 +529,7 @@ To test another version, switch to it, test, then reset.
   `build/libs/all/cmdessentials-forge-*+<mc>.jar` in `mods/`, and run it. The other 6
   loader/version pairs work with `runServer`. Forge checks the EULA before it loads mods.
 - Test with a **vanilla client** of the same Minecraft version connected to the dev server.
-  This also proves the server-only setup works. Never test in singleplayer only.
+  This also proves vanilla clients can still join. Never test in singleplayer only.
 - From a script, you can pipe console commands into `runServer` through stdin (for example
   `cmdessentials`, then `stop`).
 - **Dev servers don't exit after `stop`.** The Architectury Transformer dev launcher leaves a
