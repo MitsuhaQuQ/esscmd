@@ -55,3 +55,18 @@ Same setup as [p0-checklist.md](p0-checklist.md): **A** is OP, **B** is not.
 | 5.7 | Look at a sign: `/editsign set 1 &cHello`, `/editsign clear 1` | Text changes for everyone |
 | 5.8 | `/unlimited minecraft:torch`, place torches | Stack refills within a second |
 | 5.9 | Hold a stick, `/powertool home`, right-click air and a block | Runs `/home`; `/powertool` removes; `/powertooltoggle` disables |
+| 5.10 | B: write and sign a book, `/book` | It is a book and quill again with the text; `/book` signs it again as B |
+| 5.11 | A: hold B's book, `/book`; then OP: `/book author Notch`, `/book title Test` | A is refused; the OP changes author and title |
+| 5.12 | Hold rockets, `/firework color:red,blue fade:white shape:star effect:trail,twinkle`, `/firework power 3` | Tooltip shows the explosion and flight 3; launching shows it |
+| 5.13 | `/firework fire 3`, `/firework clear` | Three rockets go off at you; explosions removed |
+| 5.14 | Hold a water bottle, `/potion effect:speed power:2 duration:30`, drink it | Speed II for 30 s; tooltip lists it |
+| 5.15 | `/potion effect:speed power:3`, `/potion apply`, `/potion clear` | Speed replaced by III; applied without using the potion; effects removed |
+| 5.16 | Do 5.10–5.15 on 1.20.1 and on 1.21.1 or 26.3 | Same results (NBT vs data components) |
+
+## Singleplayer
+
+| # | Do | Expect |
+|---|---|---|
+| 6.1 | Mod on the client, singleplayer world: `/msg`, `/r`, `/mail`, `/broadcast`, `/mute` | `/msg` is vanilla's; the others are not offered and are unknown |
+| 6.2 | Open to LAN | `/r`, `/mail`, `/broadcast`, `/mute`, `/emsg` appear without rejoining |
+| 6.3 | Dedicated server | All chat commands as before; `/msg` is ours when `overrideVanilla` lists it |

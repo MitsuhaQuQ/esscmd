@@ -9,6 +9,7 @@ import com.mtmrails.esscmd.command.EssentialsCommand;
 import com.mtmrails.esscmd.command.HomeCommands;
 import com.mtmrails.esscmd.command.InventoryCommands;
 import com.mtmrails.esscmd.command.ItemCommands;
+import com.mtmrails.esscmd.command.ItemMetaCommands;
 import com.mtmrails.esscmd.command.JailCommands;
 import com.mtmrails.esscmd.command.KitCommands;
 import com.mtmrails.esscmd.command.LocationInfoCommands;
@@ -32,6 +33,7 @@ import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
+import com.mtmrails.esscmd.permission.Multiplayer;
 import com.mtmrails.esscmd.platform.Platform;
 import com.mtmrails.esscmd.message.MessagingService;
 import com.mtmrails.esscmd.message.Messages;
@@ -63,7 +65,8 @@ public final class CmdEssentials {
             ConfigManager.load();
         } catch (IOException e) {
             LOGGER.error("Could not load the cmdEssentials config, using defaults", e);
-        }        if (Boolean.getBoolean("cmdessentials.debug.loadMixinTargets")) {
+        }
+        if (Boolean.getBoolean("cmdessentials.debug.loadMixinTargets")) {
             loadMixinTargets();
         }
     }
@@ -90,7 +93,11 @@ public final class CmdEssentials {
         }
     }
 
-    public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
+    /**
+     * {@code dedicated} is false on a client's integrated server (singleplayer, LAN). There the
+     * vanilla {@code /msg} stays, whatever {@code overrideVanilla} says.
+     */
+    public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, boolean dedicated) {
         EssentialsCommand.register(dispatcher);
         HomeCommands.register(dispatcher);
         SpawnCommands.register(dispatcher);
@@ -112,8 +119,9 @@ public final class CmdEssentials {
         ViewCommands.register(dispatcher);
         WorldCommands.register(dispatcher);
         ItemCommands.register(dispatcher);
+        ItemMetaCommands.register(dispatcher);
         ConfigManager.get().disabledCommands.forEach(name -> CommandTrees.removeRootCommand(dispatcher, name));
-        MessagingCommands.register(dispatcher);
+        MessagingCommands.register(dispatcher, dedicated);
         MailCommands.register(dispatcher);
         BroadcastCommands.register(dispatcher);
         NickCommands.register(dispatcher);
@@ -127,6 +135,7 @@ public final class CmdEssentials {
         PlayerView.clear();
         Sessions.clear();
         MessagingService.clear();
+        Multiplayer.clear();
     }
 
     public static void onServerTick(MinecraftServer server) {
@@ -137,6 +146,7 @@ public final class CmdEssentials {
         JailService.tick(server);
         PlayerView.tick(server);
         ItemPowers.tick(server);
+        Multiplayer.tick(server);
     }
 
     public static void onPlayerJoin(ServerPlayer player) {

@@ -2,6 +2,7 @@ package com.mtmrails.esscmd.fabric;
 
 import com.mtmrails.esscmd.CmdEssentials;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.commands.Commands;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -19,10 +20,10 @@ public final class CmdEssentialsFabric implements ModInitializer {
         CmdEssentials.init();
         //? if >=1.19 {
         CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) ->
-                CmdEssentials.registerCommands(dispatcher));
+                CmdEssentials.registerCommands(dispatcher, selection != Commands.CommandSelection.INTEGRATED));
         //?} else {
         /*CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) ->
-                CmdEssentials.registerCommands(dispatcher));
+                CmdEssentials.registerCommands(dispatcher, dedicated));
         *///?}
         ServerLifecycleEvents.SERVER_STOPPING.register(CmdEssentials::onServerStopping);
         ServerTickEvents.END_SERVER_TICK.register(CmdEssentials::onServerTick);

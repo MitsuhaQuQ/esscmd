@@ -31,8 +31,9 @@ public final class MessagingCommands {
 
     private MessagingCommands() {}
 
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        List<String> overrides = ConfigManager.get().overrideVanilla.stream()
+    /** Vanilla's {@code /msg} is only replaced on a dedicated server: in singleplayer ours is hidden. */
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, boolean dedicated) {
+        List<String> overrides = !dedicated ? List.<String>of() : ConfigManager.get().overrideVanilla.stream()
                 .map(name -> name.toLowerCase(Locale.ROOT)).filter(VANILLA_NAMES::contains).distinct().toList();
         overrides.forEach(name -> removeRoot(dispatcher, name));
 

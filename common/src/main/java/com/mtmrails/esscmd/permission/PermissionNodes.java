@@ -95,22 +95,22 @@ public final class PermissionNodes {
     public static final PermissionNode SETTPR = node("settpr", ADMINS);
     public static final PermissionNode WORLD = node("world", ADMINS);
 
-    public static final PermissionNode MSG = node("msg", ALL_PLAYERS);
-    public static final PermissionNode REPLY = node("reply", ALL_PLAYERS);
-    public static final PermissionNode MSGTOGGLE = node("msgtoggle", ALL_PLAYERS);
-    public static final PermissionNode MSGTOGGLE_OTHERS = node("msgtoggle.others", ADMINS);
-    public static final PermissionNode RTOGGLE = node("rtoggle", ALL_PLAYERS);
-    public static final PermissionNode RTOGGLE_OTHERS = node("rtoggle.others", ADMINS);
-    public static final PermissionNode IGNORE = node("ignore", ALL_PLAYERS);
-    public static final PermissionNode SOCIALSPY = node("socialspy", ADMINS);
-    public static final PermissionNode SOCIALSPY_OTHERS = node("socialspy.others", ADMINS);
-    public static final PermissionNode HELPOP = node("helpop", ALL_PLAYERS);
-    public static final PermissionNode HELPOP_RECEIVE = node("helpop.receive", ADMINS);
-    public static final PermissionNode MAIL = node("mail", ALL_PLAYERS);
-    public static final PermissionNode MAIL_OTHERS = node("mail.others", ADMINS);
-    public static final PermissionNode MAIL_SENDALL = node("mail.sendall", ADMINS);
-    public static final PermissionNode BROADCAST = node("broadcast", ADMINS);
-    public static final PermissionNode BROADCASTWORLD = node("broadcastworld", ADMINS);
+    public static final PermissionNode MSG = chatNode("msg", ALL_PLAYERS);
+    public static final PermissionNode REPLY = chatNode("reply", ALL_PLAYERS);
+    public static final PermissionNode MSGTOGGLE = chatNode("msgtoggle", ALL_PLAYERS);
+    public static final PermissionNode MSGTOGGLE_OTHERS = chatNode("msgtoggle.others", ADMINS);
+    public static final PermissionNode RTOGGLE = chatNode("rtoggle", ALL_PLAYERS);
+    public static final PermissionNode RTOGGLE_OTHERS = chatNode("rtoggle.others", ADMINS);
+    public static final PermissionNode IGNORE = chatNode("ignore", ALL_PLAYERS);
+    public static final PermissionNode SOCIALSPY = chatNode("socialspy", ADMINS);
+    public static final PermissionNode SOCIALSPY_OTHERS = chatNode("socialspy.others", ADMINS);
+    public static final PermissionNode HELPOP = chatNode("helpop", ALL_PLAYERS);
+    public static final PermissionNode HELPOP_RECEIVE = chatNode("helpop.receive", ADMINS);
+    public static final PermissionNode MAIL = chatNode("mail", ALL_PLAYERS);
+    public static final PermissionNode MAIL_OTHERS = chatNode("mail.others", ADMINS);
+    public static final PermissionNode MAIL_SENDALL = chatNode("mail.sendall", ADMINS);
+    public static final PermissionNode BROADCAST = chatNode("broadcast", ADMINS);
+    public static final PermissionNode BROADCASTWORLD = chatNode("broadcastworld", ADMINS);
     public static final PermissionNode NICK = node("nick", ADMINS);
     public static final PermissionNode NICK_OTHERS = node("nick.others", ADMINS);
     public static final PermissionNode REALNAME = node("realname", ALL_PLAYERS);
@@ -141,8 +141,8 @@ public final class PermissionNodes {
     public static final PermissionNode DELKIT = node("delkit", ADMINS);
     public static final PermissionNode KITRESET = node("kitreset", ADMINS);
 
-    public static final PermissionNode MUTE = node("mute", ADMINS);
-    public static final PermissionNode MUTE_EXEMPT = node("mute.exempt", ADMINS);
+    public static final PermissionNode MUTE = chatNode("mute", ADMINS);
+    public static final PermissionNode MUTE_EXEMPT = chatNode("mute.exempt", ADMINS);
     public static final PermissionNode TEMPBAN = node("tempban", ADMINS);
     public static final PermissionNode TEMPBAN_EXEMPT = node("tempban.exempt", ADMINS);
     public static final PermissionNode TEMPBANIP = node("tempbanip", ADMINS);
@@ -154,7 +154,7 @@ public final class PermissionNodes {
     public static final PermissionNode GC = node("gc", ADMINS);
 
     public static final PermissionNode HEAL_COOLDOWN_BYPASS = node("heal.cooldown.bypass", ADMINS);
-    public static final PermissionNode MUTE_UNLIMITED = node("mute.unlimited", ADMINS);
+    public static final PermissionNode MUTE_UNLIMITED = chatNode("mute.unlimited", ADMINS);
     public static final PermissionNode TEMPBAN_UNLIMITED = node("tempban.unlimited", ADMINS);
 
     public static final PermissionNode SETJAIL = node("setjail", ADMINS);
@@ -195,6 +195,15 @@ public final class PermissionNodes {
     public static final PermissionNode UNLIMITED = node("unlimited", ADMINS);
     public static final PermissionNode UNLIMITED_OTHERS = node("unlimited.others", ADMINS);
     public static final PermissionNode POWERTOOL = node("powertool", ADMINS);
+    public static final PermissionNode BOOK = node("book", ALL_PLAYERS);
+    public static final PermissionNode BOOK_TITLE = node("book.title", ALL_PLAYERS);
+    public static final PermissionNode BOOK_AUTHOR = node("book.author", ADMINS);
+    /** Lets /book edit books written by someone else. */
+    public static final PermissionNode BOOK_OTHERS = node("book.others", ADMINS);
+    public static final PermissionNode FIREWORK = node("firework", ADMINS);
+    public static final PermissionNode FIREWORK_FIRE = node("firework.fire", ADMINS);
+    public static final PermissionNode POTION = node("potion", ADMINS);
+    public static final PermissionNode POTION_APPLY = node("potion.apply", ADMINS);
 
     public static final PermissionNode TELEPORT_BYPASS_DELAY = node("teleport.bypass.delay", ADMINS);
     public static final PermissionNode TELEPORT_BYPASS_COOLDOWN = node("teleport.bypass.cooldown", ADMINS);
@@ -222,6 +231,7 @@ public final class PermissionNodes {
             SETJAIL, DELJAIL, JAILS, JAILEDPLAYERS, TOGGLEJAIL, JAIL_EXEMPT, VANISH, VANISH_OTHERS, VANISH_SEE,
             PTIME, PTIME_OTHERS, PWEATHER, THUNDER, LIGHTNING, LIGHTNING_OTHERS, BURN, ICE, ICE_OTHERS, REMOVE, SPAWNER, SPAWNMOB, TREE, BREAK, BREAK_BEDROCK,
             ITEM, ITEMDB, ITEMNAME, ITEMLORE, EXP, EXP_OTHERS, SKULL, CONDENSE, EDITSIGN, UNLIMITED, UNLIMITED_OTHERS, POWERTOOL,
+            BOOK, BOOK_TITLE, BOOK_AUTHOR, BOOK_OTHERS, FIREWORK, FIREWORK_FIRE, POTION, POTION_APPLY,
             TELEPORT_BYPASS_DELAY, TELEPORT_BYPASS_COOLDOWN);
 
     public static final IntOption HOME_LIMIT =
@@ -232,6 +242,11 @@ public final class PermissionNodes {
     private PermissionNodes() {}
 
     private static PermissionNode node(String name, int opLevel) {
-        return new PermissionNode("cmdessentials." + name, opLevel);
+        return new PermissionNode("cmdessentials." + name, opLevel, false);
+    }
+
+    /** A chat command: only available when other players can be on the server ({@code Multiplayer}). */
+    private static PermissionNode chatNode(String name, int opLevel) {
+        return new PermissionNode("cmdessentials." + name, opLevel, true);
     }
 }

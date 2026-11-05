@@ -10,7 +10,7 @@ You can also install it on a client to use the commands in singleplayer and on L
 
 > **Status: beta.** All of P0 and P1 is implemented: homes, spawn, warps, `/back`,
 > the `/tpa` family, teleport extensions, player state, AFK, info commands, messaging, mail,
-> nicknames, inventory tools, portable workbenches and kits. So is P2, except `/book`, `/firework` and `/potion`.
+> nicknames, inventory tools, portable workbenches and kits. So is all of P2.
 > See the [roadmap](#roadmap). Core features have been played in-game on five of the eight
 > targets. Forge 1.21.1, both 26.3 targets and the newest P2 commands have only passed
 > server-console tests so far.
@@ -38,6 +38,11 @@ NeoForge is not supported yet.
 In singleplayer or on a LAN world, put the jar (and Fabric API on Fabric) in the client's `mods/`
 folder. It then runs on the integrated server. Having it on the client is never required to join a
 server, and a client with it can still join servers without it.
+
+In singleplayer the chat commands (`/msg` and `/emsg`, `/r`, `/msgtoggle`, `/rtoggle`, `/ignore`,
+`/socialspy`, `/helpop`, `/mail`, `/broadcast`, `/broadcastworld`, `/mute`) are hidden, because
+nobody else can read them. They appear once the world is opened to LAN. In singleplayer and on LAN
+worlds, `/msg`, `/tell` and `/w` stay the vanilla commands.
 
 ## Commands
 
@@ -134,6 +139,9 @@ Items and blocks always use standard IDs such as `minecraft:diamond`.
 | `/spawner <mob>`, `/spawnmob <mob> [amount] [player]`, `/tree [type]`, `/bigtree <type>` | Mobs and trees | admins |
 | `/item`, `/itemname`, `/itemlore`, `/exp`, `/skull`, `/condense`, `/editsign`, `/unlimited` | Item and sign tools | admins |
 | `/powertool [command]`, `/powertoollist`, `/powertooltoggle` | Run a command on right-click with an item | admins |
+| `/book [title <title>\|author <name>]` | Unsign your written book, sign a book and quill, or change the title or author | everyone (author: admins) |
+| `/firework <color:… fade:… shape:… effect:…\|power [n]\|clear\|fire [n]>` | Add explosions to the held rocket, set its flight power, or launch it | admins |
+| `/potion <effect:<id> power:<n> duration:<s>\|clear\|apply>` (`/elixer`) | Add custom effects to the held potion, or drink it without using it up | admins |
 | `/itemdb [item]` | Item information | everyone |
 | `/eban`, `/ekick`, `/egive`, `/etp`, `/etime`, ... | Vanilla commands under Essentials' `e` names | as vanilla |
 
@@ -202,14 +210,16 @@ LuckPerms meta value on Fabric, or an integer node on Forge.
 
 ## Roadmap
 
+How the code is organised, with UML diagrams: [docs/architecture.md](docs/architecture.md).
+
 The full plan lives in [AGENTS.md](AGENTS.md#commands). It is based on the 163 EssentialsX
 commands listed in [docs/essentials-commands.md](docs/essentials-commands.md).
 
 - **P0 (done):** homes, spawn, `/speed`, `/back`, `/tpa` and friends, warps
 - **P1 (done):** player state and AFK, info commands, teleport extensions, gamemode shortcuts,
   messaging, mail, nicknames, inventory tools, portable workbenches, kits
-- **P2 (done except `/book`, `/firework`, `/potion`):** moderation, jails, `/vanish`,
-  per-player time and weather, world tools, item tools and power tools
+- **P2 (done):** moderation, jails, `/vanish`, per-player time and weather, world tools,
+  item tools, power tools, `/book`, `/firework` and `/potion`
 - **P3 (optional):** economy, fun commands
 - **Out of scope:** Discord/XMPP integration, `/customtext`, `/backup`, `/recipe` (use the
   vanilla recipe book)

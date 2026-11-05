@@ -1,6 +1,7 @@
 package com.mtmrails.esscmd.forge;
 
 import com.mtmrails.esscmd.CmdEssentials;
+import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -99,7 +100,12 @@ public final class CmdEssentialsForge {
     }
 
     private void onRegisterCommands(RegisterCommandsEvent event) {
-        CmdEssentials.registerCommands(event.getDispatcher());
+        //? if >=1.19 {
+        Commands.CommandSelection selection = event.getCommandSelection();
+        //?} else {
+        /*Commands.CommandSelection selection = event.getEnvironment();
+        *///?}
+        CmdEssentials.registerCommands(event.getDispatcher(), selection != Commands.CommandSelection.INTEGRATED);
     }
 
     private void onGatherPermissionNodes(PermissionGatherEvent.Nodes event) {

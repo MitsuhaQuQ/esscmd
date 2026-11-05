@@ -4,18 +4,20 @@ A **server-side** Minecraft mod that brings the commands and features of the Buk
 [EssentialsX](https://essentialsx.net/commands) plugin to Fabric and Forge servers.
 Vanilla clients must be able to join a server running this mod without installing anything.
 
-Read this file before changing code. Reply to the user in Chinese; write code, comments and
+Read this file before changing code. [docs/architecture.md](docs/architecture.md) describes the
+modules and runtime flow with UML diagrams; update it when the structure changes. Reply to the user in Chinese; write code, comments and
 commit messages in English.
 
 ## Status
 
 All 8 jars build; CI builds them and runs the unit tests on every push.
 
-- **Done:** P0, P1 (M1–M7) and P2 (M8–M12), except `/book`, `/firework` and `/potion`.
+- **Done:** P0, P1 (M1–M7) and P2 (M8–M12).
 - **In-game testing:** P0 and M2–M7 on Fabric 1.20.1. P0 and M5 core checks on Forge 1.20.1 and
   Fabric 1.21.1. Both 1.18.2 targets passed a pass covering P0, M5, M6, M7 and M8 core checks.
 - **Client install:** singleplayer passed (user-tested).
-- **Not yet tested in-game:** Forge 1.21.1 (console only), `/mute` with signed chat (1.19+),
+- **Not yet tested in-game:** `/book`, `/firework`, `/potion`, chat commands hidden in
+  singleplayer, Forge 1.21.1 (console only), `/mute` with signed chat (1.19+),
   all of M9–M12 and all of 26.3. Both 26.3 targets pass a console smoke test with mixin
   verification (Forge on a real server, `testserver/26.3-forge`).
 
@@ -161,6 +163,12 @@ cmdEssentials/
   mods.toml. On 1.18.2, `CmdEssentialsForge` also registers `IExtensionPoint.DisplayTest` in
   code, behind `//? if <1.20`. Static in-memory state must be cleared in `onServerStopping`,
   because a client starts a new integrated server for each world it opens.
+  - **Chat commands in singleplayer (decided)**: nodes made with `PermissionNodes.chatNode` (msg,
+    reply, toggles, ignore, socialspy, helpop, mail, broadcast, mute) fail `require()` unless
+    `permission.Multiplayer.active`: a dedicated server, or an integrated server opened to LAN.
+    `Multiplayer.tick` re-sends the command tree when that changes. `registerCommands` gets
+    `dedicated` from the loader (command selection), and `overrideVanilla` only applies when it is
+    true, so singleplayer and LAN keep vanilla `/msg`.
 
 ### Multi-version with Stonecutter
 
@@ -477,7 +485,13 @@ vanilla-clash versions, M11 per-player view and world tools, M12 items and power
   (`command/ItemCommands`). `/enchant` is `/eenchant` above.
 - [x] M12 power tools: `/powertool`, `/powertoollist`, `/powertooltoggle`, right-click only
   (`player/ItemPowers`, `ServerPlayerGameModeMixin`).
-- [ ] Not done: `/book`, `/firework`, `/potion` (each needs per-version item data editing).
+- [x] M12 item meta: `/book`, `/firework`, `/potion` (`/elixer`) (`command/ItemMetaCommands`,
+  `compat/Books`, `compat/Fireworks`, `compat/Potions`: NBT before 1.20.5, components after).
+  Options use Essentials' `key:value` syntax with tab completion. `/book` unsigns your own
+  written book (plain text) or signs a book and quill; `title`/`author` edit a written book.
+  `/firework` takes dye names or `#RRGGBB`, shapes `small_ball large_ball star creeper burst`,
+  effects `trail twinkle`, power 0-3, `fire` up to 10. `/potion` power is the level (1 = I),
+  duration in seconds (default 60); a second effect of the same type replaces the first.
 
 Test steps for M9-M12: `docs/testing/p2-checklist.md`. Console-verified on all targets, not yet
 played in-game.
