@@ -281,10 +281,14 @@ classDiagram
     ItemMetaCommands ..> Books
     ItemMetaCommands ..> Fireworks
     ItemMetaCommands ..> Potions
-    Fireworks +-- Explosion
-    note for Books "below 1.20.5: NBT tags (title, author, pages)\n1.20.5+: written_book_content / writable_book_content"
-    note for Potions "below 1.20.5: CustomPotionEffects + PotionUtils\n1.20.5+: potion_contents (4 fields on 26.1+)"
+    Fireworks *-- Explosion
 ```
+
+| Adapter | Before 1.20.5 | 1.20.5 and later |
+|---|---|---|
+| `Books` | NBT `title`, `author`, `pages` (JSON text on written books) | `written_book_content` / `writable_book_content` components |
+| `Fireworks` | NBT `Fireworks` {`Flight`, `Explosions`} | `fireworks` component |
+| `Potions` | NBT `CustomPotionEffects`, `PotionUtils` | `potion_contents` component (4 fields on 26.1+) |
 
 The command code only sees plain Java values (`String`, `List<Integer>`, `MobEffectInstance`);
 each adapter method has one branch for NBT and one for data components.
@@ -377,7 +381,7 @@ sequenceDiagram
     R-->>TC: request
     TC-->>A: "B accepted"
     TC->>T: teleport(A, () -> B's position)
-    Note over R: tick() expires old requests;<br/>forget() on logout
+    Note over R: tick() expires old requests,<br/>forget() runs on logout
 ```
 
 ### Private messages and chat hooks
