@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.Set;
+import com.mtmrails.esscmd.compat.Tags;
 import com.mtmrails.esscmd.compat.VersionedSavedData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -517,43 +518,43 @@ public final class EssData extends VersionedSavedData {
 
     private static EssData load(CompoundTag tag) {
         EssData data = new EssData();
-        if (tag.getInt("format") >= 2) {
-            CompoundTag playersTag = tag.getCompound("players");
-            for (String id : playersTag.getAllKeys()) {
-                data.players.put(UUID.fromString(id), PlayerRecord.fromTag(playersTag.getCompound(id)));
+        if (Tags.integer(tag, "format") >= 2) {
+            CompoundTag playersTag = Tags.compound(tag, "players");
+            for (String id : Tags.keys(playersTag)) {
+                data.players.put(UUID.fromString(id), PlayerRecord.fromTag(Tags.compound(playersTag, id)));
             }
         } else {
             data.migrateFormat1(tag);
         }
-        readLocations(tag.getCompound("warps"), data.warps);
-        readLocations(tag.getCompound("jails"), data.jails);
-        CompoundTag kitsTag = tag.getCompound("kits");
-        for (String name : kitsTag.getAllKeys()) {
-            data.kits.put(name, Kit.fromTag(kitsTag.getCompound(name)));
+        readLocations(Tags.compound(tag, "warps"), data.warps);
+        readLocations(Tags.compound(tag, "jails"), data.jails);
+        CompoundTag kitsTag = Tags.compound(tag, "kits");
+        for (String name : Tags.keys(kitsTag)) {
+            data.kits.put(name, Kit.fromTag(Tags.compound(kitsTag, name)));
         }
         if (tag.contains("spawn")) {
-            data.spawn = StoredLocation.fromTag(tag.getCompound("spawn"));
+            data.spawn = StoredLocation.fromTag(Tags.compound(tag, "spawn"));
         }
         return data;
     }
 
     /** P0 stored homes, back and the teleport toggles as separate maps. Saved in the new layout next time. */
     private void migrateFormat1(CompoundTag tag) {
-        CompoundTag homesTag = tag.getCompound("homes");
-        for (String id : homesTag.getAllKeys()) {
-            readLocations(homesTag.getCompound(id), record(UUID.fromString(id)).homes);
+        CompoundTag homesTag = Tags.compound(tag, "homes");
+        for (String id : Tags.keys(homesTag)) {
+            readLocations(Tags.compound(homesTag, id), record(UUID.fromString(id)).homes);
         }
-        CompoundTag backTag = tag.getCompound("back");
-        for (String id : backTag.getAllKeys()) {
-            record(UUID.fromString(id)).back = StoredLocation.fromTag(backTag.getCompound(id));
+        CompoundTag backTag = Tags.compound(tag, "back");
+        for (String id : Tags.keys(backTag)) {
+            record(UUID.fromString(id)).back = StoredLocation.fromTag(Tags.compound(backTag, id));
         }
-        ListTag disabled = tag.getList("teleportDisabled", Tag.TAG_STRING);
+        ListTag disabled = Tags.strings(tag, "teleportDisabled");
         for (int i = 0; i < disabled.size(); i++) {
-            record(UUID.fromString(disabled.getString(i))).teleportDisabled = true;
+            record(UUID.fromString(Tags.stringAt(disabled, i))).teleportDisabled = true;
         }
-        ListTag auto = tag.getList("teleportAuto", Tag.TAG_STRING);
+        ListTag auto = Tags.strings(tag, "teleportAuto");
         for (int i = 0; i < auto.size(); i++) {
-            record(UUID.fromString(auto.getString(i))).teleportAuto = true;
+            record(UUID.fromString(Tags.stringAt(auto, i))).teleportAuto = true;
         }
         if (!players.isEmpty()) {
             setDirty();
@@ -567,8 +568,8 @@ public final class EssData extends VersionedSavedData {
     }
 
     static void readLocations(CompoundTag tag, Map<String, StoredLocation> into) {
-        for (String name : tag.getAllKeys()) {
-            into.put(name, StoredLocation.fromTag(tag.getCompound(name)));
+        for (String name : Tags.keys(tag)) {
+            into.put(name, StoredLocation.fromTag(Tags.compound(tag, name)));
         }
     }
 }

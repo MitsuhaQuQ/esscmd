@@ -1,6 +1,7 @@
 package com.mtmrails.esscmd.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.permission.PermissionNodes;
@@ -19,7 +20,7 @@ public final class BackCommand {
                 .requires(PermissionNodes.BACK.require())
                 .executes(ctx -> {
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
-                    StoredLocation back = EssData.get(player.server).back(player.getUUID());
+                    StoredLocation back = EssData.get(Players.server(player)).back(player.getUUID());
                     if (back == null) {
                         return CommandUtil.fail(ctx.getSource(), "back.none");
                     }
@@ -29,8 +30,8 @@ public final class BackCommand {
                         .requires(PermissionNodes.BACK_OTHERS.require())
                         .executes(ctx -> {
                             ServerPlayer target = EntityArgument.getPlayer(ctx, "player");
-                            String name = target.getGameProfile().getName();
-                            StoredLocation back = EssData.get(target.server).back(target.getUUID());
+                            String name = Players.name(target);
+                            StoredLocation back = EssData.get(Players.server(target)).back(target.getUUID());
                             if (back == null) {
                                 return CommandUtil.fail(ctx.getSource(), "back.none-other", name);
                             }

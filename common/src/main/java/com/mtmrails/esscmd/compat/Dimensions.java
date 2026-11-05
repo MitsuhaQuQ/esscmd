@@ -14,7 +14,11 @@ public final class Dimensions {
     private Dimensions() {}
 
     public static String id(ResourceKey<Level> dimension) {
+        //? if >=1.21.11 {
+        /*return dimension.identifier().toString();
+        *///?} else {
         return dimension.location().toString();
+        //?}
     }
 
     public static ResourceKey<Level> key(String id) {

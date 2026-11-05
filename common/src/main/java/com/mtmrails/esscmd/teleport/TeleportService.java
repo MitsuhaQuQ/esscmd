@@ -44,7 +44,7 @@ public final class TeleportService {
             return false;
         }
         EssConfig.Teleport config = ConfigManager.get().teleport;
-        int now = player.server.getTickCount();
+        int now = Players.server(player).getTickCount();
         Integer until = COOLDOWN_UNTIL.get(player.getUUID());
         if (until != null && now < until && !PermissionNodes.TELEPORT_BYPASS_COOLDOWN.check(player)) {
             Players.send(player, Messages.error(player, "teleport.cooldown", (until - now + 19) / 20));
@@ -104,7 +104,7 @@ public final class TeleportService {
             Players.send(player, Messages.error(player, "teleport.target-gone"));
             return false;
         }
-        MinecraftServer server = player.server;
+        MinecraftServer server = Players.server(player);
         ServerLevel level = target.level(server);
         if (level == null) {
             Players.send(player, Messages.error(player, "teleport.unknown-world", target.dimension()));

@@ -9,13 +9,14 @@ commit messages in English.
 
 ## Status
 
-All 6 jars build; CI builds them and runs the unit tests on every push.
+All 8 jars build; CI builds them and runs the unit tests on every push.
 
 - **Done:** P0, P1 (M1–M7) and P2 (M8–M12), except `/book`, `/firework` and `/potion`.
 - **In-game testing:** P0 and M2–M7 on Fabric 1.20.1. P0 and M5 core checks on Forge 1.20.1 and
   Fabric 1.21.1. Both 1.18.2 targets passed a pass covering P0, M5, M6, M7 and M8 core checks.
-- **Not yet tested in-game:** Forge 1.21.1 (console only), `/mute` with signed chat (1.19+) and
-  all of M9–M12.
+- **Not yet tested in-game:** Forge 1.21.1 (console only), `/mute` with signed chat (1.19+),
+  all of M9–M12 and all of 26.3. Both 26.3 targets pass a console smoke test with mixin
+  verification (Forge on a real server, `testserver/26.3-forge`).
 
 The checklists under **Commands** track progress; test steps are in `docs/testing/`.
 
@@ -26,8 +27,9 @@ The checklists under **Commands** track progress; test steps are in `docs/testin
 | 1.18.2    | 17   | Fabric, Forge |
 | 1.20.1    | 17   | Fabric, Forge |
 | 1.21.1    | 21   | Fabric, Forge |
+| 26.3      | 25   | Fabric, Forge |
 
-That makes 3 versions × 2 loaders = 6 jars. Don't add another version until all of these build
+That makes 4 versions × 2 loaders = 8 jars. Don't add another version until all of these build
 and pass their tests. NeoForge is out of scope for now. If we add it later, it becomes a fourth
 module (`neoforge`) next to `forge`, and `common` stays unchanged.
 
@@ -78,9 +80,13 @@ cmdEssentials/
 - `fabric-permissions-api` is `modCompileOnly` and a *soft* dependency: `FabricPlatform` checks
   `isModLoaded("fabric-permissions-api-v0")` (LuckPerms ships it) and falls back to OP levels.
   Don't bundle it.
-- Pinned tool versions: Gradle 8.12 (wrapper), Stonecutter 0.6.2, Architectury Loom 1.9.436,
-  architectury-plugin 3.4.164, shadow 8.1.1. Upgrade them together and rebuild all 6 jars.
-  architectury-plugin 3.4.138 and older fail on Gradle 8.12.
+- Pinned tool versions: Gradle 9.5.0 (wrapper), Stonecutter 0.6.2, Architectury Loom 1.17.493,
+  architectury-plugin 3.5.170, shadow 9.6.1 (`com.gradleup.shadow`). Upgrade them together and
+  rebuild all 8 jars. architectury-plugin 3.4.x fails on Loom 1.17.
+- **26.1+ is unobfuscated**, so its nodes use `build.unobf.gradle.kts` (set in
+  `settings.gradle.kts`) in `common`, `fabric` and `forge`: `dev.architectury.loom-no-remap`, no
+  mappings, no remap and no Architectury plugin. `common` is compiled as it is and its classes
+  are copied into the loader jar. When adding a 26.x version, add it to that list too.
 - **Don't set `group`** in the module scripts. Every node project is named after its version
   (`:common:1.20.1`, `:fabric:1.20.1`), so a shared group gives them identical coordinates.
   Gradle then fails with "no variant with that configuration name exists".
@@ -90,12 +96,12 @@ cmdEssentials/
 - Mappings: `loom.officialMojangMappings()` everywhere.
 - Every version string lives in `gradle.properties` or `versions/<mc>/gradle.properties`.
   Never hard-code a version in a build script.
-- Java toolchain comes from the per-version `java` property: 17 or 21. Gradle itself runs on
-  JDK 21.
+- Java toolchain comes from the per-version `java` property: 17, 21 or 25. Gradle itself runs
+  on JDK 21.
 - `processResources` expands `fabric.mod.json`, `META-INF/mods.toml` and `pack.mcmeta` from
   properties (`${id}`, `${version}`, `${minecraft}`, `${forge_major}`, `${pack_format}`, …).
   These templates must not contain any per-version branching.
-- Jar name: `cmdessentials-<loader>-<mod_version>+<mc>.jar`. `buildAndCollect` copies all 6
+- Jar name: `cmdessentials-<loader>-<mod_version>+<mc>.jar`. `buildAndCollect` copies all 8
   jars to `build/libs/all/`.
 
 ### Code split
@@ -127,12 +133,13 @@ cmdEssentials/
     node list in `common` (one `PermissionNodes` class) so both loaders use the same list.
 - **Mixins** live in `common/.../compat/mixin/` and are listed in
   `cmdessentials.common.mixins.json`, which `fabric.mod.json` and `loom.forge.mixinConfigs(...)`
-  register. Architectury Loom adds the refmap (intermediary on Fabric, SRG on Forge). Only add
+  register. Architectury Loom rewrites the names in the mixin annotations directly (intermediary
+  on Fabric, SRG on Forge before 1.20.5), so the jars have no refmap. Only add
   loader-specific mixins when unavoidable. Prefer events over mixins. Current mixins:
   - `ServerPlayerMixin`: before 1.20.2 vanilla doesn't keep the client's language, so it
     stores it (see `Players.language`). From 1.20.2 it's empty and `clientInformation()` is used.
   - `ServerGamePacketListenerImplMixin`: chat and command activity for AFK, plus `/mute`.
-    Expected injected handlers: 2 on 1.18.2, 3 on 1.20.1, 4 on 1.21.1.
+    Expected injected handlers: 2 on 1.18.2, 3 on 1.20.1, 4 on 1.21.1 and 26.3.
   - `TrackedEntityMixin`, `ChunkMapAccessor`: /vanish. `ServerPlayerGameModeMixin`: /powertool.
   - `PlayerMixin`, `ServerPlayerListNameMixin`: nickname in the display name, nickname and
     AFK tag in the tab list. `TabListNames` sends the update packet.
@@ -145,9 +152,6 @@ cmdEssentials/
   - Never target library classes such as Brigadier: Forge doesn't transform them, so the
     mixin silently doesn't apply and casts crash at startup. `compat/CommandTrees` uses
     reflection to remove vanilla commands instead.
-  - The Forge 1.21.1 jar's refmap only has Fabric intermediary names. That is fine: Forge
-    1.21.1 runs on Mojang names, so Mixin falls back to the names in the annotations
-    (verified on a real Forge 1.21.1 server).
 - **Server-only flag**: Fabric uses `"environment": "server"` with a `server` entrypoint
   (`DedicatedServerModInitializer`). Forge sets `displayTest = "IGNORE_SERVER_VERSION"` in
   mods.toml. On 1.18.2, `CmdEssentialsForge` also registers `IExtensionPoint.DisplayTest` in
@@ -161,10 +165,15 @@ cmdEssentials/
 - Put version branches in **one place**: a small adapter class per topic in
   `common/.../compat/` (`Texts`, `Players`, `ItemData`, `ItemLookup`, `MovementSpeed`, …). Command code calls
   these adapters and contains no `//?` blocks itself.
+- Vanilla class renames that would otherwise reach command code are Stonecutter replacements in
+  `stonecutter.gradle.kts` (`ResourceLocation` → `Identifier`, `ClickType` → `ContainerInput`).
+  Write the old name in a new version's sources only through those replacements: the active
+  version's files on disk show the new name.
 - Known version splits we need to handle: 1.19 (chat and `Component` API, the
   `CommandBuildContext` argument), 1.20 (`Level` vs `ServerLevel` getters, smithing menu),
   1.20.5 (NBT → data components, attribute modifier IDs), 1.21 (`ResourceLocation` factory
-  methods).
+  methods), 1.21.5 (`CompoundTag` getters return Optionals: `compat/Tags`), 26.1 (saved data
+  codecs and location, world clocks, `PermissionSet`, `NameAndId`, Forge EventBus 7 `BUS` fields).
 - The source files on disk are always in the state of the **active** version. Before you
   commit, switch back to the VCS version (1.20.1) so that diffs stay readable.
 
@@ -206,7 +215,9 @@ redirect does nothing. `EssentialsCommand` shows the pattern.
 ## Data & config
 
 - Persistent data is one `EssData` (`SavedData`, `format: 2`) on the overworld:
-  `<world>/data/cmdessentials.dat`. Server-wide: warps, kits and the spawn point. Per player,
+  `<world>/data/cmdessentials.dat`, or from 26.1
+  `<world>/dimensions/minecraft/overworld/data/minecraft/cmdessentials.dat`. On 26.1+,
+  `VersionedSavedData` reads the old file once when the new one doesn't exist. Server-wide: warps, kits and the spawn point. Per player,
   one `PlayerRecord`: homes, `/back`, teleport toggles, `/fly`, `/god`, last name, last seen,
   logout location, mail, nickname, message settings, ignore list, kit claims and mute. Locations
   are `StoredLocation`s: dimension id, position, yaw and pitch. `/tpa` requests, pending
@@ -485,12 +496,12 @@ played in-game.
 ## Build & run
 
 Run Gradle with **JDK 21**: `export JAVA_HOME=$(/usr/libexec/java_home -v 21)`. Gradle 8.12
-can't run on the JDK 25 that is this machine's default `java`. The toolchain picks JDK 17 or
-21 for each version on its own (both are installed under `/Library/Java`).
+can't run on the JDK 25 that is this machine's default `java`. The toolchain picks JDK 17, 21
+or 25 for each version on its own (all are installed under `/Library/Java`).
 
 | Goal | Command |
 |---|---|
-| Build all 6 jars into `build/libs/all/` | `./gradlew buildAndCollect` |
+| Build all 8 jars into `build/libs/all/` | `./gradlew buildAndCollect` |
 | Switch the active version | `./gradlew "Set active project to 1.21.1"` |
 | Build the active version only | `./gradlew :fabric:1.21.1:build` (node path: `:<branch>:<mc>`) |
 | Dev server, active version | `./gradlew runActiveServerFabric` / `runActiveServerForge` |
@@ -504,13 +515,13 @@ To test another version, switch to it, test, then reset.
 
 - Dev servers run in `run/<mc>-<loader>/`, and their EULA is accepted automatically. Only
   server run configs exist; the client run config is removed on purpose.
-- **`:forge:1.21.1:runServer` doesn't work.** Architectury Loom 1.9 and 1.10 assemble a broken
-  module path for Forge 1.21.1 dev runs ("Module org.lwjgl.openal not found"). Excluding LWJGL
-  only moves the failure further into Forge's bootstrap. Test Forge 1.21.1 on a real server
-  instead: install it with the official installer
-  (`forge-1.21.1-<ver>-installer.jar --installServer`), put
-  `build/libs/all/cmdessentials-forge-*+1.21.1.jar` in `mods/`, and run it. The other 5
-  loader/version pairs work with `runServer`.
+- **`:forge:1.21.1:runServer` and `:forge:26.3:runServer` don't work.** Architectury Loom
+  assembles a broken module path for these Forge dev runs ("Module org.lwjgl... not found").
+  Excluding LWJGL only moves the failure further into Forge's bootstrap. Test them on a real
+  server instead: install it with the official installer
+  (`forge-<mc>-<ver>-installer.jar --installServer`), put
+  `build/libs/all/cmdessentials-forge-*+<mc>.jar` in `mods/`, and run it. The other 6
+  loader/version pairs work with `runServer`. Forge checks the EULA before it loads mods.
 - Test with a **vanilla client** of the same Minecraft version connected to the dev server.
   This also proves the server-only setup works. Never test in singleplayer only.
 - From a script, you can pipe console commands into `runServer` through stdin (for example
@@ -522,8 +533,8 @@ To test another version, switch to it, test, then reset.
 - Before finishing a task, run `./gradlew buildAndCollect`. A change that compiles on only the
   active version isn't done.
 - CI: `.github/workflows/build.yml` runs `buildAndCollect` on pushes to `main` and on pull
-  requests, with Temurin 17 and 21, and uploads the 6 jars as an artifact. Gradle finds the JDKs
-  through `org.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_21_X64`. If you
+  requests, with Temurin 17, 21 and 25, and uploads the 8 jars as an artifact. Gradle finds the JDKs
+  through `org.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_21_X64,JAVA_HOME_25_X64`. If you
   change the Java versions, update that list too.
 - Test servers on 1.18.2: take Fabric API from Modrinth. The aggregate `fabric-api` jars for
   1.18.2 on maven.fabricmc.net are ~5 KB stubs with no modules, and the mod then crashes with

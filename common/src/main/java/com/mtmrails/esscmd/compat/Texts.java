@@ -54,8 +54,14 @@ public final class Texts {
 
     /** Makes {@code text} run {@code command} when clicked in chat. */
     public static MutableComponent runOnClick(MutableComponent text, String command, Component hover) {
+        //? if >=26.1 {
+        /*return text.withStyle(style -> style
+                .withClickEvent(new ClickEvent.RunCommand(command))
+                .withHoverEvent(new HoverEvent.ShowText(hover)));
+        *///?} else {
         return text.withStyle(style -> style
                 .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hover)));
+        //?}
     }
 }

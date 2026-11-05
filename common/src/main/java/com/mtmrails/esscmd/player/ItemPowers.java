@@ -21,7 +21,7 @@ public final class ItemPowers {
         if (stack.isEmpty()) {
             return false;
         }
-        PlayerRecord record = EssData.get(player.server).player(player.getUUID()).orElse(null);
+        PlayerRecord record = EssData.get(Players.server(player)).player(player.getUUID()).orElse(null);
         if (record == null || record.powerToolsOff()) {
             return false;
         }
@@ -30,7 +30,7 @@ public final class ItemPowers {
             return false;
         }
         try {
-            player.server.getCommands().getDispatcher().execute(command, player.createCommandSourceStack());
+            Players.server(player).getCommands().getDispatcher().execute(command, player.createCommandSourceStack());
         } catch (CommandSyntaxException e) {
             Players.send(player, Messages.error(player, "powertool.failed", e.getMessage()));
         }

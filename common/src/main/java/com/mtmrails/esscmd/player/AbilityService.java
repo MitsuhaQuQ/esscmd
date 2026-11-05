@@ -34,7 +34,7 @@ public final class AbilityService {
 
     /** Applies the stored flags now, e.g. right after /fly or /god changed them. */
     public static void refresh(ServerPlayer player) {
-        EssData data = EssData.get(player.server);
+        EssData data = EssData.get(Players.server(player));
         Abilities abilities = player.getAbilities();
         // Start from what the gamemode grants, so turning a flag off doesn't take away
         // creative flight or invulnerability.

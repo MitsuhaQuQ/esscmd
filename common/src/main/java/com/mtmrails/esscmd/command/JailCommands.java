@@ -9,6 +9,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.permission.PermissionNodes;
@@ -87,7 +88,7 @@ public final class JailCommands {
 
     private static int toggle(CommandSourceStack source, ServerPlayer target, String jailName, String duration)
             throws CommandSyntaxException {
-        String shown = target.getGameProfile().getName();
+        String shown = Players.name(target);
         if (JailService.isJailed(target)) {
             JailService.release(target);
             return CommandUtil.ok(source, "jail.freed", shown);

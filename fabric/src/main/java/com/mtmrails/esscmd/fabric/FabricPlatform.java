@@ -2,6 +2,7 @@ package com.mtmrails.esscmd.fabric;
 
 import java.nio.file.Path;
 import com.mtmrails.esscmd.CmdEssentials;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.permission.IntOption;
 import com.mtmrails.esscmd.platform.Platform;
 import me.lucko.fabric.api.permissions.v0.Options;
@@ -32,7 +33,7 @@ public final class FabricPlatform implements Platform {
 
     @Override
     public boolean hasPermission(CommandSourceStack source, String node, int opLevel) {
-        return PERMISSIONS_API ? LuckoPermissions.check(source, node, opLevel) : source.hasPermission(opLevel);
+        return PERMISSIONS_API ? LuckoPermissions.check(source, node, opLevel) : Players.hasOpLevel(source, opLevel);
     }
 
     @Override

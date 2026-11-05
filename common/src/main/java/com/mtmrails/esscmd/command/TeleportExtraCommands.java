@@ -112,7 +112,7 @@ public final class TeleportExtraCommands {
                 .requires(PermissionNodes.WORLD.require())
                 .executes(ctx -> {
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
-                    MinecraftServer server = player.server;
+                    MinecraftServer server = Players.server(player);
                     // Like Essentials: without a world, switch between the overworld and the Nether.
                     boolean inOverworld = Players.level(player).dimension() == Level.OVERWORLD;
                     ServerLevel target = server.getLevel(inOverworld ? Level.NETHER : Level.OVERWORLD);
@@ -125,7 +125,7 @@ public final class TeleportExtraCommands {
     }
 
     private static String name(ServerPlayer player) {
-        return player.getGameProfile().getName();
+        return Players.name(player);
     }
 
     private static int bringHere(CommandSourceStack source, ServerPlayer target, boolean override) throws CommandSyntaxException {

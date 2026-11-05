@@ -5,10 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 import com.mtmrails.esscmd.compat.Players;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.GameRules;
 
 /**
  * /ptime and /pweather: what one client is told, without touching the world. Vanilla broadcasts
@@ -31,9 +29,7 @@ public final class PlayerView {
 
     public static void resetTime(ServerPlayer player) {
         TIME.remove(player.getUUID());
-        var level = Players.level(player);
-        player.connection.send(new ClientboundSetTimePacket(level.getGameTime(), level.getDayTime(),
-                level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)));
+        Players.resetTime(player);
     }
 
     public static void setWeather(ServerPlayer player, boolean storm) {
@@ -55,7 +51,7 @@ public final class PlayerView {
     }
 
     private static void sendTime(ServerPlayer player, long ticks) {
-        player.connection.send(new ClientboundSetTimePacket(Players.level(player).getGameTime(), ticks, false));
+        Players.sendTime(player, ticks);
     }
 
     private static void sendWeather(ServerPlayer player, boolean storm) {

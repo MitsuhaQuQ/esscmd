@@ -10,8 +10,9 @@ Install it on the server only. Players join with an unmodified vanilla client.
 > **Status: early development.** All of P0 and P1 is implemented: homes, spawn, warps, `/back`,
 > the `/tpa` family, teleport extensions, player state, AFK, info commands, messaging, mail,
 > nicknames, inventory tools, portable workbenches and kits. So is P2, except `/book`, `/firework` and `/potion`.
-> See the [roadmap](#roadmap). Core features have been played in-game on five of the six
-> targets; Forge 1.21.1 and the newest P2 commands have only passed server-console tests so far.
+> See the [roadmap](#roadmap). Core features have been played in-game on five of the eight
+> targets. Forge 1.21.1, both 26.3 targets and the newest P2 commands have only passed
+> server-console tests so far.
 
 ## Supported versions
 
@@ -20,6 +21,7 @@ Install it on the server only. Players join with an unmodified vanilla client.
 | 1.18.2    | ✅     | ✅    | 17   |
 | 1.20.1    | ✅     | ✅    | 17   |
 | 1.21.1    | ✅     | ✅    | 21   |
+| 26.3      | ✅     | ✅    | 25   |
 
 NeoForge is not supported yet.
 
@@ -218,13 +220,13 @@ command.
 ## Building from source
 
 You need JDK 21 to run Gradle. JDK 17 is also needed for the 1.18.2 and 1.20.1 targets, and
-Gradle's toolchain support finds or downloads it.
+JDK 25 for 26.3. Gradle's toolchain support finds or downloads them.
 
 ```bash
 ./gradlew buildAndCollect
 ```
 
-All 6 jars end up in `build/libs/all/`. Unit tests run with `./gradlew :common:1.20.1:test`.
+All 8 jars end up in `build/libs/all/`. Unit tests run with `./gradlew :common:1.20.1:test`.
 GitHub Actions builds the jars and runs the tests on every push to `main` and every pull
 request. Download the jars from the run's **Artifacts**.
 
@@ -251,7 +253,7 @@ Useful tasks:
 
 Only the active version can be built or run on its own. A dev server doesn't exit after `stop`;
 press Ctrl+C once the world is saved. [AGENTS.md](AGENTS.md#build--run) covers these and other
-details, such as testing Forge 1.21.1 on a real server. In-game test checklists are in
+details, such as testing Forge 1.21.1 and 26.3 on a real server. In-game test checklists are in
 [docs/testing/](docs/testing/).
 
 ## License

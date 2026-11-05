@@ -140,11 +140,11 @@ public final class CmdEssentials {
     }
 
     public static void onPlayerJoin(ServerPlayer player) {
-        EssData.get(player.server).playerJoined(player.getUUID(), player.getGameProfile().getName());
+        EssData.get(Players.server(player)).playerJoined(player.getUUID(), Players.name(player));
         AfkService.onJoin(player);
         VanishService.onJoin(player);
         Sessions.onJoin(player);
-        int unreadMail = EssData.get(player.server).unreadMail(player.getUUID(), System.currentTimeMillis());
+        int unreadMail = EssData.get(Players.server(player)).unreadMail(player.getUUID(), System.currentTimeMillis());
         if (unreadMail > 0) {
             Players.send(player, Messages.info(player, "mail.unread", unreadMail));
         }
@@ -152,7 +152,7 @@ public final class CmdEssentials {
             TextCommands.showMotd(player);
         }
         if (ConfigManager.get().spawn.firstJoinAtSpawn && Players.isFirstJoin(player)) {
-            StoredLocation spawn = EssData.get(player.server).spawn();
+            StoredLocation spawn = EssData.get(Players.server(player)).spawn();
             if (spawn != null) {
                 TeleportService.teleportNow(player, spawn);
             }
@@ -160,7 +160,7 @@ public final class CmdEssentials {
     }
 
     public static void onPlayerLeave(ServerPlayer player) {
-        EssData.get(player.server).playerLeft(player.getUUID(), player.getGameProfile().getName(),
+        EssData.get(Players.server(player)).playerLeft(player.getUUID(), Players.name(player),
                 StoredLocation.of(player), System.currentTimeMillis());
         TeleportService.cancel(player);
         TpaRequests.forget(player.getUUID());
@@ -168,7 +168,7 @@ public final class CmdEssentials {
         VanishService.onLeave(player);
         PlayerView.onLeave(player);
         if (ConfigManager.get().god.removeOnDisconnect) {
-            EssData.get(player.server).setGod(player.getUUID(), false);
+            EssData.get(Players.server(player)).setGod(player.getUUID(), false);
         }
         Sessions.onLeave(player);
         MessagingService.forget(player.getUUID());
@@ -177,15 +177,15 @@ public final class CmdEssentials {
     /** Called with the dead player, still at the place of death. */
     public static void onPlayerDeath(ServerPlayer player) {
         if (ConfigManager.get().back.saveOnDeath) {
-            EssData.get(player.server).setBack(player.getUUID(), StoredLocation.of(player));
+            EssData.get(Players.server(player)).setBack(player.getUUID(), StoredLocation.of(player));
         }
     }
 
     /** Called with the new player entity after a respawn from death (not after leaving the End). */
     public static void onPlayerRespawn(ServerPlayer player) {
         var config = ConfigManager.get().spawn;
-        boolean hasBed = player.getRespawnPosition() != null;
-        EssData data = EssData.get(player.server);
+        boolean hasBed = Players.hasRespawnPoint(player);
+        EssData data = EssData.get(Players.server(player));
         var homes = data.homes(player.getUUID());
         StoredLocation target = null;
         if (config.respawnAtHome && !homes.isEmpty() && !(hasBed && config.respawnAtHomeBed)) {
@@ -195,7 +195,7 @@ public final class CmdEssentials {
         }
         if (target != null) {
             // Not via TeleportService: a respawn shouldn't overwrite the death location in /back.
-            var level = target.level(player.server);
+            var level = target.level(Players.server(player));
             if (level != null) {
                 Players.teleport(player, level, target.x(), target.y(), target.z(), target.yaw(), target.pitch());
             }

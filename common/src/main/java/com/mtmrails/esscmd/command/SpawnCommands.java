@@ -2,6 +2,7 @@ package com.mtmrails.esscmd.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
 import com.mtmrails.esscmd.permission.PermissionNodes;
@@ -29,7 +30,7 @@ public final class SpawnCommands {
                 .requires(PermissionNodes.SPAWN.require())
                 .executes(ctx -> {
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
-                    return TeleportService.teleport(player, () -> spawn(player.server)) ? 1 : 0;
+                    return TeleportService.teleport(player, () -> spawn(Players.server(player))) ? 1 : 0;
                 })
                 .then(Commands.argument("player", EntityArgument.player())
                         .requires(PermissionNodes.SPAWN_OTHERS.require())
@@ -45,6 +46,6 @@ public final class SpawnCommands {
         if (!TeleportService.teleportNow(target, spawn(source.getServer()))) {
             return 0;
         }
-        return CommandUtil.ok(source, "spawn.sent", target.getGameProfile().getName());
+        return CommandUtil.ok(source, "spawn.sent", Players.name(target));
     }
 }

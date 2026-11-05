@@ -102,13 +102,13 @@ public final class MessagingCommands {
         }
         EssData data = EssData.get(source.getServer());
         if (data.messagesDisabled(target.getUUID())) {
-            return CommandUtil.fail(source, "msg.disabled", target.getGameProfile().getName());
+            return CommandUtil.fail(source, "msg.disabled", Players.name(target));
         }
         if (data.ignores(target.getUUID(), sender.getUUID())) {
-            return CommandUtil.fail(source, "msg.ignored", target.getGameProfile().getName());
+            return CommandUtil.fail(source, "msg.ignored", Players.name(target));
         }
-        String senderName = sender.getGameProfile().getName();
-        String targetName = target.getGameProfile().getName();
+        String senderName = Players.name(sender);
+        String targetName = Players.name(target);
         Players.send(sender, Messages.info(sender, "msg.outgoing", Nicknames.displayName(target), text));
         Players.send(target, Messages.info(target, "msg.incoming", Nicknames.displayName(sender), text));
         MessagingService.sent(sender.getUUID(), target.getUUID());
@@ -136,7 +136,7 @@ public final class MessagingCommands {
             return CommandUtil.fail(source, "ignore.self");
         }
         boolean ignored = EssData.get(source.getServer()).toggleIgnored(self.getUUID(), target.getUUID());
-        return CommandUtil.ok(source, ignored ? "ignore.on" : "ignore.off", target.getGameProfile().getName());
+        return CommandUtil.ok(source, ignored ? "ignore.on" : "ignore.off", Players.name(target));
     }
 
     /** kind: false=messages enabled, true=reply-to-recipient, null=social spy. */
@@ -173,7 +173,7 @@ public final class MessagingCommands {
             data.setMessagesDisabled(id, !next);
             key = "msgtoggle.";
         }
-        return CommandUtil.ok(source, key + (next ? "on" : "off"), player.getGameProfile().getName());
+        return CommandUtil.ok(source, key + (next ? "on" : "off"), Players.name(player));
     }
 
     private static int helpop(CommandSourceStack source, String text) throws CommandSyntaxException {
@@ -181,7 +181,7 @@ public final class MessagingCommands {
         int recipients = 0;
         for (ServerPlayer player : source.getServer().getPlayerList().getPlayers()) {
             if (PermissionNodes.HELPOP_RECEIVE.check(player)) {
-                Players.send(player, Messages.info(player, "helpop.message", sender.getGameProfile().getName(), text));
+                Players.send(player, Messages.info(player, "helpop.message", Players.name(sender), text));
                 recipients++;
             }
         }
@@ -191,16 +191,16 @@ public final class MessagingCommands {
     public static void spyMail(Iterable<ServerPlayer> players, ServerPlayer sender, UUID target, String targetName,
                                String text) {
         for (ServerPlayer spy : players) {
-            if (spy != sender && !spy.getUUID().equals(target) && EssData.get(spy.server).socialSpy(spy.getUUID())) {
-                Players.send(spy, Messages.info(spy, "socialspy.mail", sender.getGameProfile().getName(), targetName, text));
+            if (spy != sender && !spy.getUUID().equals(target) && EssData.get(Players.server(spy)).socialSpy(spy.getUUID())) {
+                Players.send(spy, Messages.info(spy, "socialspy.mail", Players.name(sender), targetName, text));
             }
         }
     }
 
     public static void spyMailAll(Iterable<ServerPlayer> players, ServerPlayer sender, String text) {
         for (ServerPlayer spy : players) {
-            if (spy != sender && EssData.get(spy.server).socialSpy(spy.getUUID())) {
-                Players.send(spy, Messages.info(spy, "socialspy.mail-all", sender.getGameProfile().getName(), text));
+            if (spy != sender && EssData.get(Players.server(spy)).socialSpy(spy.getUUID())) {
+                Players.send(spy, Messages.info(spy, "socialspy.mail-all", Players.name(sender), text));
             }
         }
     }
@@ -208,7 +208,7 @@ public final class MessagingCommands {
     private static void spy(Iterable<ServerPlayer> players, ServerPlayer sender, ServerPlayer target,
                             String key, Object... args) {
         for (ServerPlayer player : players) {
-            if (player != sender && player != target && EssData.get(player.server).socialSpy(player.getUUID())) {
+            if (player != sender && player != target && EssData.get(Players.server(player)).socialSpy(player.getUUID())) {
                 Players.send(player, Messages.info(player, key, args));
             }
         }

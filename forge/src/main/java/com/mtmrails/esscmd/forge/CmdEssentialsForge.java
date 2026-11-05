@@ -4,7 +4,9 @@ import com.mtmrails.esscmd.CmdEssentials;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+//? if <26.1 {
 import net.minecraftforge.common.MinecraftForge;
+//?}
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -30,19 +32,49 @@ public final class CmdEssentialsForge {
                 () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (version, fromServer) -> true));
         *///?}
         CmdEssentials.init();
+        //? if >=26.1 {
+        /*RegisterCommandsEvent.BUS.addListener(this::onRegisterCommands);
+        PermissionGatherEvent.Nodes.BUS.addListener(this::onGatherPermissionNodes);
+        ServerStoppingEvent.BUS.addListener(event -> CmdEssentials.onServerStopping(event.getServer()));
+        TickEvent.ServerTickEvent.Post.BUS.addListener(event -> CmdEssentials.onServerTick(server(event)));
+        PlayerEvent.PlayerLoggedInEvent.BUS.addListener(event -> {
+            if (player(event) instanceof ServerPlayer player) {
+                CmdEssentials.onPlayerJoin(player);
+            }
+        });
+        PlayerEvent.PlayerLoggedOutEvent.BUS.addListener(event -> {
+            if (player(event) instanceof ServerPlayer player) {
+                CmdEssentials.onPlayerLeave(player);
+            }
+        });
+        LivingDeathEvent.BUS.addListener(event -> {
+            if (entity(event) instanceof ServerPlayer player) {
+                CmdEssentials.onPlayerDeath(player);
+            }
+        });
+        PlayerEvent.PlayerRespawnEvent.BUS.addListener(event -> {
+            if (!event.isEndConquered() && player(event) instanceof ServerPlayer player) {
+                CmdEssentials.onPlayerRespawn(player);
+            }
+        });
+        *///?}
+        //? if <26.1 {
         MinecraftForge.EVENT_BUS.addListener(this::onRegisterCommands);
         MinecraftForge.EVENT_BUS.addListener(this::onGatherPermissionNodes);
         MinecraftForge.EVENT_BUS.addListener((ServerStoppingEvent event) -> CmdEssentials.onServerStopping(event.getServer()));
-        //? if >=1.21 {
+        //?}
+        //? if >=1.21 && <26.1 {
         /*MinecraftForge.EVENT_BUS.addListener((TickEvent.ServerTickEvent.Post event) ->
-                CmdEssentials.onServerTick(event.getServer()));
-        *///?} else {
+                CmdEssentials.onServerTick(server(event)));
+        *///?}
+        //? if <1.21 {
         MinecraftForge.EVENT_BUS.addListener((TickEvent.ServerTickEvent event) -> {
             if (event.phase == TickEvent.Phase.END) {
                 CmdEssentials.onServerTick(server(event));
             }
         });
         //?}
+        //? if <26.1 {
         MinecraftForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent event) -> {
             if (player(event) instanceof ServerPlayer player) {
                 CmdEssentials.onPlayerJoin(player);
@@ -63,6 +95,7 @@ public final class CmdEssentialsForge {
                 CmdEssentials.onPlayerRespawn(player);
             }
         });
+        //?}
     }
 
     private void onRegisterCommands(RegisterCommandsEvent event) {
@@ -75,7 +108,9 @@ public final class CmdEssentialsForge {
     }
 
     private static MinecraftServer server(TickEvent.ServerTickEvent event) {
-        //? if >=1.20 {
+        //? if >=26.1 {
+        /*return event.server();
+        *///?} else if >=1.20 {
         return event.getServer();
         //?} else {
         /*return ServerLifecycleHooks.getCurrentServer();

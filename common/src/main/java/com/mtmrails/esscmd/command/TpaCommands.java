@@ -63,7 +63,7 @@ public final class TpaCommands {
     }
 
     private static String name(ServerPlayer player) {
-        return player.getGameProfile().getName();
+        return Players.name(player);
     }
 
     private static int request(CommandSourceStack source, ServerPlayer target, Type type) throws CommandSyntaxException {

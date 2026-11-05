@@ -59,7 +59,7 @@ public final class PlayerInfoCommands {
                 .requires(PermissionNodes.PLAYTIME.require())
                 .executes(ctx -> {
                     ServerPlayer self = ctx.getSource().getPlayerOrException();
-                    return playtime(ctx.getSource(), self.getUUID(), self.getGameProfile().getName());
+                    return playtime(ctx.getSource(), self.getUUID(), Players.name(self));
                 })
                 .then(Commands.argument("player", StringArgumentType.word())
                         .requires(PermissionNodes.PLAYTIME_OTHERS.require())
@@ -83,7 +83,7 @@ public final class PlayerInfoCommands {
     private static String displayName(MinecraftServer server, UUID id, String typed) {
         ServerPlayer online = server.getPlayerList().getPlayer(id);
         if (online != null) {
-            return online.getGameProfile().getName();
+            return Players.name(online);
         }
         return EssData.get(server).player(id).map(PlayerRecord::lastName).filter(n -> !n.isEmpty()).orElse(typed);
     }
@@ -96,7 +96,7 @@ public final class PlayerInfoCommands {
         MinecraftServer server = source.getServer();
         ServerPlayer online = server.getPlayerList().getPlayerByName(name);
         if (online != null) {
-            return CommandUtil.ok(source, "seen.online", online.getGameProfile().getName(), ago(Sessions.joinedAt(online)));
+            return CommandUtil.ok(source, "seen.online", Players.name(online), ago(Sessions.joinedAt(online)));
         }
         Optional<UUID> id = Players.findId(server, name);
         Optional<PlayerRecord> record = id.flatMap(uuid -> EssData.get(server).player(uuid));
@@ -123,7 +123,7 @@ public final class PlayerInfoCommands {
             CommandUtil.ok(source, "whois.health", Math.round(online.getHealth()), Math.round(online.getMaxHealth()),
                     online.getFoodData().getFoodLevel());
             CommandUtil.ok(source, "whois.gamemode", online.gameMode.getGameModeForPlayer().getName());
-            CommandUtil.ok(source, "whois.flags", yesNo(server.getPlayerList().isOp(online.getGameProfile())),
+            CommandUtil.ok(source, "whois.flags", yesNo(Players.isOp(server, online)),
                     yesNo(data.fly(id.get())), yesNo(data.god(id.get())), yesNo(AfkService.isAfk(online)));
             if (PermissionNodes.WHOIS_IP.check(source)) {
                 CommandUtil.ok(source, "whois.ip", online.getIpAddress());

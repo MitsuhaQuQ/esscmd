@@ -7,6 +7,7 @@ import java.util.OptionalLong;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.permission.PermissionNodes;
 import com.mtmrails.esscmd.player.PlayerView;
 import com.mtmrails.esscmd.util.TimeOfDay;
@@ -65,7 +66,7 @@ public final class ViewCommands {
             Long time = PlayerView.time(player);
             Boolean weather = PlayerView.weather(player);
             if (time != null || weather != null) {
-                CommandUtil.ok(source, "view.entry", player.getGameProfile().getName(),
+                CommandUtil.ok(source, "view.entry", Players.name(player),
                         time == null ? "-" : time + "t", weather == null ? "-" : weather ? "storm" : "sun");
             }
         }

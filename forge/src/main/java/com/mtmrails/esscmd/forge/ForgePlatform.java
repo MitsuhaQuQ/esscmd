@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Collectors;
 import com.mtmrails.esscmd.CmdEssentials;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.permission.IntOption;
 import com.mtmrails.esscmd.permission.PermissionNodes;
 import com.mtmrails.esscmd.platform.Platform;
@@ -36,7 +37,7 @@ public final class ForgePlatform implements Platform {
 
     private static PermissionNode<Boolean> toForgeNode(com.mtmrails.esscmd.permission.PermissionNode node) {
         return new PermissionNode<>(CmdEssentials.MOD_ID, nodeName(node.name()), PermissionTypes.BOOLEAN,
-                (player, uuid, context) -> player != null && player.hasPermissions(node.opLevel()));
+                (player, uuid, context) -> player != null && Players.hasOpLevel(player, node.opLevel()));
     }
 
     @Override
@@ -46,7 +47,11 @@ public final class ForgePlatform implements Platform {
 
     @Override
     public String modVersion() {
+        //? if >=26.1 {
+        /*return ModList.getModContainerById(CmdEssentials.MOD_ID)
+        *///?} else {
         return ModList.get().getModContainerById(CmdEssentials.MOD_ID)
+        //?}
                 .map(mod -> mod.getModInfo().getVersion().toString())
                 .orElse("unknown");
     }
@@ -63,7 +68,7 @@ public final class ForgePlatform implements Platform {
             return PermissionAPI.getPermission(player, forgeNode);
         }
         // Console, command blocks and unknown nodes use the OP level.
-        return source.hasPermission(opLevel);
+        return Players.hasOpLevel(source, opLevel);
     }
 
     @Override

@@ -11,9 +11,11 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mtmrails.esscmd.compat.Dimensions;
 import com.mtmrails.esscmd.compat.ItemLookup;
 import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.compat.Spawners;
+import com.mtmrails.esscmd.compat.Worlds;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.permission.PermissionNodes;
 import net.minecraft.commands.CommandSourceStack;
@@ -31,7 +33,6 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SaplingBlock;
@@ -59,7 +60,7 @@ public final class WorldCommands {
 
     private static final Map<String, Predicate<Entity>> REMOVABLE = Map.of(
             "drops", entity -> entity instanceof ItemEntity,
-            "arrows", entity -> entity instanceof AbstractArrow,
+            "arrows", Worlds::isArrow,
             "xp", entity -> entity instanceof ExperienceOrb,
             "monsters", entity -> entity instanceof Enemy,
             "animals", entity -> entity instanceof Animal);
@@ -82,7 +83,7 @@ public final class WorldCommands {
                         .executes(ctx -> {
                             ServerPlayer target = EntityArgument.getPlayer(ctx, "player");
                             strike(Players.level(target), target.position());
-                            return CommandUtil.ok(ctx.getSource(), "lightning.done", target.getGameProfile().getName());
+                            return CommandUtil.ok(ctx.getSource(), "lightning.done", Players.name(target));
                         })));
         dispatcher.register(Commands.literal("burn")
                 .requires(PermissionNodes.BURN.require())
@@ -92,7 +93,7 @@ public final class WorldCommands {
                                     ServerPlayer target = EntityArgument.getPlayer(ctx, "player");
                                     int seconds = IntegerArgumentType.getInteger(ctx, "seconds");
                                     target.setRemainingFireTicks(seconds * TICKS_PER_SECOND);
-                                    return CommandUtil.ok(ctx.getSource(), "burn.done", target.getGameProfile().getName(), seconds);
+                                    return CommandUtil.ok(ctx.getSource(), "burn.done", Players.name(target), seconds);
                                 }))));
         dispatcher.register(Commands.literal("ice")
                 .requires(PermissionNodes.ICE.require())
@@ -147,12 +148,12 @@ public final class WorldCommands {
 
     private static int thunder(CommandSourceStack source, boolean on, int ticks) throws CommandSyntaxException {
         ServerLevel level = source.getLevel();
-        level.setWeatherParameters(on ? 0 : ticks, on ? ticks : 0, on, on);
+        Worlds.setWeather(level, on ? 0 : ticks, on ? ticks : 0, on, on);
         return CommandUtil.ok(source, on ? "thunder.on" : "thunder.off");
     }
 
     private static void strike(ServerLevel level, Vec3 position) {
-        Entity bolt = EntityType.LIGHTNING_BOLT.create(level);
+        Entity bolt = Worlds.create(ItemLookup.entity(Dimensions.location("minecraft", "lightning_bolt")).orElseThrow(), level);
         if (bolt != null) {
             bolt.setPos(position.x, position.y, position.z);
             level.addFreshEntity(bolt);
@@ -171,7 +172,7 @@ public final class WorldCommands {
 
     private static int ice(CommandSourceStack source, ServerPlayer target) {
         target.setTicksFrozen(target.getTicksRequiredToFreeze());
-        return CommandUtil.ok(source, "ice.done", target.getGameProfile().getName());
+        return CommandUtil.ok(source, "ice.done", Players.name(target));
     }
 
     private static int remove(CommandSourceStack source, String type, int radius) {
@@ -230,9 +231,9 @@ public final class WorldCommands {
         }
         int spawned = 0;
         for (int i = 0; i < count; i++) {
-            Entity entity = type.get().create(level);
+            Entity entity = Worlds.create(type.get(), level);
             if (entity != null) {
-                entity.moveTo(position.x, position.y, position.z, level.getRandom().nextFloat() * 360, 0);
+                Worlds.place(entity, position, level.getRandom().nextFloat() * 360);
                 level.addFreshEntity(entity);
                 spawned++;
             }

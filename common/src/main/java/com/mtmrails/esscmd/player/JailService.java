@@ -26,18 +26,18 @@ public final class JailService {
     private JailService() {}
 
     public static boolean isJailed(ServerPlayer player) {
-        return EssData.get(player.server).player(player.getUUID()).map(r -> !r.jail().isEmpty()).orElse(false);
+        return EssData.get(Players.server(player)).player(player.getUUID()).map(r -> !r.jail().isEmpty()).orElse(false);
     }
 
     public static void jail(ServerPlayer player, String jail, StoredLocation location, long until) {
-        EssData.get(player.server).setJailed(player.getUUID(), jail, until, StoredLocation.of(player),
+        EssData.get(Players.server(player)).setJailed(player.getUUID(), jail, until, StoredLocation.of(player),
                 player.gameMode.getGameModeForPlayer().getName());
         move(player, location);
         player.setGameMode(GameType.ADVENTURE);
     }
 
     public static void release(ServerPlayer player) {
-        MinecraftServer server = player.server;
+        MinecraftServer server = Players.server(player);
         EssData data = EssData.get(server);
         PlayerRecord record = data.player(player.getUUID()).orElse(null);
         if (record == null || record.jail().isEmpty()) {
@@ -56,7 +56,7 @@ public final class JailService {
     }
 
     private static void move(ServerPlayer player, StoredLocation location) {
-        ServerLevel level = location.level(player.server);
+        ServerLevel level = location.level(Players.server(player));
         if (level != null) {
             Players.teleport(player, level, location.x(), location.y(), location.z(), location.yaw(), location.pitch());
         }

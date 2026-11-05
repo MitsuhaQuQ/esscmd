@@ -1,6 +1,7 @@
 package com.mtmrails.esscmd.message;
 
 import com.mtmrails.esscmd.CmdEssentials;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.config.EssConfig;
 import java.util.regex.Pattern;
@@ -17,8 +18,8 @@ public final class Nicknames {
     private Nicknames() {}
 
     public static MutableComponent displayName(ServerPlayer player) {
-        String nickname = EssData.get(player.server).nickname(player.getUUID());
-        String name = nickname.isEmpty() ? player.getGameProfile().getName()
+        String nickname = EssData.get(Players.server(player)).nickname(player.getUUID());
+        String name = nickname.isEmpty() ? Players.name(player)
                 : ConfigManager.get().nick.prefix + nickname;
         MutableComponent display = Texts.literal(name);
         if (!nickname.isEmpty()) {

@@ -8,6 +8,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
@@ -118,7 +119,7 @@ public final class HomeCommands {
                     return CommandUtil.fail(source, "home.none-other", owned.ownerName());
                 }
                 if (ConfigManager.get().homes.spawnIfNoHome) {
-                    return TeleportService.teleport(player, () -> SpawnCommands.spawn(player.server)) ? 1 : 0;
+                    return TeleportService.teleport(player, () -> SpawnCommands.spawn(Players.server(player))) ? 1 : 0;
                 }
                 return CommandUtil.fail(source, "home.none");
             }

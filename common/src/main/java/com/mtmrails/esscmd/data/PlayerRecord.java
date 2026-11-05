@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.ArrayList;
+import com.mtmrails.esscmd.compat.Tags;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -201,49 +202,49 @@ public final class PlayerRecord {
 
     static PlayerRecord fromTag(CompoundTag tag) {
         PlayerRecord record = new PlayerRecord();
-        EssData.readLocations(tag.getCompound("homes"), record.homes);
+        EssData.readLocations(Tags.compound(tag, "homes"), record.homes);
         if (tag.contains("back")) {
-            record.back = StoredLocation.fromTag(tag.getCompound("back"));
+            record.back = StoredLocation.fromTag(Tags.compound(tag, "back"));
         }
-        record.teleportDisabled = tag.getBoolean("teleportDisabled");
-        record.teleportAuto = tag.getBoolean("teleportAuto");
-        record.lastName = tag.getString("lastName");
-        record.lastSeen = tag.getLong("lastSeen");
+        record.teleportDisabled = Tags.bool(tag, "teleportDisabled");
+        record.teleportAuto = Tags.bool(tag, "teleportAuto");
+        record.lastName = Tags.string(tag, "lastName");
+        record.lastSeen = Tags.longValue(tag, "lastSeen");
         if (tag.contains("logoutLocation")) {
-            record.logoutLocation = StoredLocation.fromTag(tag.getCompound("logoutLocation"));
+            record.logoutLocation = StoredLocation.fromTag(Tags.compound(tag, "logoutLocation"));
         }
-        record.clearConfirm = tag.getBoolean("clearConfirm");
-        CompoundTag toolTag = tag.getCompound("powerTools");
-        for (String id : toolTag.getAllKeys()) {
-            record.powerTools.put(id, toolTag.getString(id));
+        record.clearConfirm = Tags.bool(tag, "clearConfirm");
+        CompoundTag toolTag = Tags.compound(tag, "powerTools");
+        for (String id : Tags.keys(toolTag)) {
+            record.powerTools.put(id, Tags.string(toolTag, id));
         }
-        record.powerToolsOff = tag.getBoolean("powerToolsOff");
-        record.unlimited.addAll(tag.getCompound("unlimited").getAllKeys());
-        record.jail = tag.getString("jail");
-        record.jailUntil = tag.getLong("jailUntil");
-        record.jailGameMode = tag.getString("jailGameMode");
+        record.powerToolsOff = Tags.bool(tag, "powerToolsOff");
+        record.unlimited.addAll(Tags.keys(Tags.compound(tag, "unlimited")));
+        record.jail = Tags.string(tag, "jail");
+        record.jailUntil = Tags.longValue(tag, "jailUntil");
+        record.jailGameMode = Tags.string(tag, "jailGameMode");
         if (tag.contains("jailReturn")) {
-            record.jailReturn = StoredLocation.fromTag(tag.getCompound("jailReturn"));
+            record.jailReturn = StoredLocation.fromTag(Tags.compound(tag, "jailReturn"));
         }
-        record.muteUntil = tag.getLong("muteUntil");
-        record.muteReason = tag.getString("muteReason");
-        CompoundTag kitTag = tag.getCompound("kitUses");
-        for (String kit : kitTag.getAllKeys()) {
-            record.kitUses.put(kit, kitTag.getLong(kit));
+        record.muteUntil = Tags.longValue(tag, "muteUntil");
+        record.muteReason = Tags.string(tag, "muteReason");
+        CompoundTag kitTag = Tags.compound(tag, "kitUses");
+        for (String kit : Tags.keys(kitTag)) {
+            record.kitUses.put(kit, Tags.longValue(kitTag, kit));
         }
-        record.fly = tag.getBoolean("fly");
-        record.god = tag.getBoolean("god");
-        record.messagesDisabled = tag.getBoolean("messagesDisabled");
-        record.replyToRecipient = tag.getBoolean("replyToRecipient");
-        record.socialSpy = tag.getBoolean("socialSpy");
-        record.nickname = tag.getString("nickname");
-        ListTag ignoredTag = tag.getList("ignored", Tag.TAG_STRING);
+        record.fly = Tags.bool(tag, "fly");
+        record.god = Tags.bool(tag, "god");
+        record.messagesDisabled = Tags.bool(tag, "messagesDisabled");
+        record.replyToRecipient = Tags.bool(tag, "replyToRecipient");
+        record.socialSpy = Tags.bool(tag, "socialSpy");
+        record.nickname = Tags.string(tag, "nickname");
+        ListTag ignoredTag = Tags.strings(tag, "ignored");
         for (int i = 0; i < ignoredTag.size(); i++) {
-            record.ignored.add(UUID.fromString(ignoredTag.getString(i)));
+            record.ignored.add(UUID.fromString(Tags.stringAt(ignoredTag, i)));
         }
-        ListTag mailTag = tag.getList("mail", Tag.TAG_COMPOUND);
+        ListTag mailTag = Tags.compounds(tag, "mail");
         for (int i = 0; i < mailTag.size(); i++) {
-            record.mail.add(MailMessage.fromTag(mailTag.getCompound(i)));
+            record.mail.add(MailMessage.fromTag(Tags.compoundAt(mailTag, i)));
         }
         return record;
     }

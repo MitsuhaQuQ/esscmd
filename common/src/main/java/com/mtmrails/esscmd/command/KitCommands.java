@@ -13,6 +13,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mtmrails.esscmd.compat.ItemData;
 import com.mtmrails.esscmd.compat.ItemLookup;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.compat.Texts;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
@@ -164,12 +165,12 @@ public final class KitCommands {
             return CommandUtil.fail(source, "kit.broken", name);
         }
         CommandUtil.tell(target, "kit.received", name);
-        return CommandUtil.ok(source, "kit.given", name, target.getGameProfile().getName());
+        return CommandUtil.ok(source, "kit.given", name, Players.name(target));
     }
 
     private static int freeSlots(ServerPlayer player) {
         int free = 0;
-        for (ItemStack stack : player.getInventory().items) {
+        for (ItemStack stack : Players.mainItems(player)) {
             if (stack.isEmpty()) {
                 free++;
             }
@@ -186,7 +187,7 @@ public final class KitCommands {
                 ItemStack item = stack.get();
                 player.getInventory().add(item);
                 if (!item.isEmpty()) {
-                    player.drop(item, false);
+                    Players.drop(player, item);
                 }
                 given++;
             }
@@ -257,6 +258,6 @@ public final class KitCommands {
             return 0;
         }
         EssData.get(source.getServer()).resetKit(target.getUUID(), name);
-        return CommandUtil.ok(source, "kit.reset", name, target.getGameProfile().getName());
+        return CommandUtil.ok(source, "kit.reset", name, Players.name(target));
     }
 }

@@ -59,7 +59,7 @@ public final class TextCommands {
             return chapter == null ? CommandUtil.fail(source, "text.missing", name)
                     : CommandUtil.fail(source, "text.no-chapter", chapter);
         }
-        String viewer = source.getEntity() instanceof ServerPlayer player ? player.getGameProfile().getName() : "Server";
+        String viewer = source.getEntity() instanceof ServerPlayer player ? Players.name(player) : "Server";
         Pager.Page<String> shown = Pager.page(lines, page, LINES_PER_PAGE);
         for (String line : shown.items()) {
             Texts.success(source, render(line, source.getServer(), viewer), false);
@@ -78,7 +78,7 @@ public final class TextCommands {
             return;
         }
         for (String line : doc.chapter(null)) {
-            Players.send(player, render(line, player.server, player.getGameProfile().getName()));
+            Players.send(player, render(line, Players.server(player), Players.name(player)));
         }
     }
 

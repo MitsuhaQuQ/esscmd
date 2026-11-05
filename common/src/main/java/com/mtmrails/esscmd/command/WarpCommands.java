@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.data.StoredLocation;
@@ -59,7 +60,7 @@ public final class WarpCommands {
                                     if (!TeleportService.teleportNow(target, warp)) {
                                         return 0;
                                     }
-                                    return CommandUtil.ok(ctx.getSource(), "warp.sent", target.getGameProfile().getName(),
+                                    return CommandUtil.ok(ctx.getSource(), "warp.sent", Players.name(target),
                                             name.toLowerCase(Locale.ROOT));
                                 }))));
         dispatcher.register(Commands.literal("setwarp")

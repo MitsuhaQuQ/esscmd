@@ -55,7 +55,7 @@ public final class AfkService {
 
     /** Server thread. {@code message} is shown in the broadcast; may be null. */
     public static void setAfk(ServerPlayer player, boolean afk, String message) {
-        String name = player.getGameProfile().getName();
+        String name = Players.name(player);
         if (afk) {
             AFK_SINCE.put(player.getUUID(), System.currentTimeMillis());
             if (message == null || message.isBlank()) {
@@ -118,7 +118,7 @@ public final class AfkService {
     /** To everyone if {@code afk.broadcast}, else only to the player concerned. */
     private static void announce(ServerPlayer player, String key, Object... args) {
         if (ConfigManager.get().afk.broadcast) {
-            Broadcast.info(player.server, key, args);
+            Broadcast.info(Players.server(player), key, args);
         } else {
             Players.send(player, Messages.info(player, key, args));
         }

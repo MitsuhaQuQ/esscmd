@@ -37,7 +37,7 @@ public final class VanishService {
         }
         Object tracked = ((ChunkMapAccessor) Players.level(player).getChunkSource().chunkMap)
                 .cmdessentials$entityMap().get(player.getId());
-        for (ServerPlayer viewer : player.server.getPlayerList().getPlayers()) {
+        for (ServerPlayer viewer : Players.server(player).getPlayerList().getPlayers()) {
             if (viewer == player) {
                 continue;
             }
@@ -54,7 +54,7 @@ public final class VanishService {
 
     /** A new player's client just received the whole tab list; take the hidden ones out. */
     public static void onJoin(ServerPlayer joined) {
-        for (ServerPlayer other : joined.server.getPlayerList().getPlayers()) {
+        for (ServerPlayer other : Players.server(joined).getPlayerList().getPlayers()) {
             if (hiddenFrom(other, joined)) {
                 TabListNames.remove(joined, other);
             }

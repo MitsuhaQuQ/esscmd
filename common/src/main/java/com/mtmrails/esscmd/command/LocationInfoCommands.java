@@ -63,7 +63,7 @@ public final class LocationInfoCommands {
 
     private static int getPos(CommandSourceStack source, ServerPlayer player) {
         StoredLocation location = StoredLocation.of(player);
-        return CommandUtil.ok(source, "getpos.position", player.getGameProfile().getName(), location.describe(),
+        return CommandUtil.ok(source, "getpos.position", Players.name(player), location.describe(),
                 Math.round(Mth.wrapDegrees(player.getYRot())), Math.round(player.getXRot()));
     }
 
@@ -92,7 +92,7 @@ public final class LocationInfoCommands {
             return CommandUtil.ok(source, "near.none", capped);
         }
         String list = String.join(", ", nearby.stream()
-                .map(other -> other.getGameProfile().getName() + " (" + Math.round(Math.sqrt(other.distanceToSqr(center))) + "m)")
+                .map(other -> Players.name(other) + " (" + Math.round(Math.sqrt(other.distanceToSqr(center))) + "m)")
                 .toList());
         return CommandUtil.ok(source, "near.list", capped, list) * nearby.size();
     }

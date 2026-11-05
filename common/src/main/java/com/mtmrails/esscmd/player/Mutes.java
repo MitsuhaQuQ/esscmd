@@ -11,7 +11,7 @@ public final class Mutes {
 
     /** True if the player is muted, after telling them so. */
     public static boolean blockChat(ServerPlayer player) {
-        if (!EssData.get(player.server).muted(player.getUUID())) {
+        if (!EssData.get(Players.server(player)).muted(player.getUUID())) {
             return false;
         }
         Players.send(player, Messages.error(player, "mute.blocked"));

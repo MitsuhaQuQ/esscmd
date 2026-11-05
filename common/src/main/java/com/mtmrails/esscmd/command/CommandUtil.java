@@ -53,7 +53,7 @@ final class CommandUtil {
     static OwnedName ownedName(CommandSourceStack source, ServerPlayer self, String input) {
         int colon = input.indexOf(':');
         if (colon < 0) {
-            return new OwnedName(self.getUUID(), self.getGameProfile().getName(), false, input);
+            return new OwnedName(self.getUUID(), Players.name(self), false, input);
         }
         String playerName = input.substring(0, colon);
         Optional<UUID> id = Players.findId(source.getServer(), playerName);

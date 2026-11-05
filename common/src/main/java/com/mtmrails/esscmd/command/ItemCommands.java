@@ -109,7 +109,7 @@ public final class ItemCommands {
                                         IntegerArgumentType.getInteger(ctx, "amount"), true))))));
         dispatcher.register(Commands.literal("skull")
                 .requires(PermissionNodes.SKULL.require())
-                .executes(ctx -> skull(ctx.getSource(), ctx.getSource().getPlayerOrException().getGameProfile().getName(), null))
+                .executes(ctx -> skull(ctx.getSource(), Players.name(ctx.getSource().getPlayerOrException()), null))
                 .then(Commands.argument("owner", StringArgumentType.word())
                         .executes(ctx -> skull(ctx.getSource(), StringArgumentType.getString(ctx, "owner"), null))
                         .then(Commands.argument("player", EntityArgument.player())
@@ -154,7 +154,7 @@ public final class ItemCommands {
                 .requires(PermissionNodes.POWERTOOL.require())
                 .executes(ctx -> {
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
-                    EssData data = EssData.get(player.server);
+                    EssData data = EssData.get(Players.server(player));
                     boolean off = !data.player(player.getUUID()).map(PlayerRecord::powerToolsOff).orElse(false);
                     data.setPowerToolsOff(player.getUUID(), off);
                     return CommandUtil.ok(ctx.getSource(), off ? "powertool.toggle-off" : "powertool.toggle-on");
@@ -173,7 +173,7 @@ public final class ItemCommands {
     private static void addOrDrop(ServerPlayer player, ItemStack stack) {
         player.getInventory().add(stack);
         if (!stack.isEmpty()) {
-            player.drop(stack, false);
+            Players.drop(player, stack);
         }
     }
 
@@ -242,7 +242,7 @@ public final class ItemCommands {
     }
 
     private static int expShow(CommandSourceStack source, ServerPlayer target) {
-        return CommandUtil.ok(source, "exp.show", target.getGameProfile().getName(), target.experienceLevel, target.totalExperience);
+        return CommandUtil.ok(source, "exp.show", Players.name(target), target.experienceLevel, target.totalExperience);
     }
 
     private static int expSet(CommandSourceStack source, ServerPlayer target, int amount, boolean add) {
@@ -254,7 +254,7 @@ public final class ItemCommands {
             target.totalExperience = 0;
             target.giveExperiencePoints(amount);
         }
-        return CommandUtil.ok(source, "exp.done", target.getGameProfile().getName());
+        return CommandUtil.ok(source, "exp.done", Players.name(target));
     }
 
     private static int skull(CommandSourceStack source, String owner, ServerPlayer receiver) throws CommandSyntaxException {
@@ -275,7 +275,7 @@ public final class ItemCommands {
                 continue;
             }
             int total = 0;
-            for (ItemStack stack : inventory.items) {
+            for (ItemStack stack : Players.mainItems(player)) {
                 if (stack.getItem() == from.get() && !stack.isDamaged()) {
                     total += stack.getCount();
                 }
@@ -283,7 +283,7 @@ public final class ItemCommands {
             int blocks = total / CONDENSE_RATIO;
             int remove = blocks * CONDENSE_RATIO;
             used += remove;
-            for (ItemStack stack : new ArrayList<>(inventory.items)) {
+            for (ItemStack stack : new ArrayList<>(Players.mainItems(player))) {
                 if (remove > 0 && stack.getItem() == from.get()) {
                     int take = Math.min(stack.getCount(), remove);
                     stack.shrink(take);
@@ -328,7 +328,7 @@ public final class ItemCommands {
             return CommandUtil.fail(source, "item.unknown", id);
         }
         boolean on = EssData.get(source.getServer()).toggleUnlimited(target.getUUID(), id.toString());
-        return CommandUtil.ok(source, on ? "unlimited.on" : "unlimited.off", id, target.getGameProfile().getName());
+        return CommandUtil.ok(source, on ? "unlimited.on" : "unlimited.off", id, Players.name(target));
     }
 
     private static int powerTool(CommandSourceStack source, String command) throws CommandSyntaxException {

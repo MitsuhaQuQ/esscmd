@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.CommandNode;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.compat.TabListNames;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
@@ -59,7 +60,7 @@ public final class NickCommands {
         data.setNickname(target.getUUID(), nickname);
         TabListNames.refresh(target);
         return CommandUtil.ok(source, nickname.isEmpty() ? "nick.off" : "nick.set",
-                target.getGameProfile().getName(), nickname);
+                Players.name(target), nickname);
     }
 
     private static int realName(CommandSourceStack source, String nickname) {
@@ -71,7 +72,7 @@ public final class NickCommands {
             return CommandUtil.fail(source, "realname.not-found", nickname);
         }
         ServerPlayer online = source.getServer().getPlayerList().getPlayer(id.get());
-        String name = online != null ? online.getGameProfile().getName()
+        String name = online != null ? Players.name(online)
                 : data.player(id.get()).map(PlayerRecord::lastName).orElse(id.get().toString());
         return CommandUtil.ok(source, "realname.result", plain, name);
     }

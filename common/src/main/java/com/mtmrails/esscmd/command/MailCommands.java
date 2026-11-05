@@ -178,11 +178,11 @@ public final class MailCommands {
         }
         String shown = data.player(target.get()).map(PlayerRecord::lastName).filter(name -> !name.isEmpty())
                 .orElse(targetName);
-        data.addMail(target.get(), new MailMessage(sender.getGameProfile().getName(), text,
+        data.addMail(target.get(), new MailMessage(Players.name(sender), text,
                 System.currentTimeMillis(), expiresAt, false));
         ServerPlayer online = server.getPlayerList().getPlayer(target.get());
         if (online != null) {
-            CommandUtil.tell(online, "mail.received", sender.getGameProfile().getName());
+            CommandUtil.tell(online, "mail.received", Players.name(sender));
         }
         MessagingCommands.spyMail(server.getPlayerList().getPlayers(), sender, target.get(), shown, text);
         return CommandUtil.ok(source, "mail.sent", shown);
@@ -195,11 +195,11 @@ public final class MailCommands {
         int count = 0;
         for (UUID target : data.knownPlayers()) {
             if (!target.equals(sender.getUUID()) && !data.ignores(target, sender.getUUID())) {
-                data.addMail(target, new MailMessage(sender.getGameProfile().getName(), text,
+                data.addMail(target, new MailMessage(Players.name(sender), text,
                         System.currentTimeMillis(), 0, false));
                 ServerPlayer online = source.getServer().getPlayerList().getPlayer(target);
                 if (online != null) {
-                    CommandUtil.tell(online, "mail.received", sender.getGameProfile().getName());
+                    CommandUtil.tell(online, "mail.received", Players.name(sender));
                 }
                 count++;
             }

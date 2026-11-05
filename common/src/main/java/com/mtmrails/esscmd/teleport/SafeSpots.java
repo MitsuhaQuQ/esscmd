@@ -3,6 +3,7 @@ package com.mtmrails.esscmd.teleport;
 import java.util.Optional;
 import com.mtmrails.esscmd.compat.Dimensions;
 import com.mtmrails.esscmd.compat.ItemLookup;
+import com.mtmrails.esscmd.compat.Worlds;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.StoredLocation;
 import net.minecraft.core.BlockPos;
@@ -47,9 +48,9 @@ public final class SafeSpots {
      * downwards from below the roof; others use the surface heightmap. Loads the chunk.
      */
     public static Optional<BlockPos> inColumn(ServerLevel level, int x, int z) {
-        int min = level.getMinBuildHeight() + 1;
+        int min = Worlds.minY(level) + 1;
         if (level.dimensionType().hasCeiling()) {
-            int top = Math.min(level.getMaxBuildHeight(), level.getMinBuildHeight() + level.dimensionType().logicalHeight()) - 2;
+            int top = Math.min(Worlds.maxY(level), Worlds.minY(level) + level.dimensionType().logicalHeight()) - 2;
             for (int y = top; y >= min; y--) {
                 BlockPos feet = new BlockPos(x, y, z);
                 if (isSafe(level, feet)) {
@@ -64,7 +65,7 @@ public final class SafeSpots {
 
     /** The lowest safe spot in the column at x/z, for /bottom. */
     public static Optional<BlockPos> lowestInColumn(ServerLevel level, int x, int z, int maxY) {
-        for (int y = level.getMinBuildHeight() + 1; y <= maxY; y++) {
+        for (int y = Worlds.minY(level) + 1; y <= maxY; y++) {
             BlockPos feet = new BlockPos(x, y, z);
             if (isSafe(level, feet)) {
                 return Optional.of(feet);
@@ -75,7 +76,7 @@ public final class SafeSpots {
 
     /** The first safe spot at or above {@code start}, within {@code range} blocks, for /jump. */
     public static Optional<BlockPos> above(ServerLevel level, BlockPos start, int range) {
-        int top = level.getMaxBuildHeight() - 2;
+        int top = Worlds.maxY(level) - 2;
         for (int y = start.getY(); y <= Math.min(top, start.getY() + range); y++) {
             BlockPos feet = new BlockPos(start.getX(), y, start.getZ());
             if (isSafe(level, feet)) {

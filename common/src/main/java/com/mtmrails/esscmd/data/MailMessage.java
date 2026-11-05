@@ -1,5 +1,6 @@
 package com.mtmrails.esscmd.data;
 
+import com.mtmrails.esscmd.compat.Tags;
 import net.minecraft.nbt.CompoundTag;
 
 /** One persisted /mail message. An expiry of 0 means that it never expires. */
@@ -23,7 +24,7 @@ public record MailMessage(String senderName, String text, long sentAt, long expi
     }
 
     static MailMessage fromTag(CompoundTag tag) {
-        return new MailMessage(tag.getString("sender"), tag.getString("text"), tag.getLong("sentAt"),
-                tag.getLong("expiresAt"), tag.getBoolean("read"));
+        return new MailMessage(Tags.string(tag, "sender"), Tags.string(tag, "text"), Tags.longValue(tag, "sentAt"),
+                Tags.longValue(tag, "expiresAt"), Tags.bool(tag, "read"));
     }
 }

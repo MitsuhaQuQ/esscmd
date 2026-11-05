@@ -9,6 +9,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mtmrails.esscmd.compat.Effects;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
 import com.mtmrails.esscmd.permission.PermissionNode;
@@ -39,10 +40,10 @@ public final class PlayerStateCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(toggle("fly", PermissionNodes.FLY, PermissionNodes.FLY_OTHERS,
                 (source, player) -> EssData.get(source.getServer()).fly(player.getUUID()),
-                (player, on) -> EssData.get(player.server).setFly(player.getUUID(), on)));
+                (player, on) -> EssData.get(Players.server(player)).setFly(player.getUUID(), on)));
         dispatcher.register(toggle("god", PermissionNodes.GOD, PermissionNodes.GOD_OTHERS,
                 (source, player) -> EssData.get(source.getServer()).god(player.getUUID()),
-                (player, on) -> EssData.get(player.server).setGod(player.getUUID(), on)));
+                (player, on) -> EssData.get(Players.server(player)).setGod(player.getUUID(), on)));
         dispatcher.register(action("heal", PermissionNodes.HEAL, PermissionNodes.HEAL_OTHERS, player -> {
             player.setHealth(player.getMaxHealth());
             player.getFoodData().setFoodLevel(MAX_FOOD);
@@ -64,13 +65,13 @@ public final class PlayerStateCommands {
         dispatcher.register(Commands.literal("suicide")
                 .requires(PermissionNodes.SUICIDE.require())
                 .executes(ctx -> {
-                    ctx.getSource().getPlayerOrException().kill();
+                    Players.kill(ctx.getSource().getPlayerOrException());
                     return 1;
                 }));
     }
 
     private static String name(ServerPlayer player) {
-        return player.getGameProfile().getName();
+        return Players.name(player);
     }
 
     /** Tells the source; tells the target too when it's someone else. Message key: {@code <command>.done}. */

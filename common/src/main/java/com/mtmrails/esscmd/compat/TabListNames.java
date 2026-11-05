@@ -40,6 +40,6 @@ public final class TabListNames {
         /*var packet = new ClientboundPlayerInfoPacket(
                 ClientboundPlayerInfoPacket.Action.UPDATE_DISPLAY_NAME, player);
         *///?}
-        player.server.getPlayerList().broadcastAll(packet);
+        Players.server(player).getPlayerList().broadcastAll(packet);
     }
 }

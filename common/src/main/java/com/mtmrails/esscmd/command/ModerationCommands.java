@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -31,7 +30,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.IpBanListEntry;
-import net.minecraft.server.players.UserBanListEntry;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -178,7 +176,7 @@ public final class ModerationCommands {
         Date now = new Date();
         Date expires = new Date(now.getTime() + parsed.duration().toMillis());
         String reason = parsed.reason() != null ? parsed.reason() : Messages.raw(source, "ban.default-reason");
-        server.getPlayerList().getBans().add(new UserBanListEntry(new GameProfile(id.get(), shown), now, source.getTextName(), expires, reason));
+        Players.ban(server, id.get(), shown, now, source.getTextName(), expires, reason);
         if (online != null) {
             online.connection.disconnect(Messages.error(online, "ban.kicked", DateDiff.format(parsed.duration()), reason));
         }
@@ -216,11 +214,10 @@ public final class ModerationCommands {
         if (id.isEmpty()) {
             return CommandUtil.fail(source, "error.player-not-found", name);
         }
-        GameProfile profile = new GameProfile(id.get(), name);
-        if (!server.getPlayerList().getBans().isBanned(profile)) {
+        if (!Players.isBanned(server, id.get(), name)) {
             return CommandUtil.fail(source, "ban.not-banned", name);
         }
-        server.getPlayerList().getBans().remove(profile);
+        Players.unban(server, id.get(), name);
         return CommandUtil.ok(source, "ban.removed", name);
     }
 
@@ -248,7 +245,7 @@ public final class ModerationCommands {
     private static int sudo(CommandSourceStack source, CommandDispatcher<CommandSourceStack> dispatcher,
                             ServerPlayer target, String command) {
         if (PermissionNodes.SUDO_EXEMPT.check(target)) {
-            return CommandUtil.fail(source, "error.exempt", target.getGameProfile().getName());
+            return CommandUtil.fail(source, "error.exempt", Players.name(target));
         }
         String line = command.startsWith("/") ? command.substring(1) : command;
         try {
@@ -256,7 +253,7 @@ public final class ModerationCommands {
         } catch (CommandSyntaxException e) {
             return CommandUtil.fail(source, "sudo.failed", e.getMessage());
         }
-        return CommandUtil.ok(source, "sudo.done", target.getGameProfile().getName(), line);
+        return CommandUtil.ok(source, "sudo.done", Players.name(target), line);
     }
 
     private static int gc(CommandSourceStack source) {

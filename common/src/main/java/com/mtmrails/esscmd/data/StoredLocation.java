@@ -2,6 +2,8 @@ package com.mtmrails.esscmd.data;
 
 import com.mtmrails.esscmd.compat.Dimensions;
 import com.mtmrails.esscmd.compat.Players;
+import com.mtmrails.esscmd.compat.Tags;
+import com.mtmrails.esscmd.compat.Worlds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
@@ -19,9 +21,9 @@ public record StoredLocation(String dimension, double x, double y, double z, flo
     /** The world spawn of the overworld, centred on its block. */
     public static StoredLocation worldSpawn(MinecraftServer server) {
         ServerLevel overworld = server.overworld();
-        BlockPos pos = overworld.getSharedSpawnPos();
+        BlockPos pos = Worlds.spawnPos(overworld);
         return new StoredLocation(Dimensions.id(overworld.dimension()),
-                pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, overworld.getSharedSpawnAngle(), 0);
+                pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Worlds.spawnAngle(overworld), 0);
     }
 
     /** The loaded level for this location, or null if that dimension doesn't exist. */
@@ -47,7 +49,7 @@ public record StoredLocation(String dimension, double x, double y, double z, flo
     }
 
     public static StoredLocation fromTag(CompoundTag tag) {
-        return new StoredLocation(tag.getString("dim"), tag.getDouble("x"), tag.getDouble("y"), tag.getDouble("z"),
-                tag.getFloat("yaw"), tag.getFloat("pitch"));
+        return new StoredLocation(Tags.string(tag, "dim"), Tags.doubleValue(tag, "x"), Tags.doubleValue(tag, "y"), Tags.doubleValue(tag, "z"),
+                Tags.floatValue(tag, "yaw"), Tags.floatValue(tag, "pitch"));
     }
 }

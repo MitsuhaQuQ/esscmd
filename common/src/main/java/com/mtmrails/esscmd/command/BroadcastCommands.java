@@ -4,6 +4,7 @@ import java.util.List;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.CommandNode;
+import com.mtmrails.esscmd.compat.Dimensions;
 import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.message.Messages;
 import com.mtmrails.esscmd.permission.PermissionNodes;
@@ -54,7 +55,7 @@ public final class BroadcastCommands {
             count++;
         }
         Players.sendToConsole(source.getServer(), Messages.info(source, "broadcastworld.console",
-                level.dimension().location(), text));
+                Dimensions.id(level.dimension()), text));
         return count;
     }
 }

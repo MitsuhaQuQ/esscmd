@@ -2,6 +2,7 @@ package com.mtmrails.esscmd.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.mtmrails.esscmd.compat.Tags;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -23,11 +24,11 @@ public record Kit(long delaySeconds, int opLevel, List<CompoundTag> items) {
     }
 
     static Kit fromTag(CompoundTag tag) {
-        ListTag list = tag.getList("items", Tag.TAG_COMPOUND);
+        ListTag list = Tags.compounds(tag, "items");
         List<CompoundTag> items = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            items.add(list.getCompound(i));
+            items.add(Tags.compoundAt(list, i));
         }
-        return new Kit(tag.getLong("delay"), tag.getInt("opLevel"), List.copyOf(items));
+        return new Kit(Tags.longValue(tag, "delay"), Tags.integer(tag, "opLevel"), List.copyOf(items));
     }
 }

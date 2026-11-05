@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mtmrails.esscmd.compat.MovementSpeed;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.config.EssConfig;
 import com.mtmrails.esscmd.message.Messages;
@@ -55,7 +56,7 @@ public final class SpeedCommand {
             MovementSpeed.setWalkMultiplier(target, multiplier(speed, config.maxWalkMultiplier));
         }
         String typeName = Messages.raw(ctx.getSource(), effective == Type.FLY ? "speed.fly" : "speed.walk");
-        return CommandUtil.ok(ctx.getSource(), "speed.set", typeName, speed, target.getGameProfile().getName());
+        return CommandUtil.ok(ctx.getSource(), "speed.set", typeName, speed, Players.name(target));
     }
 
     /** 0..1 scales the vanilla speed linearly; 1..10 goes linearly from vanilla to {@code max} times vanilla. */

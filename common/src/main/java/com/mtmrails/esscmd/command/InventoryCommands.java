@@ -14,6 +14,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mtmrails.esscmd.compat.ItemLookup;
+import com.mtmrails.esscmd.compat.Players;
 import com.mtmrails.esscmd.compat.Texts;
 import com.mtmrails.esscmd.config.ConfigManager;
 import com.mtmrails.esscmd.data.EssData;
@@ -120,7 +121,7 @@ public final class InventoryCommands {
                 .requires(PermissionNodes.CLEARINVENTORY.require())
                 .executes(ctx -> {
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
-                    EssData data = EssData.get(player.server);
+                    EssData data = EssData.get(Players.server(player));
                     boolean on = !data.clearConfirm(player.getUUID());
                     data.setClearConfirm(player.getUUID(), on);
                     return CommandUtil.ok(ctx.getSource(), on ? "clear.confirm-on" : "clear.confirm-off");
@@ -157,7 +158,7 @@ public final class InventoryCommands {
     private static int enderChest(ServerPlayer viewer, ServerPlayer owner) {
         Container chest = owner.getEnderChestInventory();
         Component title = viewer == owner ? Texts.vanillaTranslatable("container.enderchest")
-                : Messages.info(viewer, "enderchest.title", owner.getGameProfile().getName());
+                : Messages.info(viewer, "enderchest.title", Players.name(owner));
         open(viewer, (id, inventory, player) -> new ChestMenu(MenuType.GENERIC_9x3, id, inventory, chest, 3) {
             // Not the container's check: it follows the owner's open ender chest block.
             @Override
@@ -175,7 +176,7 @@ public final class InventoryCommands {
         }
         boolean editable = PermissionNodes.INVSEE_MODIFY.check(source);
         open(viewer, (id, inventory, player) -> new InvseeMenu(id, inventory, target, editable),
-                Messages.info(viewer, "invsee.title", target.getGameProfile().getName()));
+                Messages.info(viewer, "invsee.title", Players.name(target)));
         return 1;
     }
 
@@ -312,7 +313,7 @@ public final class InventoryCommands {
 
     /** True when the same command was given within the confirmation window; otherwise arms it. */
     private static boolean confirmed(ServerPlayer player, String input) {
-        int now = player.server.getTickCount();
+        int now = Players.server(player).getTickCount();
         Pending pending = PENDING_CLEAR.remove(player.getUUID());
         if (pending != null && pending.input().equals(input) && now < pending.expiresTick()) {
             return true;

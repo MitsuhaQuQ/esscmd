@@ -8,10 +8,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-//? if >=1.20.5 {
+//? if >=26.1 {
+/*import net.minecraft.nbt.NbtOps;
+*///?} else if >=1.20.5 {
 /*import com.mojang.authlib.properties.PropertyMap;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.Tag;
+*///?}
+//? if >=1.20.5 {
+/*import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.ResolvableProfile;
 *///?} else {
@@ -69,7 +73,9 @@ public final class ItemData {
     /** A player head showing {@code owner}'s skin. */
     public static ItemStack playerHead(String owner) {
         ItemStack head = new ItemStack(Items.PLAYER_HEAD);
-        //? if >=1.20.5 {
+        //? if >=26.1 {
+        /*head.set(DataComponents.PROFILE, ResolvableProfile.createUnresolved(owner));
+        *///?} else if >=1.20.5 {
         /*head.set(DataComponents.PROFILE, new ResolvableProfile(Optional.of(owner), Optional.empty(), new PropertyMap()));
         *///?} else {
         head.getOrCreateTag().putString("SkullOwner", owner);
@@ -79,7 +85,10 @@ public final class ItemData {
 
     /** {@code stack} must not be empty. */
     public static CompoundTag save(MinecraftServer server, ItemStack stack) {
-        //? if >=1.20.5 {
+        //? if >=26.1 {
+        /*return (CompoundTag) ItemStack.CODEC.encodeStart(server.registryAccess().createSerializationContext(NbtOps.INSTANCE), stack)
+                .getOrThrow();
+        *///?} else if >=1.20.5 {
         /*Tag tag = stack.save(server.registryAccess());
         return (CompoundTag) tag;
         *///?} else {
@@ -89,7 +98,9 @@ public final class ItemData {
 
     /** Empty if the item no longer exists, e.g. it came from a removed mod. */
     public static Optional<ItemStack> load(MinecraftServer server, CompoundTag tag) {
-        //? if >=1.20.5 {
+        //? if >=26.1 {
+        /*return ItemStack.CODEC.parse(server.registryAccess().createSerializationContext(NbtOps.INSTANCE), tag).result();
+        *///?} else if >=1.20.5 {
         /*return ItemStack.parse(server.registryAccess(), tag);
         *///?} else {
         ItemStack stack = ItemStack.of(tag);
