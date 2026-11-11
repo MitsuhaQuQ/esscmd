@@ -69,6 +69,11 @@ public final class InventoryCommands {
 
     private InventoryCommands() {}
 
+    /** Tick numbers restart with each world, so drop them when the server stops. */
+    public static void clear() {
+        PENDING_CLEAR.clear();
+    }
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         portable(dispatcher, "workbench", List.of("wb", "craft", "wbench"), PermissionNodes.WORKBENCH,
                 "container.crafting", PortableMenus::workbench);

@@ -19,7 +19,6 @@ public final class EssConfig {
     public Spawn spawn = new Spawn();
     public Back back = new Back();
     public Tpa tpa = new Tpa();
-    public Speed speed = new Speed();
     public Afk afk = new Afk();
     public Near near = new Near();
     public Motd motd = new Motd();
@@ -213,12 +212,5 @@ public final class EssConfig {
             this.minRange = minRange;
             this.maxRange = maxRange;
         }
-    }
-
-    public static final class Speed {
-        /** Walking speed at /speed 10, as a multiple of the vanilla speed. */
-        public double maxWalkMultiplier = 4.0;
-        /** Flying speed at /speed 10, as a multiple of the vanilla speed. */
-        public double maxFlyMultiplier = 8.0;
     }
 }

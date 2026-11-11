@@ -93,13 +93,25 @@ Mark each line ✅ or ❌. For ❌, note what happened and any console error.
 
 | # | Do | Expect |
 |---|---|---|
-| 6.1 | A on the ground: `/speed 3` | `Walking speed set to 3.0 for A.` Clearly faster walking |
-| 6.2 | A flying (creative): `/speed 5` | `Flying speed set to 5.0`, faster flight. Walking unchanged |
+| 6.1 | A on the ground: `/speed 3` | Walking multiplier is 3, not interpolated toward an old config maximum |
+| 6.2 | A flying (creative): `/speed 5` | Flying speed is 5 times vanilla. Walking unchanged |
 | 6.3 | A: `/speed walk 1`, `/speed fly 1` | Back to vanilla speeds |
 | 6.4 | A: `/speed walk 0` | Can't walk or sprint (jumping still works) |
 | 6.5 | A: `/speed walk 2 B` | B walks faster |
 | 6.6 | B: `/speed 2` | No such command for B |
 | 6.7 | A: `/speed walk 5`, relog | Speed is back to normal after relog (by design) |
+| 6.8 | A: `/speed walk 0.5`, then `/speed fly 0.5` | Half the normal walking/flying speed |
+| 6.9 | A: `/speed walk 20`, then `/speed fly 20` | Both accepted; 20 times the base speed, not capped at 10. On a dedicated server, fast flight rubber-bands with `moved too quickly` in the console (known vanilla limit, not a bug) |
+| 6.10 | A: `/speed walk 2` twice, then `/speed walk 1` | Still 2 times after the second command; 1 removes the modifier |
+| 6.11 | A: `/speed -1` | Rejected without changing speed |
+| 6.12 | A: set both speeds above 1, die and respawn | Both reset to vanilla |
+
+Repeat speed checks on Fabric and Forge for 1.18.2, 1.20.1 and 1.21.1 with vanilla clients.
+For an exact walking check without other effects, use `/attribute @s minecraft:generic.movement_speed get`:
+1, 0.5, 2 and 20 should give approximately 0.1, 0.05, 0.2 and 2 respectively.
+The command accepts nonnegative finite floats; vanilla's movement attribute limits still apply.
+Old `speed.maxWalkMultiplier` / `speed.maxFlyMultiplier` config entries no longer affect the result
+and are removed when the config is rewritten.
 
 ## 7. Persistence and reload
 

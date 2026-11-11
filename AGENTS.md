@@ -3,6 +3,7 @@
 A **server-side** Minecraft mod that brings the commands and features of the Bukkit
 [EssentialsX](https://essentialsx.net/commands) plugin to Fabric and Forge servers.
 Vanilla clients must be able to join a server running this mod without installing anything.
+Installed on a client, it also works in singleplayer and LAN worlds.
 
 Read this file before changing code. [docs/architecture.md](docs/architecture.md) describes the
 modules and runtime flow with UML diagrams; update it when the structure changes. Reply to the user in Chinese; write code, comments and
@@ -320,13 +321,18 @@ below says otherwise. Mark each line `[x]` once every command on it is done.
   (`/renamehome` needs it quoted: `/renamehome "Steve:base" home2`).
 - [x] `/setspawn`, `/spawn`: `/setspawn` sets the spawn and `/spawn` teleports to it, falling
   back to the world spawn if none is set. Options: respawn there after death and on first join.
-- [x] `/speed [walk|fly] <0-10> [player]`: with no type given, use `fly` while the player is
+- [x] `/speed [walk|fly] <multiplier> [player]`: with no type given, use `fly` while the player is
   flying and `walk` otherwise. `1` = vanilla default.
   - Fly: set `Abilities.flyingSpeed`, then call `onUpdateAbilities()`.
   - Walk: add or replace a transient `MOVEMENT_SPEED` attribute modifier. Don't use
     `Abilities.walkingSpeed`, which only changes the client's FOV.
-  - Mapping: below 1, scale the default linearly (`default * v`); from 1 to 10, interpolate
-    linearly from the default to a configured maximum.
+  - Mapping: a nonnegative multiplier (`default * v`): 0.5 = half, 1 = vanilla, 2 = double.
+    There is no command cap of 10. Vanilla movement attribute limits still apply.
+    The old `speed.maxWalkMultiplier` / `speed.maxFlyMultiplier` settings are no longer used.
+  - Known limit (decided: documented, not capped): vanilla's "moved too quickly" check pulls a
+    player back when one move packet covers more than about 10 blocks per tick. Sprint-flying
+    hits it from roughly fly 9-10, normal flying from about 18, walking only above about 30.
+    The singleplayer host is exempt, so test high values on a dedicated server or as a LAN guest.
   - The change is not persisted: it resets on relog and respawn.
 - [x] `/back`: your location before the last teleport. Optionally your death location too.
 - [x] `/tpa`, `/tpahere`, `/tpaccept`, `/tpdeny`, `/tpacancel`, `/tptoggle`, `/tpauto`

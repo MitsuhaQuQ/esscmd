@@ -136,6 +136,8 @@ public final class CmdEssentials {
         Sessions.clear();
         MessagingService.clear();
         Multiplayer.clear();
+        PlayerStateCommands.clear();
+        InventoryCommands.clear();
     }
 
     public static void onServerTick(MinecraftServer server) {

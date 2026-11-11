@@ -88,7 +88,7 @@ the command's `.others` permission (admins by default).
 |---|---|---|
 | `/fly`, `/god` `[player] [on\|off]` | Flight and invulnerability; kept across relog, respawn and gamemode changes | admins |
 | `/heal`, `/feed`, `/rest`, `/ext` `[player]` | Heal (also clears harmful effects), fill hunger, reset phantoms, put out fire | admins |
-| `/speed [walk\|fly] <0-10> [player]` | Walking or flying speed (1 = vanilla) | admins |
+| `/speed [walk\|fly] <multiplier> [player]` | Walking or flying speed multiplier (0.5 = half, 1 = vanilla, 2 = double; no cap). Above about 9 for flying, vanilla's "moved too quickly" check pulls players back on multiplayer servers | admins |
 | `/afk [message]` | Toggle AFK; players also go AFK automatically after 5 minutes idle | everyone |
 | `/suicide` | Kill yourself | everyone |
 | `/gmc`, `/gms`, `/gma`, `/gmsp` `[targets]`, `/gm` | Gamemode shortcuts; `/gamemode` and `/gm` also accept `c s a sp` and `0-3`. They run vanilla `/gamemode`, so its permission applies | admins |
@@ -174,7 +174,7 @@ Everything lives in `config/cmdessentials/`, created on first start. Run
 `/cmdessentials reload` after editing.
 
 - `config.json`: teleport delay and cooldown, home limit, spawn behaviour, `/back` on death,
-  `/tpa` timeout, speed limits, AFK timers (`afk.autoSeconds`, `afk.kickSeconds`), `/near`
+  `/tpa` timeout, AFK timers (`afk.autoSeconds`, `afk.kickSeconds`), `/near`
   radius, unsafe teleport blocks (by ID), MOTD on join, `/tpr` areas per dimension, and the
   `overrideVanilla` command names.
   Options follow EssentialsX `config.yml` with the same defaults, for example the `/heal`

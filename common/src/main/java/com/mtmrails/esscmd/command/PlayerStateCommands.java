@@ -37,6 +37,11 @@ public final class PlayerStateCommands {
 
     private PlayerStateCommands() {}
 
+    /** Tick numbers restart with each world, so drop them when the server stops. */
+    public static void clear() {
+        HEAL_READY.clear();
+    }
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(toggle("fly", PermissionNodes.FLY, PermissionNodes.FLY_OTHERS,
                 (source, player) -> EssData.get(source.getServer()).fly(player.getUUID()),
