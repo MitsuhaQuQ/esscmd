@@ -9,6 +9,11 @@ Read this file before changing code. [docs/architecture.md](docs/architecture.md
 modules and runtime flow with UML diagrams; update it when the structure changes. Reply to the user in Chinese; write code, comments and
 commit messages in English.
 
+Keep the conversation language constant: every message to the user stays in Chinese for the
+whole session, including progress notes, summaries, questions and the final report. Don't switch
+to English because a tool result, log, file or earlier English message is in English, and don't
+mix languages within a message. Identifiers, commands, paths and quoted output stay as they are.
+
 ## Status
 
 All 8 jars build; CI builds them and runs the unit tests on every push.

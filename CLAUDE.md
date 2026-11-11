@@ -9,7 +9,9 @@ The full project guide, covering architecture, rules, the command roadmap and bu
 
 ## Quick reference
 
-Reply to the user in Chinese; write code, comments and commit messages in English.
+Reply to the user in Chinese for the whole session and keep it constant: progress notes,
+summaries and questions included, even when tool output or files are in English. Write code,
+comments and commit messages in English.
 
 | Goal | Command |
 |---|---|
