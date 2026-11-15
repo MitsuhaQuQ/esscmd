@@ -534,6 +534,7 @@ targets per loader, so the jars carry no refmap.
 | `ServerGamePacketListenerImplMixin` | chat/command handlers, chat broadcast | AFK, `/mute` |
 | `TrackedEntityMixin`, `ChunkMapAccessor` | `ChunkMap$TrackedEntity.updatePlayer` | `/vanish` |
 | `ServerPlayerGameModeMixin` | `useItem`, `useItemOn` | `/powertool` |
+| `TeleportCommandMixin` | `TeleportCommand.teleportToEntity`, `teleportToPos` | `/back` after vanilla `/tp` |
 | `PlayerMixin`, `ServerPlayerListNameMixin` | display name, tab-list name | `/nick`, AFK tag |
 
 **Adding a command**

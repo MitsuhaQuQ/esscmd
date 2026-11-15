@@ -10,6 +10,7 @@
     "ServerPlayerGameModeMixin",
     "ServerPlayerListNameMixin",
     "ServerPlayerMixin",
+    "TeleportCommandMixin",
     "TrackedEntityMixin"
   ],
   "injectors": {

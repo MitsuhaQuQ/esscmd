@@ -83,7 +83,8 @@ public final class CmdEssentials {
                 "net.minecraft.server.level.ServerPlayerGameMode",
                 "net.minecraft.server.level.ChunkMap",
                 "net.minecraft.server.level.ChunkMap$TrackedEntity",
-                "net.minecraft.server.network.ServerGamePacketListenerImpl"}) {
+                "net.minecraft.server.network.ServerGamePacketListenerImpl",
+                "net.minecraft.server.commands.TeleportCommand"}) {
             try {
                 Class.forName(target, true, CmdEssentials.class.getClassLoader());
                 LOGGER.info("Mixin target {} loaded", target);

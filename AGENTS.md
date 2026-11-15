@@ -150,6 +150,9 @@ cmdEssentials/
   - `ServerGamePacketListenerImplMixin`: chat and command activity for AFK, plus `/mute`.
     Expected injected handlers: 2 on 1.18.2, 3 on 1.20.1, 4 on 1.21.1 and 26.3.
   - `TrackedEntityMixin`, `ChunkMapAccessor`: /vanish. `ServerPlayerGameModeMixin`: /powertool.
+  - `TeleportCommandMixin`: vanilla `/tp` and `/teleport` (so also `/etp`) save `/back` for each
+    player they move, at the head of `teleportToEntity` / `teleportToPos`. `LookAt` is
+    package-private before 26.1, so that parameter is `@Coerce Object`.
   - `PlayerMixin`, `ServerPlayerListNameMixin`: nickname in the display name, nickname and
     AFK tag in the tab list. `TabListNames` sends the update packet.
   - **Verifying mixins**: targets like the network handler only load when a player joins, so
@@ -340,6 +343,9 @@ below says otherwise. Mark each line `[x]` once every command on it is done.
     The singleplayer host is exempt, so test high values on a dedicated server or as a LAN guest.
   - The change is not persisted: it resets on relog and respawn.
 - [x] `/back`: your location before the last teleport. Optionally your death location too.
+  Every teleport through `TeleportService` and every vanilla `/tp` / `/teleport` records it
+  (`TeleportCommandMixin`; Essentials replaces `/tp`, we keep vanilla's, so we hook it). Other
+  mods' teleports, ender pearls and portals don't.
 - [x] `/tpa`, `/tpahere`, `/tpaccept`, `/tpdeny`, `/tpacancel`, `/tptoggle`, `/tpauto`
 - [x] `/warp`, `/setwarp`, `/delwarp`, `/warpinfo`
 - [x] `/essentials` → `/cmdessentials` (alias `/ess`): `reload` and version info

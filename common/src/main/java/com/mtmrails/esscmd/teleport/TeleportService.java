@@ -67,6 +67,11 @@ public final class TeleportService {
         return perform(player, target);
     }
 
+    /** Saves where the player stands now as their /back location; call it just before moving them. */
+    public static void recordBack(ServerPlayer player) {
+        EssData.get(Players.server(player)).setBack(player.getUUID(), StoredLocation.of(player));
+    }
+
     public static void cancel(ServerPlayer player) {
         PENDING.remove(player.getUUID());
     }
@@ -110,7 +115,7 @@ public final class TeleportService {
             Players.send(player, Messages.error(player, "teleport.unknown-world", target.dimension()));
             return false;
         }
-        EssData.get(server).setBack(player.getUUID(), StoredLocation.of(player));
+        recordBack(player);
         Players.teleport(player, level, target.x(), target.y(), target.z(), target.yaw(), target.pitch());
         int cooldown = ConfigManager.get().teleport.cooldownSeconds * 20;
         if (cooldown > 0) {

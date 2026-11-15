@@ -61,6 +61,9 @@ Mark each line ✅ or ❌. For ❌, note what happened and any console error.
 | 3.1 | B: note the position, `/spawn`, then `/back` | Returns to the noted position |
 | 3.2 | B: die somewhere, respawn, `/back` | Returns to the death spot |
 | 3.3 | A: `/back B` | B goes to their last /back location instantly |
+| 3.4 | A: note the position, vanilla `/tp ~100 ~ ~`, then `/back` | Returns to the noted position, not an older /back spot |
+| 3.5 | A: note B's position, `/tp B A`; B: `/back` | B returns to where they stood before |
+| 3.6 | A: note the position, `/tp 0 80 0`, `/tp 100 80 100`, `/back` | Returns to 0 80 0 (the last teleport only) |
 
 ## 4. TPA
 
